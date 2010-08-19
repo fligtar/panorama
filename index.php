@@ -17,7 +17,7 @@
                 <li><a href="#addon-categories" onclick="polygraph.getReport(reports.addons.categories);" class="todo">categories</a></li>
                 <li><a href="#addon-contributions" onclick="polygraph.getReport(reports.addons.contributions);" class="todo">contributions</a></li>
                 <li><a href="#addon-creation" onclick="polygraph.getReport(reports.addons.creation, this);">creation</a></li>
-                <li><a href="#addon-downloads" onclick="polygraph.getReport(reports.addons.downloads);" class="todo">downloads</a></li>
+                <li><a href="#addon-downloads" onclick="polygraph.getReport(reports.addons.downloads);" class="todo">downloads (sources)</a></li>
                 <li><a href="#addon-eulas" onclick="polygraph.getReport(reports.addons.eulas);" class="todo">eulas</a></li>
                 <li><a href="#addon-license" onclick="polygraph.getReport(reports.addons.license);" class="todo">license</a></li>
                 <li><a href="#addon-privacy" onclick="polygraph.getReport(reports.addons.privacy);" class="todo">privacy policies</a></li>
@@ -25,6 +25,7 @@
                 <li><a href="#addon-shares" onclick="polygraph.getReport(reports.addons.shares);" class="todo">shares</a></li>
                 <li><a href="#addon-status" onclick="polygraph.getReport(reports.addons.status);" class="todo">status</a></li>
                 <li><a href="#addon-tags" onclick="polygraph.getReport(reports.addons.tags);" class="todo">tags</a></li>
+                <li><a href="#addon-themes" onclick="polygraph.getReport(reports.addons.themes);" class="todo">theme usage</a></li>
                 <li><a href="#addon-translations" onclick="polygraph.getReport(reports.addons.translations);" class="todo">translations</a></li>
                 <li><a href="#addon-updatepings" onclick="polygraph.getReport(reports.addons.updatepings);" class="todo">update pings</a></li>
                 <li><a href="#addon-reviews" onclick="polygraph.getReport(reports.addons.reviews);" class="todo">user reviews</a></li>

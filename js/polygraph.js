@@ -18,18 +18,69 @@ var polygraph = {
             var chart = report.graphs[i];
             
             $.get(chart.url, function(data) {
-                eval(data);
+                chart.options.series = polygraph.getSeriesFromCSV(data, chart);
                 
-                chart.options.series = series;
-            
                 polygraph.newContainer(chart.options.chart.renderTo);
                 polygraph.createChart(chart.options);
                 
                 // This will remove loading after the first chart loads
                 // Don't care enough about the second
-                $('nav .selected').removeClass('loading');
+                $('nav .loading').removeClass('loading');
             });
         }
+    },
+    
+    getSeriesFromCSV: function(csv, chart) {
+        var series = [];
+        
+        // Split the lines
+        var lines = csv.split('\n');
+
+        // Go through each line
+        $.each(lines, function(lineNo, line) {
+            var items = line.split(',');
+
+            // First line is the header with series names
+            if (lineNo == 0) {
+                $.each(items, function(itemNo, item) {
+                    if (itemNo > 0) {
+                        var s = {name: item, data: []};
+                        
+                        // Populate series options for this chart
+                        if ('*' in chart.specificSeries) {
+                            for (var key in chart.specificSeries['*']) {
+                                s[key] = chart.specificSeries['*'][key];
+                            }
+                        }
+                        
+                        // Populate series options for this series
+                        if (itemNo in chart.specificSeries) {
+                            for (var key in chart.specificSeries[itemNo]) {
+                                s[key] = chart.specificSeries[itemNo][key];
+                            }
+                        }
+                        
+                        series.push(s);
+                        console.log(s);
+                    }                        
+                });
+            }
+            // Other lines are the data with date in first column
+            else {
+                var date;
+                $.each(items, function(itemNo, item) {
+                    if (itemNo == 0) {
+                        // Split the date
+                        var dateparts = item.split('-');
+                        date = Date.UTC(dateparts[0], dateparts[1], dateparts[2]);
+                    } else {
+                        series[itemNo - 1].data.push([date, parseInt(item)]);
+                    }
+                });
+            }
+        });
+        
+        return series;
     },
     
     newContainer: function(id) {
@@ -49,7 +100,8 @@ var reports = {
                     url: 'reports/addons/creation.php',
                     options: {
                         chart: {
-                            renderTo: 'addon-creation'
+                            renderTo: 'addon-creation',
+                            defaultSeriesType: 'area'
                         },
                         title: { text: 'Add-ons Created per Day' },
                         subtitle: { text: 'by Add-on Type' },
@@ -59,11 +111,19 @@ var reports = {
                         tooltip: {
                             formatter: function() {
                             	return ''+
-                            		Highcharts.dateFormat('%A %B %e %Y', this.x) + ': '+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': '+
                             		Highcharts.numberFormat(this.y, 0) +' add-ons';
                             }
                         },
                         series: []
+                    },
+                    specificSeries: {
+                        '*': {
+                            visible: false
+                        },
+                        1: {
+                            visible: true
+                        }
                     }
                 }
             ]
@@ -77,7 +137,8 @@ Highcharts.setOptions({
 		renderTo: 'chart',
 		zoomType: 'x',
 		marginRight: 150,
-        marginBottom: 25
+        marginBottom: 25,
+        defaultSeriesType: 'line'
 	},
     title: {
 		text: ''
@@ -106,7 +167,7 @@ Highcharts.setOptions({
 	tooltip: {
 		formatter: function() {
 			return ''+
-				Highcharts.dateFormat('%A %B %e %Y', this.x) + ': '+
+				Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': '+
 				Highcharts.numberFormat(this.y, 0);
 		}
 	},

@@ -106,11 +106,11 @@ nav > ul > ul li {
 a.todo {
     color: #CCCCCC;
 }
-nav li.selected {
+nav a.selected {
     text-decoration: blink;
     font-weight: bold;
 }
-nav li.loading {
+nav a.loading {
     text-decoration: blink;
     font-weight: normal;
 }
