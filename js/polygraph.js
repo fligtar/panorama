@@ -20,7 +20,7 @@ var polygraph = {
             $.get(chart.url, function(data) {
                 chart.options.series = polygraph.getSeriesFromCSV(data, chart);
                 
-                polygraph.newContainer(chart.options.chart.renderTo);
+                polygraph.newContainer(chart.options.chart.renderTo, chart.url);
                 polygraph.createChart(chart.options);
                 
                 // This will remove loading after the first chart loads
@@ -61,20 +61,24 @@ var polygraph = {
                         }
                         
                         series.push(s);
-                        console.log(s);
                     }                        
                 });
             }
-            // Other lines are the data with date in first column
+            // Other lines are the data with date/label in first column
             else {
-                var date;
+                var label;
                 $.each(items, function(itemNo, item) {
                     if (itemNo == 0) {
-                        // Split the date
-                        var dateparts = item.split('-');
-                        date = Date.UTC(dateparts[0], dateparts[1], dateparts[2]);
+                        if (item.indexOf('-') != -1) {
+                            // Split the date if it's a date
+                            var dateparts = item.split('-');
+                            label = Date.UTC(dateparts[0], dateparts[1], dateparts[2]);
+                        }
+                        else {
+                            label = item;
+                        }
                     } else {
-                        series[itemNo - 1].data.push([date, parseInt(item)]);
+                        series[itemNo - 1].data.push([label, parseInt(item)]);
                     }
                 });
             }
@@ -83,51 +87,12 @@ var polygraph = {
         return series;
     },
     
-    newContainer: function(id) {
-        $('#content').append('<div id="' + id + '" class="graph"></div>');
+    newContainer: function(id, csv) {
+        $('#content').append('<div class="graph-container"><div id="' + id + '" class="graph"></div><p class="csv"><a href="' + csv + '">CSV</a></div>');
     },
     
     createChart: function(options) {
     	return new Highcharts.Chart(options);
-    }
-};
-
-var reports = {
-    addons: {
-        creation: {
-            graphs: [
-                {
-                    url: 'reports/addons/creation.php',
-                    options: {
-                        chart: {
-                            renderTo: 'addon-creation',
-                            defaultSeriesType: 'area'
-                        },
-                        title: { text: 'Add-ons Created per Day' },
-                        subtitle: { text: 'by Add-on Type' },
-                        yAxis: {
-                            title: { text: 'Add-ons Created' }
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': '+
-                            		Highcharts.numberFormat(this.y, 0) +' add-ons';
-                            }
-                        },
-                        series: []
-                    },
-                    specificSeries: {
-                        '*': {
-                            visible: false
-                        },
-                        1: {
-                            visible: true
-                        }
-                    }
-                }
-            ]
-        }
     }
 };
 
@@ -137,7 +102,6 @@ Highcharts.setOptions({
 		renderTo: 'chart',
 		zoomType: 'x',
 		marginRight: 150,
-        marginBottom: 25,
         defaultSeriesType: 'line'
 	},
     title: {
@@ -207,8 +171,24 @@ Highcharts.setOptions({
 		},
 		line: {
 		    lineWidth: 1,
-		    marker: { enabled: false },
+		    marker: {
+		        enabled: false
+		    },
 		    shadow: false
+		},
+		pie: {
+			allowPointSelect: true,
+			cursor: 'pointer',
+			dataLabels: {
+				enabled: true,
+				formatter: function() {
+					if (this.y > 5) return this.point.name;
+				},
+				color: 'white',
+				style: {
+					font: '13px Trebuchet MS, Verdana, sans-serif'
+				}
+			}
 		}
 	},
 	series: []

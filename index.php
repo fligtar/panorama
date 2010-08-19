@@ -18,10 +18,10 @@
                 <li><a href="#addon-contributions" onclick="polygraph.getReport(reports.addons.contributions);" class="todo">contributions</a></li>
                 <li><a href="#addon-creation" onclick="polygraph.getReport(reports.addons.creation, this);">creation</a></li>
                 <li><a href="#addon-downloads" onclick="polygraph.getReport(reports.addons.downloads);" class="todo">downloads (sources)</a></li>
-                <li><a href="#addon-eulas" onclick="polygraph.getReport(reports.addons.eulas);" class="todo">eulas</a></li>
+                <li><a href="#addon-eulas" onclick="polygraph.getReport(reports.addons.eulas);">eulas</a></li>
                 <li><a href="#addon-license" onclick="polygraph.getReport(reports.addons.license);" class="todo">license</a></li>
-                <li><a href="#addon-privacy" onclick="polygraph.getReport(reports.addons.privacy);" class="todo">privacy policies</a></li>
-                <li><a href="#addon-stats" onclick="polygraph.getReport(reports.addons.stats);" class="todo">public stats</a></li>
+                <li><a href="#addon-privacy" onclick="polygraph.getReport(reports.addons.privacy);">privacy policies</a></li>
+                <li><a href="#addon-publicstats" onclick="polygraph.getReport(reports.addons.publicstats);">public stats</a></li>
                 <li><a href="#addon-shares" onclick="polygraph.getReport(reports.addons.shares);" class="todo">shares</a></li>
                 <li><a href="#addon-status" onclick="polygraph.getReport(reports.addons.status);" class="todo">status</a></li>
                 <li><a href="#addon-tags" onclick="polygraph.getReport(reports.addons.tags);" class="todo">tags</a></li>
@@ -29,7 +29,7 @@
                 <li><a href="#addon-translations" onclick="polygraph.getReport(reports.addons.translations);" class="todo">translations</a></li>
                 <li><a href="#addon-updatepings" onclick="polygraph.getReport(reports.addons.updatepings);" class="todo">update pings</a></li>
                 <li><a href="#addon-reviews" onclick="polygraph.getReport(reports.addons.reviews);" class="todo">user reviews</a></li>
-                <li><a href="#addon-viewsource" onclick="polygraph.getReport(reports.addons.viewsource);" class="todo">view source</a></li>
+                <li><a href="#addon-viewsource" onclick="polygraph.getReport(reports.addons.viewsource);">view source</a></li>
             </ul>
             
             <li>collections</li>
@@ -70,6 +70,7 @@
     
     <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 	<script type="text/javascript" src="js/highcharts.js"></script>
+	<script type="text/javascript" src="js/reports.js"></script>
 	<script type="text/javascript" src="js/polygraph.js"></script>
 </body>
 </html>

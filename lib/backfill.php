@@ -1,9 +1,9 @@
 <?php
 require_once 'db.php';
 
-// Add-on types
+// Add-ons - Creation (by add-on type)
 $qry = "SELECT addontype_id, COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' GROUP BY addontype_id ORDER BY addontype_id";
-$table = 'addontypes';
+$table = 'addons_creation';
 
 
 $dates = array();
@@ -32,7 +32,7 @@ foreach ($dates as $date => $items) {
     $values = '';
     
     foreach ($items as $item => $count) {
-        $fields .= ", id{$item}";
+        $fields .= ", type{$item}";
         $values .= ','.$count;
     }
     

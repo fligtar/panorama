@@ -107,12 +107,11 @@ a.todo {
     color: #CCCCCC;
 }
 nav a.selected {
-    text-decoration: blink;
     font-weight: bold;
 }
 nav a.loading {
-    text-decoration: blink;
-    font-weight: normal;
+    padding-right: 25px;
+    background: url(../images/ajax-loader.gif) no-repeat 100% 50%;
 }
 
 #content {
@@ -126,4 +125,8 @@ nav a.loading {
     width: 800px;
     height: 400px;
     margin: 0 auto;
+}
+
+.graph-container .csv {
+    text-align: center;
 }
