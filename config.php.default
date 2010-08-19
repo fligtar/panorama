@@ -1,0 +1,13 @@
+<?php
+
+define('AMO_DB_HOST', '');
+define('AMO_DB_NAME', '');
+define('AMO_DB_USER', '');
+define('AMO_DB_PASS', '');
+
+define('STATS_DB_HOST', '');
+define('STATS_DB_NAME', '');
+define('STATS_DB_USER', '');
+define('STATS_DB_PASS', '');
+
+?>

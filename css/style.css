@@ -1,0 +1,118 @@
+/* Reset stylesheet */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+body {
+	line-height: 1;
+	color: black;
+	background: white;
+}
+ol, ul {
+	list-style: none;
+}
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+caption, th, td {
+	text-align: left;
+	font-weight: normal;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+blockquote, q {
+	quotes: "" "";
+}
+
+/* End reset stylesheet */
+@font-face {
+	font-family: '1942report';
+	src: url('1942-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'HattoriHanzo';
+	src: url('Hattori_Hanzo-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+    font-family: 'HattoriHanzo';
+    color: #333333;
+    padding: 1em;
+}
+
+a {
+    color: #333333;
+    text-decoration: none;
+}
+a:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+
+header {
+    display: block;
+    margin-bottom: 0.5em;
+}
+h1 {
+    font-family: '1942report';
+    font-size: 2.5em;
+    background-color: #F4F4F4;
+    display: inline-block;
+    padding: 0.3em 0.5em;
+    -moz-border-radius: 0.5em;
+}
+
+nav {
+    display: inline-block;
+    min-width: 15em;
+    width: 15%;
+}
+nav ul {
+    margin-left: 1em;
+}
+nav > ul > li {
+    font-weight: bold;
+    margin-top: 0.5em;
+}
+nav > ul > ul li {
+    margin-top: 0.2em;
+}
+
+#content {
+    display: inline-block;
+    vertical-align: top;
+    width: 80%;
+    min-width: 800px;
+}
+
+.graph {
+    width: 800px;
+    height: 400px;
+    margin: 0 auto;
+}
