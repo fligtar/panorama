@@ -103,6 +103,17 @@ nav > ul > li {
 nav > ul > ul li {
     margin-top: 0.2em;
 }
+a.todo {
+    color: #CCCCCC;
+}
+nav li.selected {
+    text-decoration: blink;
+    font-weight: bold;
+}
+nav li.loading {
+    text-decoration: blink;
+    font-weight: normal;
+}
 
 #content {
     display: inline-block;

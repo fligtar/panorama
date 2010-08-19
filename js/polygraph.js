@@ -1,11 +1,19 @@
 
 $(document).ready(function() {
-    polygraph.getReport(reports.addons.creation);
+    // Perma-urls via hash
+    if (window.location.hash) {
+        $('nav li a[href="' + window.location.hash + '"]').click();
+    }
 });
 
 var polygraph = {
     
-    getReport: function(report) {
+    getReport: function(report, caller) {
+        $('nav .selected').removeClass('selected');
+        $('#content .graph').remove();
+        
+        $(caller).addClass('selected').addClass('loading');
+        
         for (var i in report.graphs) {
             var chart = report.graphs[i];
             
@@ -16,6 +24,10 @@ var polygraph = {
             
                 polygraph.newContainer(chart.options.chart.renderTo);
                 polygraph.createChart(chart.options);
+                
+                // This will remove loading after the first chart loads
+                // Don't care enough about the second
+                $('nav .selected').removeClass('loading');
             });
         }
     },
@@ -63,13 +75,18 @@ var reports = {
 Highcharts.setOptions({
 	chart: {
 		renderTo: 'chart',
-		zoomType: 'x'
+		zoomType: 'x',
+		marginRight: 150,
+        marginBottom: 25
 	},
     title: {
 		text: ''
 	},
     subtitle: {
 		text: ''
+	},
+	credits: {
+	    enabled: false
 	},
 	xAxis: {
 		type: 'datetime',
