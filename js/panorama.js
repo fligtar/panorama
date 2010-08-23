@@ -15,19 +15,21 @@ var panorama = {
         $(caller).addClass('loading').addClass('selected');
         
         for (var i in report.graphs) {
-            var chart = report.graphs[i];
-            
-            $.get(chart.url, function(data) {
-                chart.options.series = panorama.getSeriesFromCSV(data, chart);
-                
-                panorama.newContainer(chart.options.chart.renderTo, chart.url);
-                panorama.createChart(chart.options);
-                
-                // This will remove loading after the first chart loads
-                // Don't care enough about the second
-                $('nav .loading').removeClass('loading');
-            });
+            panorama.reportAndChartIt(report.graphs[i]);
         }
+    },
+    
+    reportAndChartIt: function(chart) {
+        $.get(chart.url, function(data) {
+            chart.options.series = panorama.getSeriesFromCSV(data, chart);
+            
+            panorama.newContainer(chart.options.chart.renderTo, chart.url);
+            panorama.createChart(chart.options);
+            
+            // This will remove loading after the first chart loads
+            // Don't care enough about the second
+            $('nav .loading').removeClass('loading');
+        });
     },
     
     getSeriesFromCSV: function(csv, chart) {
