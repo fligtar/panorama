@@ -6,11 +6,11 @@ $(document).ready(function() {
     }
 });
 
-var polygraph = {
+var panorama = {
     
     getReport: function(report, caller) {
         $('nav .selected').removeClass('selected');
-        $('#content .graph').remove();
+        $('#content .graph-container').remove();
         
         $(caller).addClass('selected').addClass('loading');
         
@@ -18,10 +18,10 @@ var polygraph = {
             var chart = report.graphs[i];
             
             $.get(chart.url, function(data) {
-                chart.options.series = polygraph.getSeriesFromCSV(data, chart);
+                chart.options.series = panorama.getSeriesFromCSV(data, chart);
                 
-                polygraph.newContainer(chart.options.chart.renderTo, chart.url);
-                polygraph.createChart(chart.options);
+                panorama.newContainer(chart.options.chart.renderTo, chart.url);
+                panorama.createChart(chart.options);
                 
                 // This will remove loading after the first chart loads
                 // Don't care enough about the second
@@ -72,7 +72,7 @@ var polygraph = {
                         if (item.indexOf('-') != -1) {
                             // Split the date if it's a date
                             var dateparts = item.split('-');
-                            label = Date.UTC(dateparts[0], dateparts[1], dateparts[2]);
+                            label = Date.UTC(dateparts[0], dateparts[1] - 1, dateparts[2]);
                         }
                         else {
                             label = item;

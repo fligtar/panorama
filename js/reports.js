@@ -130,5 +130,35 @@ var reports = {
                 }
             ]
         }
+    },
+    editors: {
+        queues: {
+            graphs: [
+                {
+                    url: 'reports/editors/queues.php',
+                    options: {
+                        chart: {
+                            renderTo: 'editors-queues',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Editor Review Queues' },
+                        subtitle: { text: 'by type' },
+                        yAxis: {
+                            title: { text: 'Size of Queue' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': '+
+                            		Highcharts.numberFormat(this.y, 0) +' items';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                }
+            ]
+        }
     }
 };
