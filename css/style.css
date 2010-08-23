@@ -48,14 +48,14 @@ blockquote, q {
 
 /* End reset stylesheet */
 @font-face {
-	font-family: '1942report';
-	src: url('1942-webfont.woff') format('woff');
+	font-family: 'HattoriHanzo';
+	src: url('Hattori_Hanzo-webfont.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 }
 @font-face {
-	font-family: 'HattoriHanzo';
-	src: url('Hattori_Hanzo-webfont.woff') format('woff');
+	font-family: 'Acknowledgement';
+	src: url('Acknowledgement-webfont.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -77,15 +77,22 @@ a:hover {
 
 header {
     display: block;
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
+    border-left: 10px solid #333333;
+    border-right: 10px solid #333333;
 }
 h1 {
-    font-family: '1942report';
+    font-family: 'Acknowledgement';
     font-size: 2.5em;
-    background-color: #F4F4F4;
     display: inline-block;
     padding: 0.3em 0.5em;
-    -moz-border-radius: 0.5em;
+    letter-spacing: 0.3em;
+    border-bottom: 5px solid #333333;
+}
+header .corner {
+    float: right;
+    border-top: 5px solid #333333;
+    width: 12em;
 }
 
 nav {
@@ -97,7 +104,7 @@ nav ul {
     margin-left: 1em;
 }
 nav > ul > li {
-    font-weight: bold;
+    font-size: 1.3em;
     margin-top: 0.5em;
 }
 nav > ul > ul li {
@@ -106,8 +113,10 @@ nav > ul > ul li {
 a.todo {
     color: #CCCCCC;
 }
-nav a.selected {
-    font-weight: bold;
+nav .selected {
+    border-bottom: 2px solid #333333;
+    border-left: 3px solid #333333;
+    padding-left: 2px;
 }
 nav a.loading {
     padding-right: 25px;

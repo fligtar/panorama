@@ -12,7 +12,7 @@ var panorama = {
         $('nav .selected').removeClass('selected');
         $('#content .graph-container').remove();
         
-        $(caller).addClass('selected').addClass('loading');
+        $(caller).addClass('loading').addClass('selected');
         
         for (var i in report.graphs) {
             var chart = report.graphs[i];

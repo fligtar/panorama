@@ -37,7 +37,7 @@ var reports = {
         eulas: {
             graphs: [
                 {
-                    url: 'reports/addons/eulas-current.php',
+                    url: 'reports/addons/eulas.php?graph=current',
                     options: {
                         chart: {
                             renderTo: 'addon-eulas-current',
@@ -61,7 +61,7 @@ var reports = {
         privacy: {
             graphs: [
                 {
-                    url: 'reports/addons/privacy-current.php',
+                    url: 'reports/addons/privacy.php?graph=current',
                     options: {
                         chart: {
                             renderTo: 'addon-privacy-current',
@@ -85,7 +85,7 @@ var reports = {
         publicstats: {
             graphs: [
                 {
-                    url: 'reports/addons/publicstats-current.php',
+                    url: 'reports/addons/publicstats.php?graph=current',
                     options: {
                         chart: {
                             renderTo: 'addon-publicstats-current',
@@ -109,7 +109,7 @@ var reports = {
         viewsource: {
             graphs: [
                 {
-                    url: 'reports/addons/viewsource-current.php',
+                    url: 'reports/addons/viewsource.php?graph=current',
                     options: {
                         chart: {
                             renderTo: 'addon-viewsource-current',

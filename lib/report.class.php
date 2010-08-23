@@ -54,7 +54,9 @@ class Report {
      */
     public function log($msg) {
         echo '['.get_class($this).'] '.$msg."<br/>\n";
-        ob_flush();
+        
+        if (defined('OVERLORD'))
+            ob_flush();
     }
 }
 
