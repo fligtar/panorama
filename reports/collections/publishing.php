@@ -19,8 +19,7 @@ class CollectionPublishing extends Report {
         if (empty($date))
             $date = date('Y-m-d');
         
-        // @TODO addons_collections.added is going to become .created soon
-        $qry = "SELECT collection_type, COUNT(*) FROM collections INNER JOIN addons_collections ON addons_collections.collection_id = collections.id WHERE DATE(addons_collections.added) = '%DATE%' GROUP BY collection_type ORDER BY collection_type";
+        $qry = "SELECT collection_type, COUNT(*) FROM collections INNER JOIN addons_collections ON addons_collections.collection_id = collections.id WHERE DATE(addons_collections.created) = '%DATE%' GROUP BY collection_type ORDER BY collection_type";
         
         $_types = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
         
