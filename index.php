@@ -21,6 +21,7 @@
                 <li><a href="#addon-downloads" onclick="panorama.getReport(reports.addons.downloads, this);" class="todo">downloads (sources)</a></li>
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
                 <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
+                <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);" class="todo">impressions</a></li>
                 <li><a href="#addon-privacy" onclick="panorama.getReport(reports.addons.privacy, this);">privacy policies</a></li>
                 <li><a href="#addon-publicstats" onclick="panorama.getReport(reports.addons.publicstats, this);">public stats</a></li>
                 <li><a href="#addon-shares" onclick="panorama.getReport(reports.addons.shares, this);" class="todo">shares</a></li>
@@ -46,6 +47,12 @@
             <ul>
                 <li><a href="#editors-queues" onclick="panorama.getReport(reports.editors.queues, this);">queues</a></li>
                 <li><a href="#editors-activity" onclick="panorama.getReport(reports.editors.activity, this);" class="todo">activity</a></li>
+            </ul>
+            
+            <li>services</li>
+            <ul>
+                <li><a href="#services-api" onclick="panorama.getReport(reports.services.api, this);">api usage</a></li>
+                <li><a href="#services-discovery" onclick="panorama.getReport(reports.services.discovery, this);" class="todo">discovery pane</a></li>
             </ul>
             
             <li>threat assessment</li>

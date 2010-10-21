@@ -1,12 +1,12 @@
 <?php
 define('OVERLORD', true);
-require_once '../reports/collections/votes-vote.php';
+require_once '../reports/services/api.php';
 
 ob_start();
 
-$report = new CollectionVotesVote;
-$report->backfill('2009-08-27');
-//$report->backfill('2009-08-27', '2009-09-01');
+$report = new ServicesAPI;
+//$report->backfill('2010-10-19');
+$report->backfill('2010-10-17', '2010-10-18');
 
 ob_end_flush();
 

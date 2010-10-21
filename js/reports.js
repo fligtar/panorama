@@ -566,6 +566,36 @@ var reports = {
             ]
         }
     },
+    services: {
+        api: {
+            graphs: [
+                {
+                    url: 'reports/services/api.php',
+                    options: {
+                        chart: {
+                            renderTo: 'services-api',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'API Usage per Day' },
+                        subtitle: { text: 'by request type' },
+                        yAxis: {
+                            title: { text: 'API requests' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' requests</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                }
+            ]
+        }
+    },
     users: {
         creation: {
             graphs: [
