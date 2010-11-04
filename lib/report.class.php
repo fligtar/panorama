@@ -4,6 +4,7 @@ require_once dirname(__FILE__).'/db.class.php';
 class Report {
     public $db = null;
     public $backfillable = false;
+    public $cron_type = 'today';
     
     /**
      * Report constructor. Instantiates the db
@@ -42,10 +43,21 @@ class Report {
     }
     
     /**
+     * Called once daily for each cron type. Possible types are
+     * 'today' and 'yesterday'. Yesterday is used for things like logs
+     * that aren't present until the next day.
+     */
+    public function daily($cron_type) {
+        // Check if the currently running cron is the correct one for this report
+        if ($cron_type == $this->cron_type)
+            $this->analyzeDay();
+    }
+    
+    /**
      * This is called once a day. If the report has anything to run daily,
      * it should override this method and call it.
      */
-    public function daily() {
+    public function analyzeDay() {
         $this->log('Nothing to run daily.');
     }
     

@@ -4,20 +4,14 @@ require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 class AddonDownloads extends Report {
     public $table = 'addons_downloads';
     public $backfillable = true;
-    
-    /**
-     * Called daily
-     */
-    public function daily() {
-        $this->analyzeDay();
-    }
+    public $cron_type = 'yesterday';
     
     /**
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
         if (empty($date))
-            $date = date('Y-m-d');
+            $date = date('Y-m-d', strtotime('yesterday'));
         
         $qry = "SELECT a.addontype_id, SUM(dc.count) FROM download_counts AS dc INNER JOIN addons AS a ON dc.addon_id = a.id WHERE dc.date = '%DATE%' GROUP BY a.addontype_id ORDER BY a.addontype_id";
         

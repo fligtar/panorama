@@ -4,20 +4,14 @@ require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 class ServicesAPI extends Report {
     public $table = 'services_api';
     public $backfillable = true;
-    
-    /**
-     * Called daily
-     */
-    public function daily() {
-        $this->analyzeDay();
-    }
+    public $cron_type = 'yesterday';
     
     /**
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
         if (empty($date))
-            $date = date('Y-m-d');
+            $date = date('Y-m-d', strtotime('yesterday'));
         
         $data_dir = HADOOP_DATA.'/'.$date;
         

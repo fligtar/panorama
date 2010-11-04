@@ -6,13 +6,6 @@ class CollectionVotesVote extends Report {
     public $backfillable = true;
     
     /**
-     * Called daily
-     */
-    public function daily() {
-        $this->analyzeDay();
-    }
-    
-    /**
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {

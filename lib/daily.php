@@ -5,6 +5,7 @@ ob_start();
 // Iterate through reports directories to get every report
 $containers = array();
 $reports_dir = '../reports';
+$cron_type = (!empty($argv[1]) && $argv[1] == 'yesterday') ? 'yesterday' : 'today';
  
 if ($dh = opendir($reports_dir)) {
     while (($container = readdir($dh)) !== false) {
@@ -33,7 +34,7 @@ foreach ($containers as $container => $reports) {
         
         // Call the report's daily method. If the report itself has no
         // daily method, the superclass will handle it gracefully.
-        $report->daily();
+        $report->daily($cron_type);
     }
 }
 

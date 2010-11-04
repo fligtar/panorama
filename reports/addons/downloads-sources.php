@@ -4,20 +4,14 @@ require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 class AddonDownloadsSources extends Report {
     public $table = 'addons_downloads_sources';
     public $backfillable = true;
-    
-    /**
-     * Called daily
-     */
-    public function daily() {
-        $this->analyzeDay();
-    }
-    
+    public $cron_type = 'yesterday';
+
     /**
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
         if (empty($date))
-            $date = date('Y-m-d');
+            $date = date('Y-m-d', strtotime('yesterday'));
         
         $qry = "SELECT count, src FROM download_counts WHERE date = '%DATE%'";
         

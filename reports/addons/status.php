@@ -6,13 +6,6 @@ class AddonStatus extends Report {
     public $backfillable = false;
     
     /**
-     * Called daily
-     */
-    public function daily() {
-        $this->analyzeDay();
-    }
-    
-    /**
      * Pull data and store it for a single day's report
      */
     public function analyzeDay() {
