@@ -18,10 +18,11 @@
                 <li><a href="#addon-categories" onclick="panorama.getReport(reports.addons.categories, this);" class="todo">categories</a></li>
                 <li><a href="#addon-contributions" onclick="panorama.getReport(reports.addons.contributions, this);" class="todo">contributions</a></li>
                 <li><a href="#addon-creation" onclick="panorama.getReport(reports.addons.creation, this, this);">creation</a></li>
-                <li><a href="#addon-downloads" onclick="panorama.getReport(reports.addons.downloads, this);" class="todo">downloads (sources)</a></li>
+                <li><a href="#addon-downloads" onclick="panorama.getReport(reports.addons.downloads, this);">downloads</a></li>
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
                 <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
                 <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);">impressions</a></li>
+                <li><a href="#addon-packager" onclick="panorama.getReport(reports.addons.packager, this);" class="todo">packager</a></li>
                 <li><a href="#addon-privacy" onclick="panorama.getReport(reports.addons.privacy, this);">privacy policies</a></li>
                 <li><a href="#addon-publicstats" onclick="panorama.getReport(reports.addons.publicstats, this);">public stats</a></li>
                 <li><a href="#addon-shares" onclick="panorama.getReport(reports.addons.shares, this);" class="todo">shares</a></li>
@@ -52,7 +53,7 @@
             <li>services</li>
             <ul>
                 <li><a href="#services-api" onclick="panorama.getReport(reports.services.api, this);">api usage</a></li>
-                <li><a href="#services-discovery" onclick="panorama.getReport(reports.services.discovery, this);" class="todo">discovery pane</a></li>
+                <li><a href="#services-discovery" onclick="panorama.getReport(reports.services.discovery, this);">discovery pane</a></li>
             </ul>
             
             <li>threat assessment</li>

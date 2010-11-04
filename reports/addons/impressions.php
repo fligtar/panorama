@@ -108,8 +108,6 @@ class AddonImpressions extends Report {
         
         if ($graph == 'current') {
             echo "Label,Count\n";
-            
-            
 
             $_values = $this->db->query_stats("SELECT homepage, featured, details, extensions, category, search, external, collections, details_api, discovery, china, japan FROM {$this->table} ORDER BY date DESC LIMIT 1");
             $values = mysql_fetch_array($_values, MYSQL_ASSOC);

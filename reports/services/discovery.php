@@ -36,7 +36,8 @@ class ServicesDiscovery extends Report {
      */
      public function generateCSV($graph) {
          $columns = array(
-             'home' => 'Home Views'
+             'home' => 'Pane Views',
+             'downloads' => 'Downloads from Pane'
          );
 
          if ($graph == 'current') {
@@ -52,7 +53,7 @@ class ServicesDiscovery extends Report {
          elseif ($graph == 'history') {
              echo "Date,".implode(',', $columns)."\n";
 
-             $dates = $this->db->query_stats("SELECT date, ".implode(', ', array_keys($columns))." FROM {$this->table} ORDER BY date");
+             $dates = $this->db->query_stats("SELECT d.date, d.home, IFNULL(ads.discovery_pane, 0) AS downloads FROM {$this->table} AS d LEFT JOIN addons_downloads_sources AS ads ON ads.date = d.date ORDER BY d.date");
              while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
                  echo implode(',', $date)."\n";
              }

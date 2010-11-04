@@ -34,6 +34,110 @@ var reports = {
                 }
             ]
         },
+        downloads: {
+            graphs: [
+                {
+                    url: 'reports/addons/downloads.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-downloads-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Add-on Downloads per Day' },
+                        subtitle: { text: 'by add-on type' },
+                        yAxis: {
+                            title: { text: 'Downloads' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' downloads</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                        '*': {
+                            visible: false
+                        },
+                        1: {
+                            visible: true
+                        }
+                    }
+                },
+                {
+                    url: 'reports/addons/downloads.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-downloads-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'Add-on Downloads by Type' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' downloads (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                },
+                {
+                    url: 'reports/addons/downloads-sources.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-downloads-sources-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Add-on Downloads per Day' },
+                        subtitle: { text: 'by source' },
+                        yAxis: {
+                            title: { text: 'Downloads' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' downloads</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                        '*': {
+                            visible: false
+                        },
+                        1: {
+                            visible: true
+                        }
+                    }
+                },
+                {
+                    url: 'reports/addons/downloads-sources.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-downloads-sources-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'Add-on Downloads by Source' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' downloads (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                }
+            ]
+        },
         eulas: {
             graphs: [
                 {
@@ -679,7 +783,7 @@ var reports = {
                             defaultSeriesType: 'pie',
                             marginRight: 80
                         },
-                        title: { text: 'Discovery Pane Views' },
+                        title: { text: 'Discovery Pane Interaction' },
                         subtitle: { text: 'yesterday' },
                         tooltip: {
                             formatter: function() {
@@ -698,16 +802,16 @@ var reports = {
                             renderTo: 'services-discovery-history',
                             defaultSeriesType: 'area'
                         },
-                        title: { text: 'Discovery Pane Views per Day' },
-                        subtitle: { text: 'by page' },
+                        title: { text: 'Discovery Pane Interaction per Day' },
+                        subtitle: { text: 'by interaction' },
                         yAxis: {
-                            title: { text: 'Views' }
+                            title: { text: 'Interactions' }
                         },
                         tooltip: {
                             formatter: function() {
                             	return ''+
                             		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
-                            		Highcharts.numberFormat(this.y, 0) +' views</b> (' + this.series.name + ')';
+                            		Highcharts.numberFormat(this.y, 0) +' interactions</b> (' + this.series.name + ')';
                             }
                         },
                         series: []
