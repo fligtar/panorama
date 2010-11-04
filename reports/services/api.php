@@ -39,20 +39,41 @@ class ServicesAPI extends Report {
     /**
      * Generate the CSV for graphs
      */
-    public function generateCSV() {
-        echo "Date,All Methods,Featured,Add-on Details,Search,GUID Search\n";
+    public function generateCSV($graph) {
+        $columns = array(
+            'total' => 'All Methods',
+            'featured' => 'Featured',
+            'addon' => 'Addon Details',
+            'search' => 'Search',
+            'guidsearch' => 'GUID Search'
+        );
+        
+        if ($graph == 'current') {
+            echo "Label,Count\n";
 
-        $dates = $this->db->query_stats("SELECT date, total, featured, addon, search, guidsearch FROM {$this->table} ORDER BY date");
-        while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
-            echo implode(',', $date)."\n";
+            $_values = $this->db->query_stats("SELECT featured, addon, search, guidsearch FROM {$this->table} ORDER BY date DESC LIMIT 1");
+            $values = mysql_fetch_array($_values, MYSQL_ASSOC);
+            
+            foreach ($values as $column => $value) {
+                echo "{$columns[$column]},{$value}\n";
+            }
+        }
+        elseif ($graph == 'history') {
+            echo "Date,".implode(',', $columns)."\n";
+
+            $dates = $this->db->query_stats("SELECT date, ".implode(', ', array_keys($columns))." FROM {$this->table} ORDER BY date");
+            while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
+                echo implode(',', $date)."\n";
+            }
         }
     }
 }
 
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
+    $graph = !empty($_GET['graph']) ? $_GET['graph'] : 'current';
     $report = new ServicesAPI;
-    $report->generateCSV();
+    $report->generateCSV($graph);
 }
 
 ?>

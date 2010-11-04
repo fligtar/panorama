@@ -21,7 +21,7 @@
                 <li><a href="#addon-downloads" onclick="panorama.getReport(reports.addons.downloads, this);" class="todo">downloads (sources)</a></li>
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
                 <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
-                <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);" class="todo">impressions</a></li>
+                <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);">impressions</a></li>
                 <li><a href="#addon-privacy" onclick="panorama.getReport(reports.addons.privacy, this);">privacy policies</a></li>
                 <li><a href="#addon-publicstats" onclick="panorama.getReport(reports.addons.publicstats, this);">public stats</a></li>
                 <li><a href="#addon-shares" onclick="panorama.getReport(reports.addons.shares, this);" class="todo">shares</a></li>

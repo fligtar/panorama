@@ -81,6 +81,60 @@ var reports = {
                 }
             ]
         },
+        impressions: {
+            graphs: [
+                {
+                    url: 'reports/addons/impressions.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-impressions-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Adblock Plus Impressions per Day' },
+                        subtitle: { text: 'by impression source' },
+                        yAxis: {
+                            title: { text: 'ABP Impressions' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' impressions</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                        '*': {
+                            visible: false
+                        },
+                        1: {
+                            visible: true
+                        }
+                    }
+                },
+                {
+                    url: 'reports/addons/impressions.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-impressions-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'Adblock Plus Impressions by Known Source' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' impressions (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                }
+            ]
+        },
         privacy: {
             graphs: [
                 {
@@ -570,14 +624,34 @@ var reports = {
         api: {
             graphs: [
                 {
-                    url: 'reports/services/api.php',
+                    url: 'reports/services/api.php?graph=current',
                     options: {
                         chart: {
-                            renderTo: 'services-api',
+                            renderTo: 'services-api-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'API Method Usage' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' API requests (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                },
+                {
+                    url: 'reports/services/api.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'services-api-history',
                             defaultSeriesType: 'area'
                         },
                         title: { text: 'API Usage per Day' },
-                        subtitle: { text: 'by request type' },
+                        subtitle: { text: 'by method called' },
                         yAxis: {
                             title: { text: 'API requests' }
                         },
@@ -586,6 +660,54 @@ var reports = {
                             	return ''+
                             		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
                             		Highcharts.numberFormat(this.y, 0) +' requests</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                }
+            ]
+        },
+        discovery: {
+            graphs: [
+                {
+                    url: 'reports/services/discovery.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'services-discovery-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'Discovery Pane Views' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' views (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                },
+                {
+                    url: 'reports/services/discovery.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'services-discovery-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Discovery Pane Views per Day' },
+                        subtitle: { text: 'by page' },
+                        yAxis: {
+                            title: { text: 'Views' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' views</b> (' + this.series.name + ')';
                             }
                         },
                         series: []
