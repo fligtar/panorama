@@ -239,6 +239,60 @@ var reports = {
                 }
             ]
         },
+        packager: {
+            graphs: [
+                {
+                    url: 'reports/addons/packager.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-packager-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Add-on Packager Use per Day' },
+                        subtitle: { text: 'by UI elements' },
+                        yAxis: {
+                            title: { text: 'Add-ons Created' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' add-ons created</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                        '*': {
+                            visible: false
+                        },
+                        1: {
+                            visible: true
+                        }
+                    }
+                },
+                {
+                    url: 'reports/addons/packager.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-packager-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'Add-on Packager Use by UI Element' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' add-ons created (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                }
+            ]
+        },
         privacy: {
             graphs: [
                 {
@@ -393,6 +447,54 @@ var reports = {
                         1: {
                             visible: true
                         }
+                    }
+                }
+            ]
+        },
+        status: {
+            graphs: [
+                {
+                    url: 'reports/addons/status.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-status-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Add-on Status per Day' },
+                        subtitle: { text: '' },
+                        yAxis: {
+                            title: { text: 'Add-ons' }
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' add-ons</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                    }
+                },
+                {
+                    url: 'reports/addons/status.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-status-current',
+                            defaultSeriesType: 'pie',
+                            marginRight: 80
+                        },
+                        title: { text: 'Add-on Status' },
+                        subtitle: { text: 'yesterday' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' add-ons (' + Highcharts.numberFormat(this.percentage, 2) + '%)';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
                     }
                 }
             ]
