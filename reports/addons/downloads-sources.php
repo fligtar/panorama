@@ -87,7 +87,8 @@ class AddonDownloadsSources extends Report {
             'creatured' => 'Category Features',
             'version_history' => 'Version History',
             'addon_detail_version' => 'Addon Details (Version Area)',
-            'discovery_pane' => 'Discovery Pane'
+            'discovery_pane' => 'Discovery Pane',
+            'discovery_pane_details' => 'Discovery Pane Details'
         );
         
         if ($graph == 'current') {

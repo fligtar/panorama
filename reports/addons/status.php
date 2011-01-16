@@ -41,11 +41,14 @@ class AddonStatus extends Report {
             'Incomplete',
             'Unreviewed',
             'Pending (Files only)',
-            'Nominated',
-            'Public',
+            'Awaiting Review',
+            'Fully Reviewed',
             'Admin Disabled',
             'Self-hosted',
-            'Beta (Files only)'
+            'Beta (Files only)',
+            'Preliminarily Reviewed',
+            'Preliminarily Reviewed and Awaiting Full Review',
+            'Purgatory'
         );
         
         if ($graph == 'current') {
@@ -59,7 +62,7 @@ class AddonStatus extends Report {
         elseif ($graph == 'history') {
             echo "Date,".implode(',', $labels)."\n";
 
-            $dates = $this->db->query_stats("SELECT date, status0, status1, status2, status3, status4, status5, status6, status7 FROM {$this->table} ORDER BY date");
+            $dates = $this->db->query_stats("SELECT date, status0, status1, status2, status3, status4, status5, status6, status7, status8, status9, status10 FROM {$this->table} ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
                 echo implode(',', $date)."\n";
             }
