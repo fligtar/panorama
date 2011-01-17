@@ -48,10 +48,10 @@ class Report {
      * 'today' and 'yesterday'. Yesterday is used for things like logs
      * that aren't present until the next day.
      */
-    public function daily($cron_type) {
+    public function daily($cron_type, $date = '') {
         // Check if the currently running cron is the correct one for this report
         if ($cron_type == $this->cron_type)
-            $this->analyzeDay();
+            $this->analyzeDay($date);
     }
     
     /**

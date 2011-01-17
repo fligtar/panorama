@@ -1,4 +1,11 @@
 <?php
+/*
+ * Call to process daily reports. Possible syntax:
+ * run today's live db reports - /usr/bin/php -f daily.php
+ * run yesterday's hadoop reports - /usr/bin/php -f daily.php yesterday
+ * backfill hadoop reports - /usr/bin/php -f daily.php yesterday 2011-01-01
+ */
+
 define('OVERLORD', true);
 ob_start();
 
@@ -6,6 +13,7 @@ ob_start();
 $containers = array();
 $reports_dir = '../reports';
 $cron_type = (!empty($argv[1]) && $argv[1] == 'yesterday') ? 'yesterday' : 'today';
+$date = !empty($argv[2]) ? $argv[2] : '';
  
 if ($dh = opendir($reports_dir)) {
     while (($container = readdir($dh)) !== false) {
@@ -34,7 +42,7 @@ foreach ($containers as $container => $reports) {
         
         // Call the report's daily method. If the report itself has no
         // daily method, the superclass will handle it gracefully.
-        $report->daily($cron_type);
+        $report->daily($cron_type, $date);
     }
 }
 
