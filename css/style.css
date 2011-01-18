@@ -130,6 +130,15 @@ nav a.loading {
     min-width: 800px;
 }
 
+.graph-container {
+  margin-bottom: 2em;
+}
+.graph-container.loading .graph {
+    background: #EEEEEE url(../images/chart-loader.gif) no-repeat 50% 50%;
+}
+.graph-container.loading .csv {
+    display: none;
+}
 .graph {
     width: 800px;
     height: 400px;
@@ -138,4 +147,6 @@ nav a.loading {
 
 .graph-container .csv {
     text-align: center;
+    font-size: 12px;
+    margin-top: 2px;
 }

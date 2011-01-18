@@ -44,6 +44,14 @@
                 <li><a href="#collection-watchers" onclick="panorama.getReport(reports.collections.watchers, this);">watchers</a></li>
             </ul>
             
+            <li>contributions</li>
+            <ul>
+                <li><a href="#contributions-summary" onclick="panorama.getReport(reports.contributions.summary, this);">summary</a></li>
+                <li><a href="#contributions-annoyance" onclick="panorama.getReport(reports.contributions.annoyance, this);">annoyance</a></li>
+                <li><a href="#contributions-recipients" onclick="panorama.getReport(reports.contributions.recipients, this);">recipients</a></li>
+                <li><a href="#contributions-sources" onclick="panorama.getReport(reports.contributions.sources, this);">sources</a></li>
+            </ul>
+            
             <li>editors</li>
             <ul>
                 <li><a href="#editors-queues" onclick="panorama.getReport(reports.editors.queues, this);">queues</a></li>

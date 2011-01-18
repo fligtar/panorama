@@ -20,10 +20,11 @@ var panorama = {
     },
     
     reportAndChartIt: function(chart) {
+        panorama.newContainer(chart.options.chart.renderTo, chart.url);
+        
         $.get(chart.url, function(data) {
             chart.options.series = panorama.getSeriesFromCSV(data, chart);
             
-            panorama.newContainer(chart.options.chart.renderTo, chart.url);
             panorama.createChart(chart.options);
             
             // This will remove loading after the first chart loads
@@ -80,7 +81,7 @@ var panorama = {
                             label = item;
                         }
                     } else {
-                        series[itemNo - 1].data.push([label, parseInt(item)]);
+                        series[itemNo - 1].data.push([label, parseFloat(item)]);
                     }
                 });
             }
@@ -90,7 +91,7 @@ var panorama = {
     },
     
     newContainer: function(id, csv) {
-        $('#content').append('<div class="graph-container"><div id="' + id + '" class="graph"></div><p class="csv"><a href="' + csv + '">CSV</a></div>');
+        $('#content').append('<div class="graph-container loading"><div id="' + id + '" class="graph"></div><p class="csv"><a href="' + csv + '">CSV</a></div>');
     },
     
     createChart: function(options) {
@@ -104,7 +105,13 @@ Highcharts.setOptions({
 		renderTo: 'chart',
 		zoomType: 'x',
 		marginRight: 150,
-        defaultSeriesType: 'line'
+        defaultSeriesType: 'line',
+        marginBottom: 25,
+        events: {
+            load: function() {
+                $('#' + this.options.chart.renderTo).parent().removeClass('loading');
+            }
+        }
 	},
     title: {
 		text: ''
@@ -124,8 +131,11 @@ Highcharts.setOptions({
 	},
 	yAxis: {
 		title: {
-			text: ''
+			text: '',
 		},
+        labels: { formatter: function() {
+            return '' + Highcharts.numberFormat(this.value, 0);
+        }},
 		min: 0.6,
 		startOnTick: false,
 		showFirstLabel: false
