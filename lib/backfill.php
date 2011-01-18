@@ -8,7 +8,7 @@ ob_start();
 $report = new ContributionSources;
 
 //$report->backfill('2011-01-14');
-$report->backfill('2009-09-07', '2010-09-23');
+$report->backfill('2010-09-24', '2011-01-01');
 
 ob_end_flush();
 

@@ -800,16 +800,47 @@ var reports = {
         summary: {
             graphs: [
                 {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_earned',
+                    url: 'reports/contributions/summary.php?graph=total',
                     options: {
                         chart: {
-                            renderTo: 'contributions-summary-amt_earned',
+                            renderTo: 'contributions-summary-total',
                             defaultSeriesType: 'area',
                             marginBottom: 60,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Received per Day' },
-                        subtitle: { text: 'by annoyance level' },
+                        subtitle: { text: null },
+                        yAxis: {
+                            title: { text: null },
+                            labels: { formatter: function() {
+                                return '$' + Highcharts.numberFormat(this.value, 2);
+                            }}
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>$'+
+                            		Highcharts.numberFormat(this.y, 2) +'</b> (' + this.series.name + ')';
+                            }
+                        },
+                        legend: {
+                    		enabled: false
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/contributions/summary.php?graph=amt',
+                    options: {
+                        chart: {
+                            renderTo: 'contributions-summary-amt',
+                            defaultSeriesType: 'area',
+                            marginBottom: 60,
+                            marginRight: 15
+                        },
+                        title: { text: 'Average, Maximum, and Minimum Contributions per Day' },
+                        subtitle: { text: null },
                         yAxis: {
                             title: { text: null },
                             labels: { formatter: function() {
@@ -836,124 +867,16 @@ var reports = {
                     specificSeries: {}
                 },
                 {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_avg',
+                    url: 'reports/contributions/summary.php?graph=suggested',
                     options: {
                         chart: {
-                            renderTo: 'contributions-summary-amt_avg',
+                            renderTo: 'contributions-summary-suggested',
                             defaultSeriesType: 'area',
                             marginBottom: 60,
                             marginRight: 15
                         },
-                        title: { text: 'Average Contribution Amount per Day' },
-                        subtitle: { text: 'by annoyance level' },
-                        yAxis: {
-                            title: { text: null },
-                            labels: { formatter: function() {
-                                return '$' + Highcharts.numberFormat(this.value, 2);
-                            }}
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>$'+
-                            		Highcharts.numberFormat(this.y, 2) +'</b> (' + this.series.name + ')';
-                            }
-                        },
-                        legend: {
-                    		layout: 'horizontal',
-                    		align: 'center',
-                    		verticalAlign: 'bottom',
-                    		x: 0,
-                    		y: -5,
-                    		borderWidth: 1
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_min',
-                    options: {
-                        chart: {
-                            renderTo: 'contributions-summary-amt_min',
-                            defaultSeriesType: 'area',
-                            marginBottom: 60,
-                            marginRight: 15
-                        },
-                        title: { text: 'Minimum Contribution Amount per Day' },
-                        subtitle: { text: 'by annoyance level' },
-                        yAxis: {
-                            title: { text: null },
-                            labels: { formatter: function() {
-                                return '$' + Highcharts.numberFormat(this.value, 2);
-                            }}
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>$'+
-                            		Highcharts.numberFormat(this.y, 2) +'</b> (' + this.series.name + ')';
-                            }
-                        },
-                        legend: {
-                    		layout: 'horizontal',
-                    		align: 'center',
-                    		verticalAlign: 'bottom',
-                    		x: 0,
-                    		y: -5,
-                    		borderWidth: 1
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_max',
-                    options: {
-                        chart: {
-                            renderTo: 'contributions-summary-amt_max',
-                            defaultSeriesType: 'area',
-                            marginBottom: 60,
-                            marginRight: 15
-                        },
-                        title: { text: 'Maximum Contribution Amount per Day' },
-                        subtitle: { text: 'by annoyance level' },
-                        yAxis: {
-                            title: { text: null },
-                            labels: { formatter: function() {
-                                return '$' + Highcharts.numberFormat(this.value, 2);
-                            }}
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>$'+
-                            		Highcharts.numberFormat(this.y, 2) +'</b> (' + this.series.name + ')';
-                            }
-                        },
-                        legend: {
-                    		layout: 'horizontal',
-                    		align: 'center',
-                    		verticalAlign: 'bottom',
-                    		x: 0,
-                    		y: -5,
-                    		borderWidth: 1
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_eq_suggested',
-                    options: {
-                        chart: {
-                            renderTo: 'contributions-summary-amt_eq_suggested',
-                            defaultSeriesType: 'area',
-                            marginBottom: 60,
-                            marginRight: 15
-                        },
-                        title: { text: 'Contributions Equal to Suggested Amount per Day' },
-                        subtitle: { text: 'by annoyance level' },
+                        title: { text: 'Response to Suggested Contributions per Day' },
+                        subtitle: { text: null },
                         yAxis: {
                             title: { text: null }
                         },
@@ -977,16 +900,16 @@ var reports = {
                     specificSeries: {}
                 },
                 {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_gt_suggested',
+                    url: 'reports/contributions/summary.php?graph=tx',
                     options: {
                         chart: {
-                            renderTo: 'contributions-summary-amt_gt_suggested',
+                            renderTo: 'contributions-summary-tx',
                             defaultSeriesType: 'area',
                             marginBottom: 60,
                             marginRight: 15
                         },
-                        title: { text: 'Contributions Greater than Suggested Amount per Day' },
-                        subtitle: { text: 'by annoyance level' },
+                        title: { text: 'Transaction Completion per Day' },
+                        subtitle: { text: null },
                         yAxis: {
                             title: { text: null }
                         },
@@ -994,106 +917,7 @@ var reports = {
                             formatter: function() {
                             	return ''+
                             		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
-                            		Highcharts.numberFormat(this.y, 0) +' contributions</b> (' + this.series.name + ')';
-                            }
-                        },
-                        legend: {
-                    		layout: 'horizontal',
-                    		align: 'center',
-                    		verticalAlign: 'bottom',
-                    		x: 0,
-                    		y: -5,
-                    		borderWidth: 1
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/contributions/summary.php?graph=history&field=amt_lt_suggested',
-                    options: {
-                        chart: {
-                            renderTo: 'contributions-summary-amt_lt_suggested',
-                            defaultSeriesType: 'area',
-                            marginBottom: 60,
-                            marginRight: 15
-                        },
-                        title: { text: 'Contributions Less than Suggested Amount per Day' },
-                        subtitle: { text: 'by annoyance level' },
-                        yAxis: {
-                            title: { text: null }
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
-                            		Highcharts.numberFormat(this.y, 0) +' contributions</b> (' + this.series.name + ')';
-                            }
-                        },
-                        legend: {
-                    		layout: 'horizontal',
-                    		align: 'center',
-                    		verticalAlign: 'bottom',
-                    		x: 0,
-                    		y: -5,
-                    		borderWidth: 1
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/contributions/summary.php?graph=history&field=tx_success',
-                    options: {
-                        chart: {
-                            renderTo: 'contributions-summary-tx_success',
-                            defaultSeriesType: 'area',
-                            marginBottom: 60,
-                            marginRight: 15
-                        },
-                        title: { text: 'Contributions Succeeded per Day' },
-                        subtitle: { text: 'by annoyance level' },
-                        yAxis: {
-                            title: { text: null }
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
-                            		Highcharts.numberFormat(this.y, 0) +' contributions</b> (' + this.series.name + ')';
-                            }
-                        },
-                        legend: {
-                    		layout: 'horizontal',
-                    		align: 'center',
-                    		verticalAlign: 'bottom',
-                    		x: 0,
-                    		y: -5,
-                    		borderWidth: 1
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/contributions/summary.php?graph=history&field=tx_abort',
-                    options: {
-                        chart: {
-                            renderTo: 'contributions-summary-tx_abort',
-                            defaultSeriesType: 'area',
-                            marginBottom: 60,
-                            marginRight: 15
-                        },
-                        title: { text: 'Contributions Aborted per Day' },
-                        subtitle: { text: 'by annoyance level' },
-                        yAxis: {
-                            title: { text: null }
-                        },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': <b>'+
-                            		Highcharts.numberFormat(this.y, 0) +' contributions</b> (' + this.series.name + ')';
+                            		Highcharts.numberFormat(this.y, 0) +' transactions</b> (' + this.series.name + ')';
                             }
                         },
                         legend: {
