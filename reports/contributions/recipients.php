@@ -89,7 +89,7 @@ class ContributionRecipients extends Report {
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
     $graph = !empty($_GET['graph']) ? $_GET['graph'] : 'current';
-    $field = !empty($_GET['field']) ? mysql_real_escape_string($_GET['field']) : '';
+    $field = !empty($_GET['field']) ? addslashes($_GET['field']) : '';
     $report = new ContributionRecipients;
     $report->generateCSV($graph, $field);
 }
