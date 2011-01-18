@@ -1568,7 +1568,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_earned',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Received per Day' },
@@ -1604,7 +1604,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_avg',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Average Contribution Amount per Day' },
@@ -1640,7 +1640,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_min',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Minimum Contribution Amount per Day' },
@@ -1676,7 +1676,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_max',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Maximum Contribution Amount per Day' },
@@ -1712,7 +1712,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_eq_suggested',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Equal to Suggested Amount per Day' },
@@ -1745,7 +1745,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_gt_suggested',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Greater than Suggested Amount per Day' },
@@ -1778,7 +1778,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-amt_lt_suggested',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Less than Suggested Amount per Day' },
@@ -1811,7 +1811,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-tx_success',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Succeeded per Day' },
@@ -1844,7 +1844,7 @@ var reports = {
                         chart: {
                             renderTo: 'contributions-sources-tx_abort',
                             defaultSeriesType: 'area',
-                            marginBottom: 60,
+                            marginBottom: 75,
                             marginRight: 15
                         },
                         title: { text: 'Contributions Aborted per Day' },

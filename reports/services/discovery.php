@@ -21,9 +21,9 @@ class ServicesDiscovery extends Report {
         $qry = "INSERT INTO {$this->table} (date, pane, details) VALUES ('{$date}', {$pane}, {$details})";
 
         if ($this->db->query_stats($qry))
-            $this->log("{$date} - Inserted row ({$total} total)");
+            $this->log("{$date} - Inserted row ({$pane} total)");
         else
-            $this->log("{$date} - Problem inserting row ({$total} total)");
+            $this->log("{$date} - Problem inserting row ({$pane} total)");
     }
     
     /**
