@@ -37,9 +37,9 @@ class EditorQueues extends Report {
      * Generate the CSV for graphs
      */
     public function generateCSV() {
-        echo "Date,Nominations,Updates,Admin Reviews,Flagged Reviews\n";
+        echo "Date,Full Reviews,Preliminary Reviews,Full Updates,Preliminary Updates,Admin Reviews,Flagged Reviews\n";
 
-        $dates = $this->db->query_stats("SELECT date, nomination, pending, flagged, reviews FROM {$this->table} ORDER BY date");
+        $dates = $this->db->query_stats("SELECT date, fullreview, prelimreview, fullupdates, prelimupdates, adminreview, flaggedreviews FROM {$this->table} ORDER BY date");
         while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
             echo implode(',', $date)."\n";
         }
