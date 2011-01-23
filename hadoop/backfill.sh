@@ -14,4 +14,4 @@ DATA=/home/fligtar/data/$DATE
 # Number of add-ons installed
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT commas, COUNT(1) FROM (SELECT (LENGTH(request_url) - LENGTH(REGEXP_REPLACE(request_url, ',', '')) + 1) as commas FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api/%/search/guid%') temp GROUP BY commas ORDER BY commas;" | tee $DATA/metadata-installed-distro.txt
 
-scp -r $DATA/metadata-installed-distro.txt fligtar@khan:./hadoop-drop/$DATA/
+scp -r $DATA/metadata-installed-distro.txt fligtar@khan:./hadoop-drop/$DATE/

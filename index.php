@@ -21,6 +21,7 @@
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
                 <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
                 <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);">impressions</a></li>
+                <li><a href="#addon-installdistro" onclick="panorama.getReport(reports.addons.installdistro, this);">installed distro</a></li>
                 <li><a href="#addon-packager" onclick="panorama.getReport(reports.addons.packager, this);">packager</a></li>
                 <li><a href="#addon-privacy" onclick="panorama.getReport(reports.addons.privacy, this);">privacy policies</a></li>
                 <li><a href="#addon-publicstats" onclick="panorama.getReport(reports.addons.publicstats, this);">public stats</a></li>

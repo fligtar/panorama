@@ -200,6 +200,92 @@ var reports = {
                 }
             ]
         },
+        installdistro: {
+            graphs: [
+                {
+                    url: 'reports/addons/installdistro.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-installdistro-current-50',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Installed Add-ons Distribution - Top 50' },
+                        subtitle: { text: 'Firefox 4 users only' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +' add-ons installed</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		max: 50,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 1;
+                    		    }
+                    		}
+                    	},
+                    	legend: { enabled: false },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/addons/installdistro.php?graph=current',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-installdistro-current',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Installed Add-ons Distribution' },
+                        subtitle: { text: 'Firefox 4 users only' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +' add-ons installed</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 1;
+                    		    }
+                    		}
+                    	},
+                    	legend: { enabled: false },
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/addons/installdistro.php?graph=history',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-installdistro-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Installed Add-ons' },
+                        subtitle: { text: 'Firefox 4.0 only' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' add-ons installed</b>';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                }
+            ]
+        },
         packager: {
             graphs: [
                 {

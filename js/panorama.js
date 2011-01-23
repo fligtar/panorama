@@ -127,6 +127,9 @@ Highcharts.setOptions({
 		maxZoom: 14 * 24 * 3600000, // fourteen days
 		title: {
 			text: null
+		},
+		dateTimeLabelFormats: {
+		    day: '%b %e'
 		}
 	},
 	yAxis: {
