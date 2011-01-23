@@ -3,34 +3,35 @@ require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 
 class EditorQueues extends Report {
     public $table = 'editors_queues';
-    public $backfillable = true;
+    public $backfillable = false;
     
     /**
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
-        // TODO
-        return false;
+        $date = date('Y-m-d');
         
-        if (empty($date))
-            $date = date('Y-m-d');
+        $queues = array(
+            'fullreview' => "SELECT COUNT(*) FROM addons WHERE status in (3,9)",
+            'prelimreview' => "SELECT COUNT(*) FROM addons WHERE status=8",
+            'fullupdates' => "SELECT COUNT(*) FROM files INNER JOIN versions ON versions.id=files.version_id INNER JOIN addons ON addons.id=versions.addon_id WHERE files.status=2 and addons.status=4",
+            'prelimupdates' => "SELECT COUNT(*) FROM files INNER JOIN versions ON versions.id=files.version_id INNER JOIN addons ON addons.id=versions.addon_id WHERE files.status=2 and addons.status=8",
+            'adminreview' => "SELECT COUNT(*) FROM addons WHERE adminreview=1",
+            'flaggedreviews' => "SELECT COUNT(*) FROM reviews WHERE editorreview=1"
+        );
         
-        $qry = "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%'";
-        $_total = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
-        $total = mysql_fetch_array($_total);
-        $total = $total[0];
-        
-        $qry = "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%' AND confirmationcode = ''";
-        $_confirmed = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
-        $confirmed = mysql_fetch_array($_confirmed);
-        $confirmed = $confirmed[0];
-        
-        $qry = "INSERT INTO {$this->table} (date, total, confirmed) VALUES ('{$date}', {$total}, {$confirmed})";
+        foreach ($queues as $name => $qry) {
+            $_total = $this->db->query_amo($qry);
+            $total = mysql_fetch_array($_total);
+            $counts[$name] = $total[0];
+        }
+
+        $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($counts)).") VALUES ('{$date}', ".implode(', ', $counts).")";
 
         if ($this->db->query_stats($qry))
-            $this->log("{$date} - Inserted row ({$total} total)");
+            $this->log("{$date} - Inserted row)");
         else
-            $this->log("{$date} - Problem inserting row ({$total} total)");
+            $this->log("{$date} - Problem inserting row");
     }
     
     /**

@@ -41,9 +41,9 @@ class ContributionSummary extends Report {
         $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
         
         if ($this->db->query_stats($qry))
-            $this->log("{$date} - Inserted row ({$insert[amt_earned]} total)");
+            $this->log("{$date} - Inserted row ({$insert['amt_earned']} total)");
         else
-            $this->log("{$date} - Problem inserting row ({$insert[amt_earned]} total)");
+            $this->log("{$date} - Problem inserting row ({$insert['amt_earned']} total)");
     }
     
     /**
