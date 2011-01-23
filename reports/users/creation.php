@@ -17,12 +17,7 @@ class UserCreation extends Report {
         $total = mysql_fetch_array($_total);
         $total = $total[0];
         
-        $qry = "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%' AND confirmationcode = ''";
-        $_confirmed = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
-        $confirmed = mysql_fetch_array($_confirmed);
-        $confirmed = $confirmed[0];
-        
-        $qry = "INSERT INTO {$this->table} (date, total, confirmed) VALUES ('{$date}', {$total}, {$confirmed})";
+        $qry = "INSERT INTO {$this->table} (date, total) VALUES ('{$date}', {$total})";
 
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row ({$total} total)");
@@ -34,9 +29,9 @@ class UserCreation extends Report {
      * Generate the CSV for graphs
      */
     public function generateCSV() {
-        echo "Date,New Users, Confirmed Users\n";
+        echo "Date,New Users\n";
 
-        $dates = $this->db->query_stats("SELECT date, total, confirmed FROM {$this->table} ORDER BY date");
+        $dates = $this->db->query_stats("SELECT date, total FROM {$this->table} ORDER BY date");
         while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
             echo implode(',', $date)."\n";
         }

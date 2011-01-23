@@ -16,7 +16,6 @@
             <li>add-ons</li>
             <ul>
                 <li><a href="#addon-categories" onclick="panorama.getReport(reports.addons.categories, this);" class="todo">categories</a></li>
-                <li><a href="#addon-contributions" onclick="panorama.getReport(reports.addons.contributions, this);" class="todo">contributions</a></li>
                 <li><a href="#addon-creation" onclick="panorama.getReport(reports.addons.creation, this, this);">creation</a></li>
                 <li><a href="#addon-downloads" onclick="panorama.getReport(reports.addons.downloads, this);">downloads</a></li>
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
@@ -55,7 +54,6 @@
             <li>editors</li>
             <ul>
                 <li><a href="#editors-queues" onclick="panorama.getReport(reports.editors.queues, this);">queues</a></li>
-                <li><a href="#editors-activity" onclick="panorama.getReport(reports.editors.activity, this);" class="todo">activity</a></li>
             </ul>
             
             <li>services</li>
@@ -64,19 +62,9 @@
                 <li><a href="#services-discovery" onclick="panorama.getReport(reports.services.discovery, this);">discovery pane</a></li>
             </ul>
             
-            <li>threat assessment</li>
-            <ul>
-                <li><a href="#threat-new" onclick="panorama.getReport(reports.threat.new, this);" class="todo">new add-ons</a></li>
-                <li><a href="#threat-spam" onclick="panorama.getReport(reports.threat.spam, this);" class="todo">spam reviews</a></li>
-            </ul>
-            
             <li>users</li>
             <ul>
-                <li><a href="#user-activity" onclick="panorama.getReport(reports.users.activity, this);" class="todo">activity</a></li>
                 <li><a href="#user-creation" onclick="panorama.getReport(reports.users.creation, this);" >creation</a></li>
-                <li><a href="#user-confirmation" onclick="panorama.getReport(reports.users.confirmation, this);" class="todo">confirmation</a></li>
-                <li><a href="#user-deletion" onclick="panorama.getReport(reports.users.creation, this);" class="todo">deletion</a></li>
-                <li><a href="#user-pictures" onclick="panorama.getReport(reports.users.deletion, this);" class="todo">pictures</a></li>
             </ul>
         </ul>
     </nav>

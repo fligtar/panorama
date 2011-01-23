@@ -44,9 +44,9 @@ class AddonPrivacy extends Report {
             }
         }
         elseif ($graph == 'history') {
-            echo "Date,Has Privacy Policy,No Privacy Policy\n";
+            echo "Date,No Privacy Policy,Has Privacy Policy\n";
 
-            $dates = $this->db->query_stats("SELECT date, hasprivacypolicy, noprivacypolicy FROM {$this->table} ORDER BY date");
+            $dates = $this->db->query_stats("SELECT date, noprivacypolicy, hasprivacypolicy FROM {$this->table} ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
                 echo implode(',', $date)."\n";
             }

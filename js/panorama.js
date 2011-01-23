@@ -104,9 +104,9 @@ Highcharts.setOptions({
 	chart: {
 		renderTo: 'chart',
 		zoomType: 'x',
-		marginRight: 150,
         defaultSeriesType: 'line',
-        marginBottom: 25,
+        marginBottom: 75,
+        marginRight: 15,
         events: {
             load: function() {
                 $('#' + this.options.chart.renderTo).parent().removeClass('loading');
@@ -117,7 +117,7 @@ Highcharts.setOptions({
 		text: ''
 	},
     subtitle: {
-		text: ''
+		text: null
 	},
 	credits: {
 	    enabled: false
@@ -131,7 +131,7 @@ Highcharts.setOptions({
 	},
 	yAxis: {
 		title: {
-			text: '',
+			text: null,
 		},
         labels: { formatter: function() {
             return '' + Highcharts.numberFormat(this.value, 0);
@@ -143,48 +143,52 @@ Highcharts.setOptions({
 	tooltip: {
 		formatter: function() {
 			return ''+
-				Highcharts.dateFormat('%a, %b %e, %Y', this.x) + ': '+
-				Highcharts.numberFormat(this.y, 0);
+				Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>' +
+				Highcharts.numberFormat(this.y, 0) + '</b> (' + this.series.name + ')';
 		}
 	},
     legend: {
-		layout: 'vertical',
-		align: 'right',
-		verticalAlign: 'top',
-		x: -10,
-		y: 100,
-		borderWidth: 0
+		layout: 'horizontal',
+		align: 'center',
+		verticalAlign: 'bottom',
+		x: 0,
+		y: -5,
+		borderWidth: 1
 	},
 	plotOptions: {
 		area: {
-			fillColor: {
-				linearGradient: [0, 0, 0, 300],
-				stops: [
-					[0, '#4572A7'],
-					[1, 'rgba(2,0,0,0)']
-				]
-			},
-			lineWidth: 1,
 			marker: {
 				enabled: false,
 				states: {
 					hover: {
 						enabled: true,
-						radius: 5
+						radius: 3
 					}
 				}
 			},
-			shadow: false,
-			states: {
-				hover: {
-					lineWidth: 1						
-				}
-			}
+			shadow: false
 		},
 		line: {
-		    lineWidth: 1,
 		    marker: {
-		        enabled: false
+		        enabled: false,
+		        states: {
+					hover: {
+						enabled: true,
+						radius: 3
+					}
+				}
+		    },
+		    shadow: false
+		},
+		spline: {
+		    marker: {
+		        enabled: false,
+		        states: {
+					hover: {
+						enabled: true,
+						radius: 3
+					}
+				}
 		    },
 		    shadow: false
 		},

@@ -44,9 +44,9 @@ class AddonEULAs extends Report {
             }
         }
         elseif ($graph == 'history') {
-            echo "Date,Has EULA,No EULA\n";
+            echo "Date,No EULA,Has EULA\n";
 
-            $dates = $this->db->query_stats("SELECT date, haseula, noeula FROM {$this->table} ORDER BY date");
+            $dates = $this->db->query_stats("SELECT date, noeula, haseula FROM {$this->table} ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
                 echo implode(',', $date)."\n";
             }

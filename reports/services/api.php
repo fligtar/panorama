@@ -37,7 +37,7 @@ class ServicesAPI extends Report {
         $columns = array(
             'total' => 'All Methods',
             'featured' => 'Featured',
-            'addon' => 'Addon Details',
+            'addon' => 'Add-on Details',
             'search' => 'Search',
             'guidsearch' => 'GUID Search'
         );

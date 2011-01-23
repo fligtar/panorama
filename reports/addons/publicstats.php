@@ -54,9 +54,9 @@ class AddonPublicStats extends Report {
             }
         }
         elseif ($graph == 'history') {
-            echo "Date,Public Stats,Private Stats\n";
+            echo "Date,Private Stats,Public Stats\n";
 
-            $dates = $this->db->query_stats("SELECT date, public, private FROM {$this->table} ORDER BY date");
+            $dates = $this->db->query_stats("SELECT date, private, public FROM {$this->table} ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_NUM)) {
                 echo implode(',', $date)."\n";
             }

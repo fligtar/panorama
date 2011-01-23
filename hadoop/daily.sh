@@ -39,4 +39,7 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 # API Add-on
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ip_address != 'NULL' AND ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api/%/addon/%';" | tee $DATA/api-addon.txt
 
+# 
+hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT commas, COUNT(1) FROM (SELECT (LENGTH(request_url) - LENGTH(REGEXP_REPLACE(request_url, ',', ''))) as commas FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api/%/search/guid%') temp GROUP BY commas ORDER BY commas;" | tee $DATA/at.txt
+
 scp -r $DATA/ fligtar@khan:./hadoop-drop/
