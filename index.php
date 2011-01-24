@@ -57,6 +57,11 @@
                 <li><a href="#editors-queues" onclick="panorama.getReport(reports.editors.queues, this);">queues</a></li>
             </ul>
             
+            <li>performance</li>
+            <ul>
+                <li><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up distro</a></li>
+            </ul>
+            
             <li>services</li>
             <ul>
                 <li><a href="#services-api" onclick="panorama.getReport(reports.services.api, this);">api usage</a></li>

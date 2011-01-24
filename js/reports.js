@@ -1415,6 +1415,220 @@ var reports = {
             ]
         }
     },
+    performance: {
+        startupdistro: {
+            graphs: [
+                {
+                    url: 'reports/performance/startupdistro.php?graph=current&app=firefox&os=WINNT&version=4.0b10pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-current-firefox-winnt-4.0b10pre',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Start-up Performance Distribution - Firefox / WINNT / 4.0b10pre' },
+                        subtitle: { text: '(long tail truncated)' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.series.name + ': ' + this.point.name +' seconds</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		max: 30,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 's';
+                    		    }
+                    		}
+                    	},
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=history&app=firefox&os=WINNT&version=4.0b10pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-history-firefox-winnt-4.0b10pre',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Start-up Performance Average - Firefox / WINNT / 4.0b10pre' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=current&app=firefox&os=Darwin&version=4.0b10pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-current-firefox-darwin-4.0b10pre',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Start-up Performance Distribution - Firefox / Darwin / 4.0b10pre' },
+                        subtitle: { text: '(long tail truncated)' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.series.name + ': ' + this.point.name +' seconds</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		max: 30,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 's';
+                    		    }
+                    		}
+                    	},
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=history&app=firefox&os=Darwin&version=4.0b10pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-history-firefox-darwin-4.0b10pre',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Start-up Performance Average - Firefox / Darwin / 4.0b10pre' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=current&app=firefox&os=Linux&version=4.0b10pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-current-firefox-linux-4.0b10pre',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Start-up Performance Distribution - Firefox / Linux / 4.0b10pre' },
+                        subtitle: { text: '(long tail truncated)' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.series.name + ': ' + this.point.name +' seconds</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		max: 30,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 's';
+                    		    }
+                    		}
+                    	},
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=history&app=firefox&os=Linux&version=4.0b10pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-history-firefox-linux-4.0b10pre',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Start-up Performance Average - Firefox / Linux / 4.0b10pre' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=current&app=mobile&os=Android&version=4.0b4pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-current-mobile-android-4.0b4pre',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Start-up Performance Distribution - Mobile / Android / 4.0b4pre' },
+                        subtitle: { text: '(long tail truncated)' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.series.name + ': ' + this.point.name +' seconds</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		max: 30,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 's';
+                    		    }
+                    		}
+                    	},
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/performance/startupdistro.php?graph=history&app=mobile&os=Android&version=4.0b4pre',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-history-mobile-android-4.0b4pre',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Start-up Performance Average - Mobile / Android / 4.0b4pre' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                }
+            ]
+        },
+    },
     services: {
         api: {
             graphs: [

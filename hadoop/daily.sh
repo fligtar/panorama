@@ -12,6 +12,9 @@ echo "Beginning log processing for $1"
 DATA=/home/fligtar/data/$DATE
 mkdir $DATA
 
+# DEBUG
+hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SHOW PARTITIONS research_logs;"
+
 # Discovery Pane views
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%discovery/pane%';" | tee $DATA/discovery.txt
 
@@ -41,5 +44,8 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 
 # Number of add-ons installed
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT commas, COUNT(1) FROM (SELECT (LENGTH(request_url) - LENGTH(REGEXP_REPLACE(request_url, ',', '')) + 1) as commas FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api/%/search/guid%') temp GROUP BY commas ORDER BY commas;" | tee $DATA/metadata-installed-distro.txt
+
+# Firefox start-up performance
+hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT * FROM addons_pings WHERE ds = '$DATE';" | tee $DATA/metadata-perf.txt
 
 scp -r $DATA/ fligtar@khan:./hadoop-drop/

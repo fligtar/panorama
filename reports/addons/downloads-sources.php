@@ -53,7 +53,7 @@ class AddonDownloadsSources extends Report {
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row ({$total} total)");
         else
-            $this->log("{$date} - Problem inserting row ({$total} total)");
+            $this->log("{$date} - Problem inserting row ({$total} total)".mysql_error());
     }
     
     /**
