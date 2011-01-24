@@ -8,15 +8,27 @@ $(document).ready(function() {
 
 var panorama = {
     
-    getReport: function(report, caller) {
+    getReport: function(report, caller, type) {
         $('nav .selected').removeClass('selected');
         $('#content .graph-container').remove();
         
         $(caller).addClass('loading').addClass('selected');
         
-        for (var i in report.graphs) {
-            panorama.reportAndChartIt(report.graphs[i]);
+        if (type == 'html') {
+            panorama.getHTML(report);
         }
+        else {
+            for (var i in report.graphs) {
+                panorama.reportAndChartIt(report.graphs[i]);
+            }
+        }
+    },
+    
+    getHTML: function(report) {
+        $('#content').append('<div class="graph-container"></div>');
+        $('#content .graph-container').load(report.url, function() {
+            $('nav .loading').removeClass('loading');
+        });
     },
     
     reportAndChartIt: function(chart) {

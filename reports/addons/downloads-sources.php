@@ -72,9 +72,9 @@ class AddonDownloadsSources extends Report {
             'recommended' => 'Featured Page',
             'homepagebrowse' => 'Homepage (Browse)',
             'homepagepromo' => 'Homepage (Promo)',
-            'api' => 'API / Addons Manager',
-            'sharingapi' => 'Addon Collector',
-            'addondetail' => 'Addon Details',
+            'api' => 'API / Add-ons Manager',
+            'sharingapi' => 'Add-on Collector',
+            'addondetail' => 'Add-on Details',
             'external' => 'External Sources',
             'developers' => 'Meet the Developers',
             'installservice' => 'Install Service',
@@ -89,7 +89,7 @@ class AddonDownloadsSources extends Report {
             'fxwhatsnew' => 'Firefox Updated',
             'creatured' => 'Category Features',
             'version_history' => 'Version History',
-            'addon_detail_version' => 'Addon Details (Version Area)',
+            'addon_detail_version' => 'Add-on Details (Version Area)',
             'discovery_pane' => 'Discovery Pane',
             'discovery_pane_details' => 'Discovery Pane Details'
         );

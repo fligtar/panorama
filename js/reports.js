@@ -1628,6 +1628,9 @@ var reports = {
                 }
             ]
         },
+        addonimpact: {
+            url: 'reports/performance/addonimpact.php'
+        }
     },
     services: {
         api: {

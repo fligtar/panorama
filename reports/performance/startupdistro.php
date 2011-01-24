@@ -111,7 +111,7 @@ class PerformanceStartupdistro extends Report {
             $distro = array();
             
             foreach ($values as $column => $data) {
-                $data = json_decode($data);
+                $data = json_decode($data, true);
                 
                 foreach ($data as $label => $count) {
                     if (!array_key_exists($label, $distro))

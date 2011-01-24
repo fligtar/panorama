@@ -59,7 +59,8 @@
             
             <li>performance</li>
             <ul>
-                <li><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up distro</a></li>
+                <li><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up</a></li>
+                <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this, 'html');">add-on impact</a></li>
             </ul>
             
             <li>services</li>
