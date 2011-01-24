@@ -28,6 +28,9 @@ class AddonDownloadsSources extends Report {
                 if (strpos($source, 'external') !== false) {
                     $source = 'external';
                 }
+                if (strpos($source, 'mozcom') !== false) {
+                    $source = 'mozcom';
+                }
                 
                 if (array_key_exists($source, $sources)) {
                     $sources[$source] += $count;

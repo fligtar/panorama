@@ -87,11 +87,11 @@ class PerformanceStartupdistro extends Report {
                     ksort($apps[$app][$os][$version]['tsessionrestored']);
                     
                     $qry = "INSERT INTO {$this->table} (date, app, os, version, tmain_avg, tmain_seconds_distro, tfirstpaint_avg, tfirstpaint_seconds_distro, tsessionrestored_avg, tsessionrestored_seconds_distro) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', {$apps[$app][$os][$version]['tmain_avg']}, '".json_encode($apps[$app][$os][$version]['tmain'])."', {$apps[$app][$os][$version]['tfirstpaint_avg']}, '".json_encode($apps[$app][$os][$version]['tfirstpaint'])."', {$apps[$app][$os][$version]['tsessionrestored_avg']}, '".json_encode($apps[$app][$os][$version]['tsessionrestored'])."')";
-echo $qry;
-                    /*if ($this->db->query_stats($qry))
+
+                    if ($this->db->query_stats($qry))
                         $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
                     else
-                        $this->log("{$date} - Problem inserting row ({$app}/{$os}/{$version})".mysql_error());*/
+                        $this->log("{$date} - Problem inserting row ({$app}/{$os}/{$version})".mysql_error());
                 }
             }
         }
@@ -142,10 +142,8 @@ if (!defined('OVERLORD')) {
     $app = !empty($_GET['app']) ? $_GET['app'] : '';
     $os = !empty($_GET['os']) ? $_GET['os'] : '';
     $version = !empty($_GET['version']) ? $_GET['version'] : '';
-    $column = !empty($_GET['column']) ? $_GET['column'] : '';
     $report = new PerformanceStartupdistro;
-    $report->generateCSV($graph, $app, $os, $version, $column);
-    //$report->analyzeDay();
+    $report->generateCSV($graph, $app, $os, $version);
 }
 
 ?>
