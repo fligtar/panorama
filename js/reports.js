@@ -1438,7 +1438,7 @@ var reports = {
                     		max: 30,
                     		labels: {
                     		    formatter: function() {
-                    		        return this.value + 's';
+                    		        return Highcharts.numberFormat(this.value, 0) + 's';
                     		    }
                     		}
                     	},
@@ -1463,7 +1463,19 @@ var reports = {
                             formatter: function() {
                             	return ''+
                             		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
-                            		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
+                            		Highcharts.numberFormat(this.y, 0) +'ms average ' + this.series.name + '</b>';
+                            }
+                        },
+                        yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                        plotOptions: {
+                            spline: {
+                                marker: { enabled: true }
                             }
                         },
                         series: []
@@ -1518,6 +1530,18 @@ var reports = {
                             		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
                             }
                         },
+                        yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                        plotOptions: {
+                            spline: {
+                                marker: { enabled: true }
+                            }
+                        },
                         series: []
                     },
                     specificSeries: {}
@@ -1570,6 +1594,18 @@ var reports = {
                             		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
                             }
                         },
+                        yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                        plotOptions: {
+                            spline: {
+                                marker: { enabled: true }
+                            }
+                        },
                         series: []
                     },
                     specificSeries: {}
@@ -1620,6 +1656,18 @@ var reports = {
                             	return ''+
                             		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
                             		Highcharts.numberFormat(this.y, 0) +'s average ' + this.series.name + '</b>';
+                            }
+                        },
+                        yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                        plotOptions: {
+                            spline: {
+                                marker: { enabled: true }
                             }
                         },
                         series: []

@@ -75,7 +75,7 @@ class PerformanceAddonimpact extends Report {
                         $bottom = array_slice($apps[$app][$os][$version][$measure], 0 - $count, $count, true);
                         $apps[$app][$os][$version][$measure] = null;
                         
-                        $guids = array();
+                        $guids = array('top' => array(), 'bottom' => array());
                         // Record top guid occurrence
                         foreach ($top as $id => $measure_value) {
                             $_guids = explode(',', $master[$id][1]);
