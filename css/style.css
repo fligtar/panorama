@@ -162,6 +162,7 @@ h4 {
 dl {
     display: inline-block;
     width: 33%;
+    vertical-align: top;
 }
 dt {
     color: #999999;

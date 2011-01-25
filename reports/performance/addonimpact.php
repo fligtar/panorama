@@ -41,12 +41,17 @@ class PerformanceAddonimpact extends Report {
             // Set up appversion array if new appversion
             if (!array_key_exists($columns[4], $apps[$columns[2]][$columns[3]]))
                 $apps[$columns[2]][$columns[3]][$columns[4]] = array(
+                    'timpact' => array(),
                     'tmain' => array(),
                     'tfirstpaint' => array(),
                     'tsessionrestored' => array()
                 );
             
             // Store reference to the master for each time
+            $timpact = $columns[7] - $columns[5];
+            if (is_numeric($timpact) && $timpact < 3600000 && $timpact >= 0)
+                $apps[$columns[2]][$columns[3]][$columns[4]]['timpact'][$i] = $timpact;
+                
             if (is_numeric($columns[5]) && $columns[5] < 3600000 && $columns[5] >= 0)
                 $apps[$columns[2]][$columns[3]][$columns[4]]['tmain'][$i] = $columns[5];
             
@@ -63,7 +68,7 @@ class PerformanceAddonimpact extends Report {
         foreach ($apps as $app => $oses) {
             foreach ($oses as $os => $versions) {
                 foreach ($versions as $version => $data) {
-                    $suspicious = array('tmain' => array(), 'tfirstpaint' => array(), 'tsessionrestored' => array());
+                    $suspicious = array('timpact' => array(), 'tmain' => array(), 'tfirstpaint' => array(), 'tsessionrestored' => array());
                     
                     foreach (array_keys($suspicious) as $measure) {
                         // Sort by times 
@@ -103,6 +108,7 @@ class PerformanceAddonimpact extends Report {
                         // For each bottom guid, see if it occurs just as often in top guids
                         foreach ($guids['bottom'] as $guid => $count) {
                             if ($count <= 1) continue;
+                            if (is_numeric($guid)) continue; // Not sure what the numeric guids like '23' are
                             
                             if (!array_key_exists($guid, $guids['top']))
                                 $suspicious[$measure][urldecode($guid)] = array(
@@ -126,7 +132,7 @@ class PerformanceAddonimpact extends Report {
                         $suspicious[$measure] = array_slice($suspicious[$measure], 0, 100, true);
                     }
 
-                    $qry = "INSERT INTO {$this->table} (date, app, os, version, tmain_suspicious, tfirstpaint_suspicious, tsessionrestored_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['tmain'])."', '".json_encode($suspicious['tfirstpaint'])."', '".json_encode($suspicious['tsessionrestored'])."')";
+                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious, tmain_suspicious, tfirstpaint_suspicious, tsessionrestored_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['timpact'])."', '".json_encode($suspicious['tmain'])."', '".json_encode($suspicious['tfirstpaint'])."', '".json_encode($suspicious['tsessionrestored'])."')";
 
                     if ($this->db->query_stats($qry))
                         $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
@@ -182,31 +188,31 @@ class PerformanceAddonimpact extends Report {
         foreach ($reports as $report_name => $where) {
             echo '<div class="report-section">';
             echo '<h3>'.$report_name.'</h3>';
-            $_qry = $this->db->query_stats("SELECT tmain_suspicious, tfirstpaint_suspicious, tsessionrestored_suspicious FROM {$this->table} WHERE app = '{$where['app']}' AND os = '{$where['os']}' AND version = '{$where['version']}' ORDER BY date DESC LIMIT 1");
+            echo '<h4>(tSessionRestored - tMain) Suspicious Add-ons</h4>';
+            $_qry = $this->db->query_stats("SELECT timpact_suspicious FROM {$this->table} WHERE app = '{$where['app']}' AND os = '{$where['os']}' AND version = '{$where['version']}' ORDER BY date DESC LIMIT 1");
             $values = mysql_fetch_array($_qry, MYSQL_ASSOC);
+            $suspicious = json_decode($values['timpact_suspicious'], true);
             
-            foreach ($values as $column => $suspicious) {
-                $suspicious = json_decode($suspicious, true);
-                
-                $i = 0;
-                echo '<dl>';
-                echo '<h4>'.$measure_pretty[$column].'</h4>';
-                foreach ($suspicious as $guid => $data) {
-                    if ($i >= 10) break;
+            $i = 1;
+            echo '<dl>';
+            foreach ($suspicious as $guid => $data) {
+                if ($i > 30) break;
                     
-                    $_qry = $this->db->query_amo("SELECT addons.id, addons.status, translations.localized_string as name FROM addons INNER JOIN translations ON translations.id=addons.name AND translations.locale=addons.defaultlocale WHERE addons.guid='".addslashes($guid)."'");
-                    if (mysql_num_rows($_qry) > 0) {
-                        $name = mysql_fetch_array($_qry, MYSQL_ASSOC);
+                $_qry = $this->db->query_amo("SELECT addons.id, addons.status, translations.localized_string as name FROM addons INNER JOIN translations ON translations.id=addons.name AND translations.locale=addons.defaultlocale WHERE addons.guid='".addslashes($guid)."'");
+                if (mysql_num_rows($_qry) > 0) {
+                    $name = mysql_fetch_array($_qry, MYSQL_ASSOC);
                     
-                        echo '<dt><span><a href="https://addons.mozilla.org/addon/'.$name['id'].'" title="'.$guid.'" target="_blank">'.$name['name'].'</a></span> - AMO: '.$amo_statuses[$name['status']].'</dt>';
-                    }
-                    else
-                        echo '<dt><span><a href="http://www.google.com/search?q='.$guid.'" target="_blank">'.$guid.'</a></span></dt>';
-                    echo '<dd>'.$data['x'].'x more in bottom 10% than top ('.$data['count'].' vs. '.$data['topcount'].')</dd>';
-                    $i++;
+                    echo '<dt>'.$i.'. <span><a href="https://addons.mozilla.org/addon/'.$name['id'].'" title="'.$guid.'" target="_blank">'.$name['name'].'</a></span> - AMO: '.$amo_statuses[$name['status']].'</dt>';
                 }
-                echo '</dl>';
+                else
+                    echo '<dt>'.$i.'. <span><a href="http://www.google.com/search?q='.$guid.'" target="_blank">'.$guid.'</a></span></dt>';
+                echo '<dd>'.$data['x'].'x more in bottom 10% than top ('.$data['count'].' vs. '.$data['topcount'].')</dd>';
+                
+                if ($i % 10 == 0)
+                    echo '</dl><dl>';
+                $i++;
             }
+            echo '</dl>';
             echo '</div>';
         }
 

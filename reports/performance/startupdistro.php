@@ -115,9 +115,13 @@ class PerformanceStartupdistro extends Report {
                 
                 foreach ($data as $label => $count) {
                     if (!array_key_exists($label, $distro))
-                        $distro[$label][$column] = $count;
-                    else
-                        $distro[$label][$column] += $count;
+                        $distro[$label] = array(
+                            'tmain_seconds_distro' => 0,
+                            'tfirstpaint_seconds_distro' => 0,
+                            'tsessionrestored_seconds_distro' => 0
+                        );
+
+                    $distro[$label][$column] += $count;
                 }
             }
 
