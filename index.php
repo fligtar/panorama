@@ -21,7 +21,7 @@
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
                 <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
                 <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);">impressions</a></li>
-                <li><a href="#addon-installdistro" onclick="panorama.getReport(reports.addons.installdistro, this);">installed distro</a></li>
+                <li><a href="#addon-installdistro" onclick="panorama.getReport(reports.addons.installdistro, this);">installed distribution</a></li>
                 <li><a href="#addon-packager" onclick="panorama.getReport(reports.addons.packager, this);">packager</a></li>
                 <li><a href="#addon-privacy" onclick="panorama.getReport(reports.addons.privacy, this);">privacy policies</a></li>
                 <li><a href="#addon-publicstats" onclick="panorama.getReport(reports.addons.publicstats, this);">public stats</a></li>
@@ -59,8 +59,10 @@
             
             <li>performance</li>
             <ul>
-                <li><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up</a></li>
-                <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this, 'html');">add-on impact</a></li>
+                <li><a href="#performance-startupdistro-nightlies" onclick="panorama.getReport(reports.performance.startupdistro_nightlies, this);">start-up (nightlies)</a></li>
+                <li><a href="#performance-startupdistro-beta" onclick="panorama.getReport(reports.performance.startupdistro_beta, this);">start-up (beta)</a></li>
+                <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this, 'html');">add-on impact (bottom 10%)</a></li>
+                <!--<li><a href="#performance-addonimpact-average" onclick="panorama.getReport(reports.performance.addonimpact_average, this, 'html');">add-on impact (low average)</a></li>-->
             </ul>
             
             <li>services</li>

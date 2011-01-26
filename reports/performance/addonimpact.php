@@ -52,14 +52,14 @@ class PerformanceAddonimpact extends Report {
             if (is_numeric($timpact) && $timpact < 3600000 && $timpact >= 0)
                 $apps[$columns[2]][$columns[3]][$columns[4]]['timpact'][$i] = $timpact;
                 
-            if (is_numeric($columns[5]) && $columns[5] < 3600000 && $columns[5] >= 0)
+            /*if (is_numeric($columns[5]) && $columns[5] < 3600000 && $columns[5] >= 0)
                 $apps[$columns[2]][$columns[3]][$columns[4]]['tmain'][$i] = $columns[5];
             
             if (is_numeric($columns[6]) && $columns[6] < 3600000 && $columns[6] >= 0)
                 $apps[$columns[2]][$columns[3]][$columns[4]]['tfirstpaint'][$i] = $columns[6];
             
             if (is_numeric($columns[7]) && $columns[7] < 3600000 && $columns[7] >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$i] = $columns[7];
+                $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$i] = $columns[7];*/
 
             $i++;
         }
@@ -68,7 +68,7 @@ class PerformanceAddonimpact extends Report {
         foreach ($apps as $app => $oses) {
             foreach ($oses as $os => $versions) {
                 foreach ($versions as $version => $data) {
-                    $suspicious = array('timpact' => array(), 'tmain' => array(), 'tfirstpaint' => array(), 'tsessionrestored' => array());
+                    $suspicious = array('timpact' => array()/*, 'tmain' => array(), 'tfirstpaint' => array(), 'tsessionrestored' => array()*/);
                     
                     foreach (array_keys($suspicious) as $measure) {
                         // Sort by times 
@@ -132,7 +132,8 @@ class PerformanceAddonimpact extends Report {
                         $suspicious[$measure] = array_slice($suspicious[$measure], 0, 100, true);
                     }
 
-                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious, tmain_suspicious, tfirstpaint_suspicious, tsessionrestored_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['timpact'])."', '".json_encode($suspicious['tmain'])."', '".json_encode($suspicious['tfirstpaint'])."', '".json_encode($suspicious['tsessionrestored'])."')";
+                    //$qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious, tmain_suspicious, tfirstpaint_suspicious, tsessionrestored_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['timpact'])."', '".json_encode($suspicious['tmain'])."', '".json_encode($suspicious['tfirstpaint'])."', '".json_encode($suspicious['tsessionrestored'])."')";
+                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['timpact'])."')";
 
                     if ($this->db->query_stats($qry))
                         $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
