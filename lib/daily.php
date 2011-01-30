@@ -43,6 +43,9 @@ foreach ($containers as $container => $reports) {
         // Call the report's daily method. If the report itself has no
         // daily method, the superclass will handle it gracefully.
         $report->daily($cron_type, $date);
+        
+        // GC
+        $report = null;
     }
 }
 

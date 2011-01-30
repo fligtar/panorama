@@ -59,8 +59,7 @@
             
             <li>performance</li>
             <ul>
-                <li><a href="#performance-startupdistro-nightlies" onclick="panorama.getReport(reports.performance.startupdistro_nightlies, this);">start-up (nightlies)</a></li>
-                <li><a href="#performance-startupdistro-beta" onclick="panorama.getReport(reports.performance.startupdistro_beta, this);">start-up (beta)</a></li>
+                <li><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up time</a></li>
                 <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this, 'html');">add-on impact (bottom 10%)</a></li>
                 <!--<li><a href="#performance-addonimpact-average" onclick="panorama.getReport(reports.performance.addonimpact_average, this, 'html');">add-on impact (low average)</a></li>-->
             </ul>

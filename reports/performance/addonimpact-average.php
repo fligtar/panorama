@@ -10,6 +10,8 @@ class PerformanceAddonimpactAverage extends Report {
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
+        return;
+        
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
         

@@ -7,20 +7,26 @@ $(document).ready(function() {
 });
 
 var panorama = {
+    currentReport: null,
     
     getReport: function(report, caller, type) {
+        panorama.currentReport = report;
         $('nav .selected').removeClass('selected');
-        $('#content .graph-container').remove();
+        $('#content .filters').remove();
         
         $(caller).addClass('loading').addClass('selected');
         
+        // If the report has filters, we have to load those before we load any graphs
+        if (report.filters) {
+            panorama.loadFilters(report);
+            return;
+        }
+
         if (type == 'html') {
             panorama.getHTML(report);
         }
         else {
-            for (var i in report.graphs) {
-                panorama.reportAndChartIt(report.graphs[i]);
-            }
+            panorama.getGraphs(report);
         }
     },
     
@@ -29,6 +35,54 @@ var panorama = {
         $('#content .graph-container').load(report.url, function() {
             $('nav .loading').removeClass('loading');
         });
+    },
+    
+    getGraphs: function(report) {
+        $('#content .graph-container').remove();
+        
+        for (var i in report.graphs) {
+            panorama.reportAndChartIt(report.graphs[i]);
+        }
+    },
+    
+    loadFilters: function(report) {
+        $.getJSON(report.filters.url, function(data) {
+            $('#content').append('<div class="filters"></div>');
+            var filtersel = $('#content .filters');
+            $.each(data, function(key, values) {
+                filtersel.append('<label>' + key + ': <select name="' + key + '"></select></label>');
+               $.each (values, function (i, value) {
+                   filtersel.find('select[name="' + key + '"]').append('<option' + (report.filters.defaults[key] == value ? ' selected="selected"' : '') + '>' + value + '</option>');
+               });
+            });
+            filtersel.append('<button onclick="panorama.applyFilters();">apply</button>');
+            panorama.applyFilters(report);
+        });
+    },
+    
+    applyFilters: function(report) {
+        if (!report)
+            report = panorama.currentReport;
+        
+        var filters = {};
+        $('#content .filters select').each(function(i, select) {
+            filters[$(select).attr('name')] = $(select).val();
+        });
+        
+        $.each(report.graphs, function(i) {
+            var url = report.graphs[i].base_url;
+            var subtitle = report.graphs[i].options.subtitle.base_text;
+            
+            $.each(filters, function(key, val) {
+                url = url.replace('%' + key + '%', val);
+                subtitle = subtitle.replace('%' + key + '%', val);
+            });
+            
+            report.graphs[i].url = url;
+            report.graphs[i].options.subtitle.text = subtitle;
+        });
+        
+        panorama.getGraphs(report);
     },
     
     reportAndChartIt: function(chart) {
@@ -98,7 +152,7 @@ var panorama = {
                 });
             }
         });
-        
+        console.log(series);
         return series;
     },
     

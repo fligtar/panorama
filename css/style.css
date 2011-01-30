@@ -185,3 +185,10 @@ dd {
     border-bottom: 1px solid #999999;
     margin-bottom: 2em;
 }
+.filters {
+    margin-bottom: 2em;
+    text-align: right;
+}
+.filters label {
+    margin-right: 1em;
+}

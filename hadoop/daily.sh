@@ -22,7 +22,7 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%discovery/addon%';" | tee $DATA/discovery-details.txt
 
 # ABP Icon views by referrer
-hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT empty_string_1, COUNT(1) as num FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%' GROUP BY empty_string_1 ORDER BY num DESC;" | tee $DATA/abp-icon-referrers.txt
+hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT empty_string_1, COUNT(1) as num FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%' GROUP BY empty_string_1 ORDER BY num DESC;" > $DATA/abp-icon-referrers.txt
 
 # ABP Icon views total
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%';" | tee $DATA/abp-icon-total.txt
@@ -46,6 +46,6 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT commas, COUNT(1) FROM (SELECT (LENGTH(request_url) - LENGTH(REGEXP_REPLACE(request_url, ',', '')) + 1) as commas FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api/%/search/guid%') temp GROUP BY commas ORDER BY commas;" | tee $DATA/metadata-installed-distro.txt
 
 # Firefox start-up performance
-hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT * FROM addons_pings WHERE ds = '$DATE';" | tee $DATA/metadata-perf.txt
+hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT * FROM addons_pings WHERE ds = '$DATE';" > $DATA/metadata-perf.txt
 
 scp -r $DATA/ fligtar@khan:./hadoop-drop/
