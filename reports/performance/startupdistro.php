@@ -10,7 +10,6 @@ class PerformanceStartupdistro extends Report {
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
-        memory();
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
         
@@ -81,7 +80,6 @@ class PerformanceStartupdistro extends Report {
                     $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$round] = 1;
             }
         }
-        memory();
         fclose($file);
         
         /* Now that the pings are all sorted into app, OS, and version, 
@@ -116,9 +114,7 @@ class PerformanceStartupdistro extends Report {
                 }
             }
         }
-        memory();
         $apps = null;
-        memory('apps=null');
     }
     
     /**
@@ -128,7 +124,8 @@ class PerformanceStartupdistro extends Report {
         $filters = array(
             'app' => array(),
             'os' => array(),
-            'version' => array()
+            'version' => array(),
+            'date' => array()
         );
         
         $_apps = $this->db->query_stats("SELECT DISTINCT app FROM {$this->table} ORDER BY app");
@@ -140,16 +137,51 @@ class PerformanceStartupdistro extends Report {
         $_versions = $this->db->query_stats("SELECT DISTINCT version FROM {$this->table} ORDER BY version");
         while ($version = mysql_fetch_array($_versions, MYSQL_ASSOC)) $filters['version'][] = $version['version'];
         
+        $_dates = $this->db->query_stats("SELECT DISTINCT date FROM {$this->table} ORDER BY date DESC");
+        while ($date = mysql_fetch_array($_dates, MYSQL_ASSOC)) $filters['date'][] = $date['date'];
+        
         echo json_encode($filters);
     }
     
     /**
      * Generate the CSV for graphs
      */
-    public function generateCSV($graph, $app, $os, $version, $limit = 0) {
+    public function generateCSV($graph, $date, $app, $os, $version, $limit = 0) {
         header('Content-type: text/plain');
         
-        if ($graph == 'distro') {
+        if ($graph == 'distro-sec') {
+            echo "Label,tMain,tFirstPaint,tSessionRestored\n";
+            
+            $_date = !empty($date) ? " AND date='".addslashes($date)."'" : '';
+            $_values = $this->db->query_stats("SELECT tmain_seconds_distro, tfirstpaint_seconds_distro, tsessionrestored_seconds_distro FROM {$this->table} WHERE app = '".addslashes($app)."' AND os = '".addslashes($os)."' AND version = '".addslashes($version)."'{$_date} ORDER BY date DESC LIMIT 1");
+            $values = mysql_fetch_array($_values, MYSQL_ASSOC);
+            $distro = array();
+            
+            foreach ($values as $column => $data) {
+                $data = json_decode($data, true);
+                
+                foreach ($data as $seconds => $count) {
+                    if (empty($distro[$seconds]))
+                        $distro[$seconds] = array(
+                            'tmain_seconds_distro' => 0,
+                            'tfirstpaint_seconds_distro' => 0,
+                            'tsessionrestored_seconds_distro' => 0
+                        );
+
+                    $distro[$seconds][$column] += $count;
+                }
+            }
+            ksort($distro);
+            
+            $i = 0;
+            foreach ($distro as $label => $columns) {
+                if (!empty($limit) && $i >= $limit) break;
+                
+                echo "{$label},".implode(',', $columns)."\n";
+                $i++;
+            }
+        }
+        elseif ($graph == 'distro-min') {
             echo "Label,tMain,tFirstPaint,tSessionRestored\n";
             
             $_values = $this->db->query_stats("SELECT tmain_seconds_distro, tfirstpaint_seconds_distro, tsessionrestored_seconds_distro FROM {$this->table} WHERE app = '".addslashes($app)."' AND os = '".addslashes($os)."' AND version = '".addslashes($version)."' ORDER BY date DESC LIMIT 1");
@@ -159,17 +191,20 @@ class PerformanceStartupdistro extends Report {
             foreach ($values as $column => $data) {
                 $data = json_decode($data, true);
                 
-                foreach ($data as $label => $count) {
-                    if (!array_key_exists($label, $distro))
-                        $distro[$label] = array(
+                foreach ($data as $seconds => $count) {
+                    $minutes = floor($seconds / 60);
+                    
+                    if (empty($distro[$minutes]))
+                        $distro[$minutes] = array(
                             'tmain_seconds_distro' => 0,
                             'tfirstpaint_seconds_distro' => 0,
                             'tsessionrestored_seconds_distro' => 0
                         );
-
-                    $distro[$label][$column] += $count;
+                    
+                    $distro[$minutes][$column] += $count;
                 }
             }
+            ksort($distro);
             
             $i = 0;
             foreach ($distro as $label => $columns) {
@@ -209,8 +244,9 @@ if (!defined('OVERLORD')) {
         $app = !empty($_GET['app']) ? $_GET['app'] : '';
         $os = !empty($_GET['os']) ? $_GET['os'] : '';
         $version = !empty($_GET['version']) ? $_GET['version'] : '';
+        $date = !empty($_GET['date']) ? $_GET['date'] : '';
         $limit = !empty($_GET['limit']) ? $_GET['limit'] : 0;
-        $report->generateCSV($graph, $app, $os, $version, $limit);
+        $report->generateCSV($graph, $date, $app, $os, $version, $limit);
     }
     elseif ($action == 'filters') {
         $report->outputFilterJSON();

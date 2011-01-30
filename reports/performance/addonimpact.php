@@ -12,22 +12,25 @@ class PerformanceAddonimpact extends Report {
     public function analyzeDay($date = '') {
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
-        
-        $data_dir = HADOOP_DATA.'/'.$date;
-        
-        $file = file_get_contents($data_dir.'/metadata-perf.txt');
-        $lines = explode("\n", $file);
-        
+        memory();
         $apps = array();
         $master = array();
-        $file = null;
         $i = 0;
         
-        foreach ($lines as $line) {
+        /* We store all of the individual rows in a master array with unique id for lookup later
+             master[0] => 'guid1,guid2,guid3'
+             
+           We then store the tImpact (tSessionRestored - tMain) with the master id
+             apps[firefox][WINNT][4.0b10][0] => 1234
+                 (1234ms tImpact for the master id 0)
+        */
+        $data_dir = HADOOP_DATA.'/'.$date;
+        $file = fopen($data_dir.'/metadata-perf.txt', 'r');
+        while (($line = fgets($file)) !== false) {
             if (empty($line)) continue;
             $columns = explode("\t", $line);
             
-            $master[$i] = $columns;
+            $master[$i] = $columns[1];
             
             /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
             // Set up app array if new app
@@ -40,100 +43,96 @@ class PerformanceAddonimpact extends Report {
             
             // Set up appversion array if new appversion
             if (!array_key_exists($columns[4], $apps[$columns[2]][$columns[3]]))
-                $apps[$columns[2]][$columns[3]][$columns[4]] = array(
-                    'timpact' => array(),
-                    'tmain' => array(),
-                    'tfirstpaint' => array(),
-                    'tsessionrestored' => array()
-                );
+                $apps[$columns[2]][$columns[3]][$columns[4]] = array();
             
             // Store reference to the master for each time
             $timpact = $columns[7] - $columns[5];
             if (is_numeric($timpact) && $timpact < 3600000 && $timpact >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]]['timpact'][$i] = $timpact;
-                
-            /*if (is_numeric($columns[5]) && $columns[5] < 3600000 && $columns[5] >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tmain'][$i] = $columns[5];
-            
-            if (is_numeric($columns[6]) && $columns[6] < 3600000 && $columns[6] >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tfirstpaint'][$i] = $columns[6];
-            
-            if (is_numeric($columns[7]) && $columns[7] < 3600000 && $columns[7] >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$i] = $columns[7];*/
+                $apps[$columns[2]][$columns[3]][$columns[4]][$i] = $timpact;
 
             $i++;
         }
-        $lines = null;
+        memory('first part done');
+        fclose($file);
         
+        /* Now that the pings are all sorted into app, OS, and version, 
+           we can make the total calculations and store them */
         foreach ($apps as $app => $oses) {
             foreach ($oses as $os => $versions) {
                 foreach ($versions as $version => $data) {
-                    $suspicious = array('timpact' => array()/*, 'tmain' => array(), 'tfirstpaint' => array(), 'tsessionrestored' => array()*/);
+                    memory('starting '.$app.' '.$os.' '.$version);
+                    // Free up some memory
+                    $apps[$app][$os][$version] = null;
                     
-                    foreach (array_keys($suspicious) as $measure) {
-                        // Sort by times 
-                        asort($apps[$app][$os][$version][$measure]);
-                    
-                        // Get the top and bottom 10%
-                        $count = ceil(count($apps[$app][$os][$version][$measure]) * .10);
-                        $top = array_slice($apps[$app][$os][$version][$measure], 0, $count, true);
-                        $bottom = array_slice($apps[$app][$os][$version][$measure], 0 - $count, $count, true);
-                        $apps[$app][$os][$version][$measure] = null;
-                        
-                        $guids = array('top' => array(), 'bottom' => array());
-                        // Record top guid occurrence
-                        foreach ($top as $id => $measure_value) {
-                            $_guids = explode(',', $master[$id][1]);
-                            foreach ($_guids as $guid) {
-                                if (!array_key_exists($guid, $guids['top']))
-                                    $guids['top'][$guid] = 1;
-                                else
-                                    $guids['top'][$guid]++;
-                            }
-                        }
-                        
-                        // Record bottom guid occurrence
-                        foreach ($bottom as $id => $measure_value) {
-                            $_guids = explode(',', $master[$id][1]);
-
-                            foreach ($_guids as $guid) {
-                                if (!array_key_exists($guid, $guids['bottom']))
-                                    $guids['bottom'][$guid] = 1;
-                                else
-                                    $guids['bottom'][$guid]++;
-                            }
-                        }
-                        arsort($guids['bottom']);
-                        
-                        // For each bottom guid, see if it occurs just as often in top guids
-                        foreach ($guids['bottom'] as $guid => $count) {
-                            if ($count <= 1) continue;
-                            if (is_numeric($guid)) continue; // Not sure what the numeric guids like '23' are
-                            
-                            if (!array_key_exists($guid, $guids['top']))
-                                $suspicious[$measure][urldecode($guid)] = array(
-                                    'count' => $count,
-                                    'topcount' => 0,
-                                    'x' => $count
-                                );
-                            else {
-                                $m = round($count / $guids['top'][$guid], 2);
-                                if ($m >= 2)
-                                    $suspicious[$measure][urldecode($guid)] = array(
-                                        'count' => $count,
-                                        'topcount' => $guids['top'][$guid],
-                                        'x' => $m
-                                    );
-                            }
-                        }
-                        uasort($suspicious[$measure], array('PerformanceAddonimpact', 'compareSuspicious'));
-
-                        // We only save the top 100 for space reasons
-                        $suspicious[$measure] = array_slice($suspicious[$measure], 0, 100, true);
+                    // We aren't interested in combinations with fewer than 1000 users
+                    if (count($data) < 1000) {
+                        $this->log("{$date} - Combination omitted ({$app}/{$os}/{$version})");
+                        continue;
                     }
+                    
+                    $suspicious = array();
+                    
+                    // Sort by times 
+                    asort($data);
+                
+                    // Get the top and bottom 10%
+                    $count = ceil(count($data) * .10);
+                    $top = array_slice($data, 0, $count, true);
+                    $bottom = array_slice($data, 0 - $count, $count, true);
+                    $data = null;
+                    
+                    $guids = array('top' => array(), 'bottom' => array());
+                    // Record top guid occurrence
+                    foreach ($top as $id => $measure_value) {
+                        $_guids = explode(',', $master[$id]);
+                        foreach ($_guids as $guid) {
+                            if (!array_key_exists($guid, $guids['top']))
+                                $guids['top'][$guid] = 1;
+                            else
+                                $guids['top'][$guid]++;
+                        }
+                    }
+                    
+                    // Record bottom guid occurrence
+                    foreach ($bottom as $id => $measure_value) {
+                        $_guids = explode(',', $master[$id]);
 
-                    //$qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious, tmain_suspicious, tfirstpaint_suspicious, tsessionrestored_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['timpact'])."', '".json_encode($suspicious['tmain'])."', '".json_encode($suspicious['tfirstpaint'])."', '".json_encode($suspicious['tsessionrestored'])."')";
-                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious['timpact'])."')";
+                        foreach ($_guids as $guid) {
+                            if (!array_key_exists($guid, $guids['bottom']))
+                                $guids['bottom'][$guid] = 1;
+                            else
+                                $guids['bottom'][$guid]++;
+                        }
+                    }
+                    arsort($guids['bottom']);
+                    
+                    // For each bottom guid, see if it occurs just as often in top guids
+                    foreach ($guids['bottom'] as $guid => $count) {
+                        if ($count <= 1) continue;
+                        if (is_numeric($guid)) continue; // Not sure what the numeric guids like '23' are
+                        
+                        if (!array_key_exists($guid, $guids['top']))
+                            $suspicious[urldecode($guid)] = array(
+                                'count' => $count,
+                                'topcount' => 0,
+                                'x' => $count
+                            );
+                        else {
+                            $m = round($count / $guids['top'][$guid], 2);
+                            if ($m >= 2)
+                                $suspicious[urldecode($guid)] = array(
+                                    'count' => $count,
+                                    'topcount' => $guids['top'][$guid],
+                                    'x' => $m
+                                );
+                        }
+                    }
+                    uasort($suspicious, array('PerformanceAddonimpact', 'compareSuspicious'));
+
+                    // We only save the top 100 for space reasons
+                    $suspicious = array_slice($suspicious, 0, 100, true);
+
+                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious)."')";
 
                     if ($this->db->query_stats($qry))
                         $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
@@ -142,10 +141,12 @@ class PerformanceAddonimpact extends Report {
                 }
             }
         }
-        
+        memory();
         $guids = null;
         $apps = null;
         $master = null;
+        $suspicious = null;
+        memory();
     }
     
     public function compareSuspicious($a, $b) {
@@ -156,9 +157,35 @@ class PerformanceAddonimpact extends Report {
     }
     
     /**
+     * Output the available filters for app, os, and version
+     */
+     public function outputFilterJSON() {
+         $filters = array(
+             'app' => array(),
+             'os' => array(),
+             'version' => array(),
+             'date' => array()
+         );
+     
+         $_apps = $this->db->query_stats("SELECT DISTINCT app FROM {$this->table} ORDER BY app");
+         while ($app = mysql_fetch_array($_apps, MYSQL_ASSOC)) $filters['app'][] = $app['app'];
+     
+         $_oses = $this->db->query_stats("SELECT DISTINCT os FROM {$this->table} ORDER BY os");
+         while ($os = mysql_fetch_array($_oses, MYSQL_ASSOC)) $filters['os'][] = $os['os'];
+     
+         $_versions = $this->db->query_stats("SELECT DISTINCT version FROM {$this->table} ORDER BY version");
+         while ($version = mysql_fetch_array($_versions, MYSQL_ASSOC)) $filters['version'][] = $version['version'];
+     
+         $_dates = $this->db->query_stats("SELECT DISTINCT date FROM {$this->table} ORDER BY date DESC");
+         while ($date = mysql_fetch_array($_dates, MYSQL_ASSOC)) $filters['date'][] = $date['date'];
+     
+         echo json_encode($filters);
+     }
+    
+    /**
      * Generate the HTML
      */
-    public function generateHTML() {
+    public function generateHTML($date, $app, $os, $version) {
         $amo_statuses = array(
             'Incomplete',
             'Unreviewed',
@@ -173,57 +200,56 @@ class PerformanceAddonimpact extends Report {
             'Purgatory'
         );
         
-        $measure_pretty = array(
-            'tmain_suspicious' => 'tMain Suspicious Add-ons',
-            'tfirstpaint_suspicious' => 'tFirstPaint Suspicious Add-ons',
-            'tsessionrestored_suspicious' => 'tSessionRestored Suspicious Add-ons'
-        );
+        echo '<div class="report-section">';
+        echo "<h3>{$date} / {$app} / {$os} / {$version}</h3>";
+        echo '<h4>(tSessionRestored - tMain) Suspicious Add-ons</h4>';
         
-        $reports = array(
-            'Firefox / WINNT / 4.0b10pre' => array('app' => 'firefox', 'os' => 'WINNT', 'version' => '4.0b10pre'),
-            'Firefox / Darwin / 4.0b10pre' => array('app' => 'firefox', 'os' => 'Darwin', 'version' => '4.0b10pre'),
-            'Firefox / Linux / 4.0b10pre' => array('app' => 'firefox', 'os' => 'Linux', 'version' => '4.0b10pre'),
-            'Mobile / Android / 4.0b4pre' => array('app' => 'mobile', 'os' => 'Android', 'version' => '4.0b4pre')
-        );
+        $_date = !empty($date) ? " AND date='".addslashes($date)."'" : '';
+        $_qry = $this->db->query_stats("SELECT timpact_suspicious FROM {$this->table} WHERE app = '".addslashes($app)."' AND os = '".addslashes($os)."' AND version = '".addslashes($version)."'{$_date} ORDER BY date DESC LIMIT 1");
+        $values = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        $suspicious = json_decode($values['timpact_suspicious'], true);
         
-        foreach ($reports as $report_name => $where) {
-            echo '<div class="report-section">';
-            echo '<h3>'.$report_name.'</h3>';
-            echo '<h4>(tSessionRestored - tMain) Suspicious Add-ons</h4>';
-            $_qry = $this->db->query_stats("SELECT timpact_suspicious FROM {$this->table} WHERE app = '{$where['app']}' AND os = '{$where['os']}' AND version = '{$where['version']}' ORDER BY date DESC LIMIT 1");
-            $values = mysql_fetch_array($_qry, MYSQL_ASSOC);
-            $suspicious = json_decode($values['timpact_suspicious'], true);
-            
-            $i = 1;
-            echo '<dl>';
-            foreach ($suspicious as $guid => $data) {
-                if ($i > 30) break;
-                    
-                $_qry = $this->db->query_amo("SELECT addons.id, addons.status, translations.localized_string as name FROM addons INNER JOIN translations ON translations.id=addons.name AND translations.locale=addons.defaultlocale WHERE addons.guid='".addslashes($guid)."'");
-                if (mysql_num_rows($_qry) > 0) {
-                    $name = mysql_fetch_array($_qry, MYSQL_ASSOC);
-                    
-                    echo '<dt>'.$i.'. <span><a href="https://addons.mozilla.org/addon/'.$name['id'].'" title="'.$guid.'" target="_blank">'.$name['name'].'</a></span> - AMO: '.$amo_statuses[$name['status']].'</dt>';
-                }
-                else
-                    echo '<dt>'.$i.'. <span><a href="http://www.google.com/search?q='.$guid.'" target="_blank">'.$guid.'</a></span></dt>';
-                echo '<dd>'.$data['x'].'x more in bottom 10% than top ('.$data['count'].' vs. '.$data['topcount'].')</dd>';
+        $i = 1;
+        echo '<dl>';
+        foreach ($suspicious as $guid => $data) {
+            if ($i > 30) break;
                 
-                if ($i % 10 == 0)
-                    echo '</dl><dl>';
-                $i++;
+            $_qry = $this->db->query_amo("SELECT addons.id, addons.status, translations.localized_string as name FROM addons INNER JOIN translations ON translations.id=addons.name AND translations.locale=addons.defaultlocale WHERE addons.guid='".addslashes($guid)."'");
+            if (mysql_num_rows($_qry) > 0) {
+                $name = mysql_fetch_array($_qry, MYSQL_ASSOC);
+                
+                echo '<dt>'.$i.'. <span><a href="https://addons.mozilla.org/addon/'.$name['id'].'" title="'.$guid.'" target="_blank">'.$name['name'].'</a></span> - AMO: '.$amo_statuses[$name['status']].'</dt>';
             }
-            echo '</dl>';
-            echo '</div>';
+            else
+                echo '<dt>'.$i.'. <span><a href="http://www.google.com/search?q='.$guid.'" target="_blank">'.$guid.'</a></span></dt>';
+            echo '<dd>'.$data['x'].'x more in bottom 10% than top ('.$data['count'].' vs. '.$data['topcount'].')</dd>';
+            
+            if ($i % 10 == 0)
+                echo '</dl><dl>';
+            $i++;
         }
+        echo '</dl>';
+        echo '</div>';
 
     }
 }
 
-// If this is not being controlled by something else, output the CSV by default
+// If this is not being controlled by something else, output the HTML by default
 if (!defined('OVERLORD')) {
     $report = new PerformanceAddonimpact;
-    $report->generateHTML();
+    $report->analyzeDay('2011-01-27');exit;
+    
+    $action = !empty($_GET['action']) ? $_GET['action'] : '';
+    if ($action == 'html') {
+        $date = !empty($_GET['date']) ? $_GET['date'] : '';
+        $app = !empty($_GET['app']) ? $_GET['app'] : '';
+        $os = !empty($_GET['os']) ? $_GET['os'] : '';
+        $version = !empty($_GET['version']) ? $_GET['version'] : '';
+        $report->generateHTML($date, $app, $os, $version);
+    }
+    elseif ($action == 'filters') {
+        $report->outputFilterJSON();
+    }
 }
 
 ?>

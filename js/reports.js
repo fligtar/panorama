@@ -1422,21 +1422,22 @@ var reports = {
                 defaults: {
                     'app': 'firefox',
                     'os': 'WINNT',
-                    'version': '4.0b10'
+                    'version': '4.0b10',
+                    'date': ''
                 }
             },
             graphs: [
                 {
                     base_subtitle: '%app% / %os% / %version%',
-                    base_url: 'reports/performance/startupdistro.php?action=graph&graph=distro&app=%app%&os=%os%&version=%version%&limit=31',
+                    base_url: 'reports/performance/startupdistro.php?action=graph&graph=distro-sec&date=%date%&app=%app%&os=%os%&version=%version%&limit=31',
                     url: null,
                     options: {
                         chart: {
-                            renderTo: 'addon-startupdistro-distro',
+                            renderTo: 'addon-startupdistro-distro-sec',
                             defaultSeriesType: 'column'
                         },
-                        title: { text: 'Start-up Performance Distribution - 30 seconds and under' },
-                        subtitle: { base_text: '%app% / %os% / %version%', text: '' },
+                        title: { text: 'Start-up Time (30 seconds and under)' },
+                        subtitle: { base_text: '%date% / %app% / %os% / %version%', text: '' },
                         tooltip: {
                             formatter: function() {
                             	var s = '<b>' + this.x + ' seconds:</b><br/>';
@@ -1473,7 +1474,7 @@ var reports = {
                             renderTo: 'addon-startupdistro-average',
                             defaultSeriesType: 'spline'
                         },
-                        title: { text: 'Start-up Performance Average' },
+                        title: { text: 'Average Start-up Time' },
                         subtitle: { base_text: '%app% / %os% / %version%', text: '' },
                         tooltip: {
                             formatter: function() {
@@ -1598,7 +1599,18 @@ var reports = {
             ]
         },
         addonimpact: {
-            url: 'reports/performance/addonimpact.php'
+            type: 'html',
+            filters: {
+                url: 'reports/performance/addonimpact.php?action=filters',
+                defaults: {
+                    'app': 'firefox',
+                    'os': 'WINNT',
+                    'version': '4.0b10',
+                    'date': ''
+                }
+            },
+            base_url: 'reports/performance/addonimpact.php?action=html&date=%date%&app=%app%&os=%os%&version=%version%',
+            url: null
         }
     },
     services: {

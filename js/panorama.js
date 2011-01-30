@@ -9,7 +9,7 @@ $(document).ready(function() {
 var panorama = {
     currentReport: null,
     
-    getReport: function(report, caller, type) {
+    getReport: function(report, caller) {
         panorama.currentReport = report;
         $('nav .selected').removeClass('selected');
         $('#content .filters').remove();
@@ -22,7 +22,7 @@ var panorama = {
             return;
         }
 
-        if (type == 'html') {
+        if (report.type == 'html') {
             panorama.getHTML(report);
         }
         else {
@@ -31,6 +31,8 @@ var panorama = {
     },
     
     getHTML: function(report) {
+        $('#content .graph-container').remove();
+        
         $('#content').append('<div class="graph-container"></div>');
         $('#content .graph-container').load(report.url, function() {
             $('nav .loading').removeClass('loading');
@@ -69,20 +71,31 @@ var panorama = {
             filters[$(select).attr('name')] = $(select).val();
         });
         
-        $.each(report.graphs, function(i) {
-            var url = report.graphs[i].base_url;
-            var subtitle = report.graphs[i].options.subtitle.base_text;
-            
+        if (report.type == 'html') {
+            var url = report.base_url;
             $.each(filters, function(key, val) {
                 url = url.replace('%' + key + '%', val);
-                subtitle = subtitle.replace('%' + key + '%', val);
             });
+            report.url = url;
             
-            report.graphs[i].url = url;
-            report.graphs[i].options.subtitle.text = subtitle;
-        });
+            panorama.getHTML(report);
+        }
+        else {
+            $.each(report.graphs, function(i) {
+                var url = report.graphs[i].base_url;
+                var subtitle = report.graphs[i].options.subtitle.base_text;
+            
+                $.each(filters, function(key, val) {
+                    url = url.replace('%' + key + '%', val);
+                    subtitle = subtitle.replace('%' + key + '%', val);
+                });
+            
+                report.graphs[i].url = url;
+                report.graphs[i].options.subtitle.text = subtitle;
+            });
         
-        panorama.getGraphs(report);
+            panorama.getGraphs(report);
+        }
     },
     
     reportAndChartIt: function(chart) {
@@ -157,7 +170,7 @@ var panorama = {
     },
     
     newContainer: function(id, csv) {
-        $('#content').append('<div class="graph-container loading"><div id="' + id + '" class="graph"></div><p class="csv"><a href="' + csv + '">CSV</a></div>');
+        $('#content').append('<div class="graph-container loading"><div id="' + id + '" class="graph"></div><p class="csv"><a href="' + csv + '" target="_blank">CSV</a></div>');
     },
     
     createChart: function(options) {
