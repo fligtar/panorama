@@ -12,25 +12,32 @@ class PerformanceAddonimpact extends Report {
     public function analyzeDay($date = '') {
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
-        memory();
-        $apps = array();
-        $master = array();
-        $i = 0;
         
-        /* We store all of the individual rows in a master array with unique id for lookup later
-             master[0] => 'guid1,guid2,guid3'
-             
-           We then store the tImpact (tSessionRestored - tMain) with the master id
-             apps[firefox][WINNT][4.0b10][0] => 1234
-                 (1234ms tImpact for the master id 0)
-        */
+        /**
+         * This script is pretty ridiculous. Doing it the normal way eats up
+         * more than 1GB of memory for just 1 million beta users, so I had
+         * to improvise. This script:
+         *  1. Reads through the raw perf data and stores all of the tImpact
+         *     (tSessionRestored - tMain) times in an array
+         *  2. Sorts the array and identifies the top 10% and bottom 10% of
+         *     start-up times
+         *  3. Notes the slowest tImpact counted in the top 10% and the fastest
+         *     tImpact counted in the bottom 10% and throws everything else away
+         *  4. Re-reads the raw perf data and stores the GUIDs only for tImpacts
+         *     that are in the top and bottom ranges we're looking for
+         *  5. For each GUID in the bottom 10%, determine if it is also in the
+         *     top 10%. If it isn't, it's a suspicious GUID.
+         *  6. Save all the suspicious GUIDs to the db for that app / os / version
+         */
+        
+        // Begin #1
+        $apps = array();
+        
         $data_dir = HADOOP_DATA.'/'.$date;
         $file = fopen($data_dir.'/metadata-perf.txt', 'r');
         while (($line = fgets($file)) !== false) {
             if (empty($line)) continue;
             $columns = explode("\t", $line);
-            
-            $master[$i] = $columns[1];
             
             /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
             // Set up app array if new app
@@ -45,46 +52,69 @@ class PerformanceAddonimpact extends Report {
             if (!array_key_exists($columns[4], $apps[$columns[2]][$columns[3]]))
                 $apps[$columns[2]][$columns[3]][$columns[4]] = array();
             
-            // Store reference to the master for each time
             $timpact = $columns[7] - $columns[5];
             if (is_numeric($timpact) && $timpact < 3600000 && $timpact >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]][$i] = $timpact;
-
-            $i++;
+                $apps[$columns[2]][$columns[3]][$columns[4]][] = $timpact;
         }
-        memory('first part done');
         fclose($file);
         
-        /* Now that the pings are all sorted into app, OS, and version, 
-           we can make the total calculations and store them */
+        // Begin #2
         foreach ($apps as $app => $oses) {
             foreach ($oses as $os => $versions) {
                 foreach ($versions as $version => $data) {
-                    memory('starting '.$app.' '.$os.' '.$version);
-                    // Free up some memory
-                    $apps[$app][$os][$version] = null;
-                    
                     // We aren't interested in combinations with fewer than 1000 users
                     if (count($data) < 1000) {
                         $this->log("{$date} - Combination omitted ({$app}/{$os}/{$version})");
                         continue;
                     }
                     
-                    $suspicious = array();
-                    
                     // Sort by times 
-                    asort($data);
+                    sort($data);
                 
                     // Get the top and bottom 10%
                     $count = ceil(count($data) * .10);
-                    $top = array_slice($data, 0, $count, true);
-                    $bottom = array_slice($data, 0 - $count, $count, true);
-                    $data = null;
+                    $top = array_slice($data, 0, $count);
+                    $bottom = array_slice($data, 0 - $count, $count);
+                    
+                    // Begin #3
+                    $apps[$app][$os][$version] = array();
+                    $apps[$app][$os][$version]['top_below'] = $top[count($top) - 1];
+                    $apps[$app][$os][$version]['bottom_above'] = $bottom[0];
+                }
+            }
+        }
+        
+        // Begin #4
+        $file = fopen($data_dir.'/metadata-perf.txt', 'r');
+        while (($line = fgets($file)) !== false) {
+            if (empty($line)) continue;
+            $columns = explode("\t", $line);
+            
+            if (empty($apps[$columns[2]][$columns[3]][$columns[4]]['top_below'])) continue;
+            
+            /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
+            $timpact = $columns[7] - $columns[5];
+            
+            if ($timpact <= $apps[$columns[2]][$columns[3]][$columns[4]]['top_below'])
+                $apps[$columns[2]][$columns[3]][$columns[4]]['top'][] = $columns[1];
+                
+            if ($timpact >= $apps[$columns[2]][$columns[3]][$columns[4]]['bottom_above'])
+                $apps[$columns[2]][$columns[3]][$columns[4]]['bottom'][] = $columns[1];
+        }
+        fclose($file);
+        
+        // Begin #5
+        foreach ($apps as $app => $oses) {
+            foreach ($oses as $os => $versions) {
+                foreach ($versions as $version => $data) {
+                    if (empty($data['bottom'])) continue;
+                    
+                    $suspicious = array();
                     
                     $guids = array('top' => array(), 'bottom' => array());
                     // Record top guid occurrence
-                    foreach ($top as $id => $measure_value) {
-                        $_guids = explode(',', $master[$id]);
+                    foreach ($data['top'] as $_guids) {
+                        $_guids = explode(',', $_guids);
                         foreach ($_guids as $guid) {
                             if (!array_key_exists($guid, $guids['top']))
                                 $guids['top'][$guid] = 1;
@@ -94,8 +124,8 @@ class PerformanceAddonimpact extends Report {
                     }
                     
                     // Record bottom guid occurrence
-                    foreach ($bottom as $id => $measure_value) {
-                        $_guids = explode(',', $master[$id]);
+                    foreach ($data['bottom'] as $_guids) {
+                        $_guids = explode(',', $_guids);
 
                         foreach ($_guids as $guid) {
                             if (!array_key_exists($guid, $guids['bottom']))
@@ -131,7 +161,8 @@ class PerformanceAddonimpact extends Report {
 
                     // We only save the top 100 for space reasons
                     $suspicious = array_slice($suspicious, 0, 100, true);
-
+                    
+                    // Begin #6
                     $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious)."')";
 
                     if ($this->db->query_stats($qry))
@@ -141,12 +172,10 @@ class PerformanceAddonimpact extends Report {
                 }
             }
         }
-        memory();
+
         $guids = null;
         $apps = null;
-        $master = null;
         $suspicious = null;
-        memory();
     }
     
     public function compareSuspicious($a, $b) {
@@ -237,7 +266,7 @@ class PerformanceAddonimpact extends Report {
 // If this is not being controlled by something else, output the HTML by default
 if (!defined('OVERLORD')) {
     $report = new PerformanceAddonimpact;
-    $report->analyzeDay('2011-01-27');exit;
+    //$report->analyzeDay('2011-01-28');exit;
     
     $action = !empty($_GET['action']) ? $_GET['action'] : '';
     if ($action == 'html') {
