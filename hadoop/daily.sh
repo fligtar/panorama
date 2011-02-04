@@ -48,4 +48,4 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT commas, COUNT(1) 
 # Firefox start-up performance
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT * FROM addons_pings WHERE ds = '$DATE';" > $DATA/metadata-perf.txt
 
-scp -r $DATA/ fligtar@khan:./hadoop-drop/
+scp -r $DATA/ fligtar@khan:./public_html/panorama/hadoop-drop/
