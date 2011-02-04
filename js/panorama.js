@@ -165,7 +165,7 @@ var panorama = {
                 });
             }
         });
-        console.log(series);
+        
         return series;
     },
     
