@@ -163,7 +163,7 @@ class PerformanceAddonimpact extends Report {
                     $suspicious = array_slice($suspicious, 0, 100, true);
                     
                     // Begin #6
-                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".json_encode($suspicious)."')";
+                    $qry = "INSERT INTO {$this->table} (date, app, os, version, timpact_suspicious) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', '".addslashes(json_encode($suspicious))."')";
 
                     if ($this->db->query_stats($qry))
                         $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
