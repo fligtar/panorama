@@ -92,8 +92,8 @@ class PerformanceAddonimpact extends Report {
             
             if (empty($apps[$columns[1]][$columns[2]][$columns[3]]['top_below'])) continue;
             
-            /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
-            $timpact = $columns[7] - $columns[5];
+            /* Column order: guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored */
+            $timpact = $columns[6] - $columns[4];
             
             if ($timpact <= $apps[$columns[1]][$columns[2]][$columns[3]]['top_below'])
                 $apps[$columns[1]][$columns[2]][$columns[3]]['top'][] = $columns[0];
