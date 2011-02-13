@@ -39,22 +39,22 @@ class PerformanceAddonimpact extends Report {
             if (empty($line)) continue;
             $columns = explode("\t", $line);
             
-            /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
+            /* Column order: guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored */
             // Set up app array if new app
-            if (!array_key_exists($columns[2], $apps))
-                $apps[$columns[2]] = array();
+            if (!array_key_exists($columns[1], $apps))
+                $apps[$columns[1]] = array();
             
             // Set up OS array if new OS
-            if (!array_key_exists($columns[3], $apps[$columns[2]]))
-                $apps[$columns[2]][$columns[3]] = array();
+            if (!array_key_exists($columns[2], $apps[$columns[1]]))
+                $apps[$columns[1]][$columns[2]] = array();
             
             // Set up appversion array if new appversion
-            if (!array_key_exists($columns[4], $apps[$columns[2]][$columns[3]]))
-                $apps[$columns[2]][$columns[3]][$columns[4]] = array();
+            if (!array_key_exists($columns[3], $apps[$columns[1]][$columns[2]]))
+                $apps[$columns[1]][$columns[2]][$columns[3]] = array();
             
-            $timpact = $columns[7] - $columns[5];
+            $timpact = $columns[6] - $columns[4];
             if (is_numeric($timpact) && $timpact < 3600000 && $timpact >= 0)
-                $apps[$columns[2]][$columns[3]][$columns[4]][] = $timpact;
+                $apps[$columns[1]][$columns[2]][$columns[3]][] = $timpact;
         }
         fclose($file);
         
@@ -90,16 +90,16 @@ class PerformanceAddonimpact extends Report {
             if (empty($line)) continue;
             $columns = explode("\t", $line);
             
-            if (empty($apps[$columns[2]][$columns[3]][$columns[4]]['top_below'])) continue;
+            if (empty($apps[$columns[1]][$columns[2]][$columns[3]]['top_below'])) continue;
             
             /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
             $timpact = $columns[7] - $columns[5];
             
-            if ($timpact <= $apps[$columns[2]][$columns[3]][$columns[4]]['top_below'])
-                $apps[$columns[2]][$columns[3]][$columns[4]]['top'][] = $columns[1];
+            if ($timpact <= $apps[$columns[1]][$columns[2]][$columns[3]]['top_below'])
+                $apps[$columns[1]][$columns[2]][$columns[3]]['top'][] = $columns[0];
                 
-            if ($timpact >= $apps[$columns[2]][$columns[3]][$columns[4]]['bottom_above'])
-                $apps[$columns[2]][$columns[3]][$columns[4]]['bottom'][] = $columns[1];
+            if ($timpact >= $apps[$columns[1]][$columns[2]][$columns[3]]['bottom_above'])
+                $apps[$columns[1]][$columns[2]][$columns[3]]['bottom'][] = $columns[0];
         }
         fclose($file);
         

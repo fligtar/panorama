@@ -28,18 +28,18 @@ class PerformanceStartupdistro extends Report {
             if (empty($line)) continue;
             $columns = explode("\t", $line);
             
-            /* Column order: timestamp, guids, app, os, appversion, tMain, tFirstPaint, tSessionRestored, date, domain */
+            /* Column order: guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored */
             // Set up app array if new app
-            if (!array_key_exists($columns[2], $apps))
-                $apps[$columns[2]] = array();
+            if (!array_key_exists($columns[1], $apps))
+                $apps[$columns[1]] = array();
             
             // Set up OS array if new OS
-            if (!array_key_exists($columns[3], $apps[$columns[2]]))
-                $apps[$columns[2]][$columns[3]] = array();
+            if (!array_key_exists($columns[2], $apps[$columns[1]]))
+                $apps[$columns[1]][$columns[2]] = array();
             
             // Set up appversion array if new appversion
-            if (!array_key_exists($columns[4], $apps[$columns[2]][$columns[3]]))
-                $apps[$columns[2]][$columns[3]][$columns[4]] = array(
+            if (!array_key_exists($columns[3], $apps[$columns[1]][$columns[2]]))
+                $apps[$columns[1]][$columns[2]][$columns[3]] = array(
                     'tmain_all' => array(),
                     'tmain' => array(),
                     'tfirstpaint_all' => array(),
@@ -50,34 +50,34 @@ class PerformanceStartupdistro extends Report {
                     'addons' => 0
                 );
             
-            $apps[$columns[2]][$columns[3]][$columns[4]]['count']++;
-            $apps[$columns[2]][$columns[3]][$columns[4]]['addons'] += substr_count($columns[1], ',') + 1;
+            $apps[$columns[1]][$columns[2]][$columns[3]]['count']++;
+            $apps[$columns[1]][$columns[2]][$columns[3]]['addons'] += substr_count($columns[0], ',') + 1;
+            
+            if (is_numeric($columns[4]) && $columns[4] < 3600000 && $columns[4] >= 0) {
+                $apps[$columns[1]][$columns[2]][$columns[3]]['tmain_all'][] = $columns[4];
+                $round = round($columns[5] / 1000, 0);
+                if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round]))
+                    $apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round]++;
+                else
+                    $apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round] = 1;
+            }
             
             if (is_numeric($columns[5]) && $columns[5] < 3600000 && $columns[5] >= 0) {
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tmain_all'][] = $columns[5];
+                $apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint_all'][] = $columns[5];
                 $round = round($columns[5] / 1000, 0);
-                if (!empty($apps[$columns[2]][$columns[3]][$columns[4]]['tmain'][$round]))
-                    $apps[$columns[2]][$columns[3]][$columns[4]]['tmain'][$round]++;
+                if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint'][$round]))
+                    $apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint'][$round]++;
                 else
-                    $apps[$columns[2]][$columns[3]][$columns[4]]['tmain'][$round] = 1;
+                    $apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint'][$round] = 1;
             }
             
             if (is_numeric($columns[6]) && $columns[6] < 3600000 && $columns[6] >= 0) {
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tfirstpaint_all'][] = $columns[6];
+                $apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored_all'][] = $columns[6];
                 $round = round($columns[6] / 1000, 0);
-                if (!empty($apps[$columns[2]][$columns[3]][$columns[4]]['tfirstpaint'][$round]))
-                    $apps[$columns[2]][$columns[3]][$columns[4]]['tfirstpaint'][$round]++;
+                if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored'][$round]))
+                    $apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored'][$round]++;
                 else
-                    $apps[$columns[2]][$columns[3]][$columns[4]]['tfirstpaint'][$round] = 1;
-            }
-            
-            if (is_numeric($columns[7]) && $columns[7] < 3600000 && $columns[7] >= 0) {
-                $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored_all'][] = $columns[7];
-                $round = round($columns[7] / 1000, 0);
-                if (!empty($apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$round]))
-                    $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$round]++;
-                else
-                    $apps[$columns[2]][$columns[3]][$columns[4]]['tsessionrestored'][$round] = 1;
+                    $apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored'][$round] = 1;
             }
         }
         fclose($file);
@@ -240,7 +240,7 @@ class PerformanceStartupdistro extends Report {
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
     $report = new PerformanceStartupdistro;
-    $report->analyzeDay('2011-03-01');exit;
+    //$report->analyzeDay('2011-03-01');exit;
     
     $action = !empty($_GET['action']) ? $_GET['action'] : '';
     if ($action == 'graph') {
