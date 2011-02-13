@@ -21,11 +21,13 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 # Discovery Pane details
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%discovery/addon%';" | tee $DATA/discovery-details.txt
 
+# RETIRED by CDN
 # ABP Icon views by referrer
-hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT empty_string_1, COUNT(1) as num FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%' GROUP BY empty_string_1 ORDER BY num DESC;" > $DATA/abp-icon-referrers.txt
+#hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT empty_string_1, COUNT(1) as num FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%' GROUP BY empty_string_1 ORDER BY num DESC;" > $DATA/abp-icon-referrers.txt
 
+# RETIRED by CDN
 # ABP Icon views total
-hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%';" | tee $DATA/abp-icon-total.txt
+#hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND (domain='addons.mozilla.org' OR domain='static.addons.mozilla.org') AND request_url LIKE '%/images/addon_icon/1865/%';" | tee $DATA/abp-icon-total.txt
 
 # API Total
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api%';" | tee $DATA/api-total.txt

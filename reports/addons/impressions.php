@@ -10,6 +10,9 @@ class AddonImpressions extends Report {
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
+        // Retired by CDN
+        return false;
+        
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
         
