@@ -13,9 +13,9 @@ class EditorQueues extends Report {
         
         $queues = array(
             'fullreview' => "SELECT COUNT(*) FROM addons WHERE status in (3,9)",
-            'prelimreview' => "SELECT COUNT(*) FROM addons WHERE status=8",
-            'fullupdates' => "SELECT COUNT(*) FROM files INNER JOIN versions ON versions.id=files.version_id INNER JOIN addons ON addons.id=versions.addon_id WHERE files.status=2 and addons.status=4",
-            'prelimupdates' => "SELECT COUNT(*) FROM files INNER JOIN versions ON versions.id=files.version_id INNER JOIN addons ON addons.id=versions.addon_id WHERE files.status=2 and addons.status=8",
+            'prelimreview' => "SELECT COUNT(*) FROM addons WHERE status=1",
+            'fullupdates' => "SELECT COUNT(*) FROM files INNER JOIN versions ON versions.id=files.version_id INNER JOIN addons ON addons.id=versions.addon_id WHERE files.status=1 and addons.status=4",
+            'prelimupdates' => "SELECT COUNT(*) FROM files INNER JOIN versions ON versions.id=files.version_id INNER JOIN addons ON addons.id=versions.addon_id WHERE files.status=1 and addons.status=8",
             'adminreview' => "SELECT COUNT(*) FROM addons WHERE adminreview=1",
             'flaggedreviews' => "SELECT COUNT(*) FROM reviews WHERE editorreview=1"
         );
