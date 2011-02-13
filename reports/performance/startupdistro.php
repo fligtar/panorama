@@ -226,6 +226,14 @@ class PerformanceStartupdistro extends Report {
                 echo implode(',', $date)."\n";
             }
         }
+        elseif ($graph == 'median') {
+            echo "Date,tMain,tFirstPaint,tSessionRestored\n";
+
+            $dates = $this->db->query_stats("SELECT date, tmain_median, tfirstpaint_median, tsessionrestored_median FROM {$this->table} WHERE app = '".addslashes($app)."' AND os = '".addslashes($os)."' AND version = '".addslashes($version)."' AND date >= '2011-02-08' ORDER BY date");
+            while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
+                echo implode(',', $date)."\n";
+            }
+        }
         elseif ($graph == 'count') {
             echo "Date,Start-ups Recorded,Add-ons Installed\n";
 

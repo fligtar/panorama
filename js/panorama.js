@@ -281,10 +281,6 @@ Highcharts.setOptions({
 				enabled: true,
 				formatter: function() {
 					if (this.y > 5) return this.point.name;
-				},
-				color: 'white',
-				style: {
-					font: '13px Trebuchet MS, Verdana, sans-serif'
 				}
 			}
 		}

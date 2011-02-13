@@ -1467,6 +1467,53 @@ var reports = {
                     specificSeries: {}
                 },
                 {
+                    base_url: 'reports/performance/startupdistro.php?action=graph&graph=median&app=%app%&os=%os%&version=%version%',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-median',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Median Start-up Time' },
+                        subtitle: { base_text: '%app% / %os% / %version%', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':</b><br/>';
+                            	$.each(this.points, function(i, point) {
+                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms median<br/>';
+                            	});
+                            	return s;                            	
+                            },
+                            shared: true,
+                            crosshairs: [ { width: 3 }]
+                        },
+                        yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                        xAxis: {
+                            tickInterval: 24 * 3600 * 1000
+                        },
+                        plotOptions: {
+                            spline: {
+                                marker: { 
+                                    enabled: true,
+                                    states: {
+                                        hover: {
+                                            radius: 6
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
                     base_url: 'reports/performance/startupdistro.php?action=graph&graph=average&app=%app%&os=%os%&version=%version%',
                     url: null,
                     options: {
