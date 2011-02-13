@@ -26,6 +26,7 @@ class PerformanceStartupdistro extends Report {
         $file = fopen($data_dir.'/metadata-perf.txt', 'r');
         while (($line = fgets($file)) !== false) {
             if (empty($line)) continue;
+            $line = trim($line);
             $columns = explode("\t", $line);
             
             /* Column order: guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored */
@@ -55,7 +56,7 @@ class PerformanceStartupdistro extends Report {
             
             if (is_numeric($columns[4]) && $columns[4] < 3600000 && $columns[4] >= 0) {
                 $apps[$columns[1]][$columns[2]][$columns[3]]['tmain_all'][] = $columns[4];
-                $round = round($columns[5] / 1000, 0);
+                $round = round($columns[4] / 1000, 0);
                 if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round]))
                     $apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round]++;
                 else
