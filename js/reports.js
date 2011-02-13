@@ -1422,7 +1422,7 @@ var reports = {
                 defaults: {
                     'app': 'firefox',
                     'os': 'WINNT',
-                    'version': '4.0b10',
+                    'version': '4.0b11',
                     'date': ''
                 }
             },
@@ -1605,7 +1605,7 @@ var reports = {
                 defaults: {
                     'app': 'firefox',
                     'os': 'WINNT',
-                    'version': '4.0b10',
+                    'version': '4.0b11',
                     'date': ''
                 }
             },

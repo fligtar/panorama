@@ -32,6 +32,9 @@ class Database {
         $this->db = mysql_connect(STATS_DB_HOST, STATS_DB_USER, STATS_DB_PASS);
         mysql_select_db(STATS_DB_NAME, $this->db);
         $this->selected = 'stats';
+        
+        // Default is 120 and isn't sufficient for at least one report
+        $this->query_stats("SET GLOBAL wait_timeout = 600");
     }
     
     private function disconnect() {

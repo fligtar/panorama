@@ -93,19 +93,23 @@ class PerformanceStartupdistro extends Report {
                         continue;
                     }
                     
-                    $apps[$app][$os][$version]['tmain_avg'] = round(array_sum($data['tmain_all']) / count($data['tmain_all']), 0);
-                    $apps[$app][$os][$version]['tfirstpaint_avg'] = round(array_sum($data['tfirstpaint_all']) / count($data['tfirstpaint_all']), 0);
-                    $apps[$app][$os][$version]['tsessionrestored_avg'] = round(array_sum($data['tsessionrestored_all']) / count($data['tsessionrestored_all']), 0);
+                    sort($data['tmain_all']);
+                    sort($data['tfirstpaint_all']);
+                    sort($data['tsessionrestored_all']);
                     
-                    sort($apps[$app][$os][$version]['tmain_all']);
-                    sort($apps[$app][$os][$version]['tfirstpaint_all']);
-                    sort($apps[$app][$os][$version]['tsessionrestored_all']);
+                    $data['tmain_avg'] = round(array_sum($data['tmain_all']) / count($data['tmain_all']), 0);
+                    $data['tfirstpaint_avg'] = round(array_sum($data['tfirstpaint_all']) / count($data['tfirstpaint_all']), 0);
+                    $data['tsessionrestored_avg'] = round(array_sum($data['tsessionrestored_all']) / count($data['tsessionrestored_all']), 0);
                     
-                    ksort($apps[$app][$os][$version]['tmain']);
-                    ksort($apps[$app][$os][$version]['tfirstpaint']);
-                    ksort($apps[$app][$os][$version]['tsessionrestored']);
+                    $data['tmain_median'] = $data['tmain_all'][floor(count($data['tmain_all']) / 2)];
+                    $data['tfirstpaint_median'] = $data['tfirstpaint_all'][floor(count($data['tfirstpaint_all']) / 2)];
+                    $data['tsessionrestored_median'] = $data['tsessionrestored_all'][floor(count($data['tsessionrestored_all']) / 2)];
                     
-                    $qry = "INSERT INTO {$this->table} (date, app, os, version, count, addons, tmain_avg, tmain_seconds_distro, tfirstpaint_avg, tfirstpaint_seconds_distro, tsessionrestored_avg, tsessionrestored_seconds_distro) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', {$apps[$app][$os][$version]['count']}, {$apps[$app][$os][$version]['addons']}, {$apps[$app][$os][$version]['tmain_avg']}, '".json_encode($apps[$app][$os][$version]['tmain'])."', {$apps[$app][$os][$version]['tfirstpaint_avg']}, '".json_encode($apps[$app][$os][$version]['tfirstpaint'])."', {$apps[$app][$os][$version]['tsessionrestored_avg']}, '".json_encode($apps[$app][$os][$version]['tsessionrestored'])."')";
+                    ksort($data['tmain']);
+                    ksort($data['tfirstpaint']);
+                    ksort($data['tsessionrestored']);
+                    
+                    $qry = "INSERT INTO {$this->table} (date, app, os, version, count, addons, tmain_avg, tmain_median, tmain_seconds_distro, tfirstpaint_avg, tfirstpaint_median, tfirstpaint_seconds_distro, tsessionrestored_avg, tsessionrestored_median,  tsessionrestored_seconds_distro) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', {$data['count']}, {$data['addons']}, {$data['tmain_avg']}, {$data['tmain_median']}, '".json_encode($data['tmain'])."', {$data['tfirstpaint_avg']}, {$data['tfirstpaint_median']}, '".json_encode($data['tfirstpaint'])."', {$data['tsessionrestored_avg']}, {$data['tsessionrestored_median']}, '".json_encode($data['tsessionrestored'])."')";
 
                     if ($this->db->query_stats($qry))
                         $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
@@ -236,7 +240,7 @@ class PerformanceStartupdistro extends Report {
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
     $report = new PerformanceStartupdistro;
-    //$report->analyzeDay('2011-01-28');exit;
+    $report->analyzeDay('2011-03-01');exit;
     
     $action = !empty($_GET['action']) ? $_GET['action'] : '';
     if ($action == 'graph') {
