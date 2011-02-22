@@ -12,11 +12,11 @@ class UserCreation extends Report {
         if (empty($date))
             $date = date('Y-m-d');
             
-        //$insert = array();
-        $update = array();
+        $insert = array();
+        //$update = array();
 
         $queries = array(
-            //'total' => "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%'",
+            'total' => "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%'",
             'new_extension_devs' => "SELECT COUNT(*) FROM users INNER JOIN addons_users ON users.id = addons_users.user_id INNER JOIN addons ON addons.id = addons_users.addon_id WHERE DATE(users.created) = '%DATE%' AND addons.addontype_id = 1",
             'new_nonpersona_devs' => "SELECT COUNT(*) FROM users INNER JOIN addons_users ON users.id = addons_users.user_id INNER JOIN addons ON addons.id = addons_users.addon_id WHERE DATE(users.created) = '%DATE%' AND addons.addontype_id != 9"
         );
@@ -30,12 +30,12 @@ class UserCreation extends Report {
             if (empty($row[0]))
                 $row[0] = 0;
 
-            //$insert["{$queryname}"] = $row[0];
-            $update[] = "{$queryname} = {$row[0]}";
+            $insert["{$queryname}"] = $row[0];
+            //$update[] = "{$queryname} = {$row[0]}";
         }
 
-        //$qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
-        $qry = "UPDATE {$this->table} SET ".implode(', ', $update)." WHERE date = '{$date}'";
+        $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
+        //$qry = "UPDATE {$this->table} SET ".implode(', ', $update)." WHERE date = '{$date}'";
         
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row");

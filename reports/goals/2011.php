@@ -24,7 +24,7 @@ class Goals2011 extends Report {
         // Add-on creation last 30 days
         $_qry = $this->db->query_stats("SELECT SUM(type1) AS extensions_created, SUM(sdk) AS sdk_created, SUM(restartless) AS restartless_created FROM addons_creation WHERE date >= CURDATE() - INTERVAL 30 DAY");
         $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
-        $data['addons_creation']['30days'][] = $_row;
+        $data['addons_creation']['30days'] = $_row;
         
         // Add-on creation monthly history
         $_qry = $this->db->query_stats("SELECT LEFT(date, 7) AS month, SUM(type1) AS extensions_created, SUM(sdk) AS sdk_created, SUM(restartless) AS restartless_created FROM addons_creation WHERE date >= '2010' GROUP BY month ORDER BY month");
@@ -40,14 +40,15 @@ class Goals2011 extends Report {
         $file = HADOOP_DATA.'/goals-2011.json';
         file_put_contents($file, json_encode($data));
         
-        system("scp {$file} areweaddeduponyet@areweaddeduponyet.com:./panorama-drop/");
+        $this->log(shell_exec("scp {$file} areweaddeduponyet@areweaddeduponyet.com:./panorama-drop/"));
+        
     }
 }
 
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
     $report = new Goals2011;
-    $report->getData();
+    $report->analyzeDay();
 }
 
 ?>
