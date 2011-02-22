@@ -11,28 +11,39 @@ class AddonCreation extends Report {
     public function analyzeDay($date = '') {
         if (empty($date))
             $date = date('Y-m-d');
-        
-        $qry = "SELECT addontype_id, COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' GROUP BY addontype_id ORDER BY addontype_id";
-        
-        $_types = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
-        
-        $fields = '';
-        $values = '';
-        $total = 0;
-        if (mysql_num_rows($_types) > 0) {
-            while ($type = mysql_fetch_array($_types, MYSQL_NUM)) {
-                $fields .= ", type{$type[0]}";
-                $values .= ','.$type[1];
-                $total += $type[1];
-            }
-        }
-        
-        $qry = "INSERT INTO {$this->table} (date, total{$fields}) VALUES ('{$date}', {$total}{$values})";
+            
+        $insert = array();
 
+        $queries = array(
+            'total' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%'",
+            'type1' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 1",
+            'type2' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 2",
+            'type3' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 3",
+            'type4' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 4",
+            'type5' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 5",
+            'type9' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 9",
+            'sdk' => "SELECT COUNT(*) FROM addons INNER JOIN versions ON addons.current_version = versions.id INNER JOIN files ON versions.id = files.version_id AND files.platform_id = 1 WHERE files.jetpack = 1 AND DATE(addons.created) = '%DATE%'",
+            'restartless' => "SELECT COUNT(*) FROM addons INNER JOIN versions ON addons.current_version = versions.id INNER JOIN files ON versions.id = files.version_id AND files.platform_id = 1 WHERE files.no_restart = 1 AND DATE(addons.created) = '%DATE%'"
+        );
+
+        foreach ($queries as $queryname => $query) {
+            $qry = str_replace('%DATE%', $date, $query);
+
+            $_rows = $this->db->query_amo($qry);
+            $row = mysql_fetch_array($_rows, MYSQL_NUM);
+
+            if (empty($row[0]))
+                $row[0] = 0;
+
+            $insert["{$queryname}"] = $row[0];
+        }
+
+        $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
+        
         if ($this->db->query_stats($qry))
-            $this->log("{$date} - Inserted row ({$total} total)");
+            $this->log("{$date} - Inserted row");
         else
-            $this->log("{$date} - Problem inserting row ({$total} total)");
+            $this->log("{$date} - Problem inserting row");
     }
     
     /**

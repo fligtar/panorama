@@ -11,18 +11,33 @@ class UserCreation extends Report {
     public function analyzeDay($date = '') {
         if (empty($date))
             $date = date('Y-m-d');
-        
-        $qry = "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%'";
-        $_total = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
-        $total = mysql_fetch_array($_total);
-        $total = $total[0];
-        
-        $qry = "INSERT INTO {$this->table} (date, total) VALUES ('{$date}', {$total})";
+            
+        $insert = array();
 
+        $queries = array(
+            'total' => "SELECT COUNT(*) FROM users WHERE DATE(created) = '%DATE%'",
+            'new_extension_devs' => "SELECT COUNT(*) FROM users INNER JOIN addons_users ON users.id = addons_users.user_id INNER JOIN addons ON addons.id = addons_users.addon_id WHERE DATE(users.created) = '%DATE%' AND addons.addontype_id = 1",
+            'new_nonpersona_devs' => "SELECT COUNT(*) FROM users INNER JOIN addons_users ON users.id = addons_users.user_id INNER JOIN addons ON addons.id = addons_users.addon_id WHERE DATE(users.created) = '%DATE%' AND addons.addontype_id != 9"
+        );
+
+        foreach ($queries as $queryname => $query) {
+            $qry = str_replace('%DATE%', $date, $query);
+
+            $_rows = $this->db->query_amo($qry);
+            $row = mysql_fetch_array($_rows, MYSQL_NUM);
+
+            if (empty($row[0]))
+                $row[0] = 0;
+
+            $insert["{$queryname}"] = $row[0];
+        }
+
+        $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
+        
         if ($this->db->query_stats($qry))
-            $this->log("{$date} - Inserted row ({$total} total)");
+            $this->log("{$date} - Inserted row");
         else
-            $this->log("{$date} - Problem inserting row ({$total} total)");
+            $this->log("{$date} - Problem inserting row");
     }
     
     /**
