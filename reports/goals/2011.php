@@ -3,6 +3,7 @@ require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 
 class Goals2011 extends Report {
     public $table = 'goals_2011';
+    public $backfillable = true;
     
     /**
      * Pull data and store it for a single day's report
