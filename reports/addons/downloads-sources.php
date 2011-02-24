@@ -28,9 +28,6 @@ class AddonDownloadsSources extends Report {
                 if (strpos($source, 'external') !== false) {
                     $source = 'external';
                 }
-                if (strpos($source, 'mozcom') !== false) {
-                    $source = 'mozcom';
-                }
                 
                 if (array_key_exists($source, $sources)) {
                     $sources[$source] += $count;
@@ -41,17 +38,7 @@ class AddonDownloadsSources extends Report {
             }
         }
         
-        $fields = '';
-        $values = '';
-        foreach ($sources as $source => $count) {
-            $source = str_replace('-', '_', $source);
-            if ($source == 'null') $source = 'unknown';
-            
-            $fields .= ", ".$source;
-            $values .= ','.$count;
-        }
-        
-        $qry = "INSERT INTO {$this->table} (date, total{$fields}) VALUES ('{$date}', {$total}{$values})";
+        $qry = "INSERT INTO {$this->table} (date, total, sources) VALUES ('{$date}', {$total}, '".addslashes(json_encode($sources))."')";
 
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row ({$total} total)");
@@ -63,9 +50,9 @@ class AddonDownloadsSources extends Report {
      * Generate the CSV for graphs
      */
     public function generateCSV($graph) {
-        $columns = array(
-            'total' => 'All Sources',
-            'unknown' => 'Unknown',
+        $pretty = array(
+            '_total' => 'All Sources',
+            'null' => 'Unknown',
             'category' => 'Category Browse',
             'search' => 'Search Results',
             'collection' => 'Collections',
@@ -88,30 +75,62 @@ class AddonDownloadsSources extends Report {
             'fxfirstrun' => 'Firefox Firstrun',
             'fxwhatsnew' => 'Firefox Updated',
             'creatured' => 'Category Features',
-            'version_history' => 'Version History',
-            'addon_detail_version' => 'Add-on Details (Version Area)',
-            'discovery_pane' => 'Discovery Pane',
-            'discovery_pane_details' => 'Discovery Pane Details'
+            'version-history' => 'Version History',
+            'addon-detail-version' => 'Add-on Details (Version Area)',
+            'discovery-pane' => '(Old) Discovery Pane',
+            'discovery-pane-details' => '(Old) Discovery Pane Details',
+            'discovery-details' => 'Discovery Pane Details',
+            'discovery-learnmore' => 'Discovery Pane Learn More'
         );
         
         if ($graph == 'current') {
             echo "Label,Count\n";
             
-            $_values = $this->db->query_stats("SELECT ".implode(', ', array_keys($columns))." FROM {$this->table} ORDER BY date DESC LIMIT 1");
+            $_values = $this->db->query_stats("SELECT sources FROM {$this->table} ORDER BY date DESC LIMIT 1");
             $values = mysql_fetch_array($_values, MYSQL_ASSOC);
+            $values = json_decode($values['sources'], true);
             
             foreach ($values as $column => $value) {
                 if (in_array($column, array('total'))) continue;
                 
-                echo "{$columns[$column]},{$value}\n";
+                if (!empty($pretty[$column]))
+                    echo "{$pretty[$column]},{$value}\n";
+                else
+                    echo "{$column},{$value}\n"; 
             }
         }
         elseif ($graph == 'history') {
-            echo "Date,".implode(',', $columns)."\n";
-
-            $dates = $this->db->query_stats("SELECT date, ".implode(', ', array_keys($columns))." FROM {$this->table} ORDER BY date");
+            $headers = array();
+            $sources = array();
+            
+            $dates = $this->db->query_stats("SELECT date, total, sources FROM {$this->table} ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
-                echo implode(',', $date)."\n";
+                $sources[$date['date']] = json_decode($date['sources'], true);
+                $sources[$date['date']]['_total'] = $date['total'];
+                $headers = array_merge($headers, array_keys($sources[$date['date']]));
+            }
+            
+            $headers = array_unique($headers);
+            sort($headers);
+            
+            echo "Date";
+            foreach ($headers as $header) {
+                if (!empty($pretty[$header]))
+                    echo ",{$pretty[$header]}";
+                else
+                    echo ",{$header}";
+            }
+            echo "\n";
+            
+            foreach ($sources as $date => $source) {
+                echo $date;
+                foreach ($headers as $header) {
+                    if (empty($source[$header]))
+                        echo ",0";
+                    else
+                        echo ",{$source[$header]}";
+                }
+                echo "\n";
             }
         }
     }

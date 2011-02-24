@@ -83,7 +83,7 @@ var reports = {
                         chart: {
                             renderTo: 'addon-downloads-sources-history',
                             defaultSeriesType: 'area',
-                            marginBottom: 130
+                            marginBottom: 160
                         },
                         title: { text: 'Add-on Downloads by Source' },
                         tooltip: {

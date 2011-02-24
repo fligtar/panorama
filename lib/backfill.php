@@ -1,14 +1,14 @@
 <?php
 error_reporting(E_ERROR);
 define('OVERLORD', true);
-require_once '../reports/goals/2011.php';
+require_once '../reports/addons/downloads-sources.php';
 
 ob_start();
 
-$report = new Goals2011;
+$report = new AddonDownloadsSources;
 
-$report->backfill('2011-01-14');
-//$report->backfill('2010-05-07', '2010-05-07');
+//$report->backfill('2011-01-14');
+$report->backfill('2009-10-21', '2009-12-31');
 
 ob_end_flush();
 
