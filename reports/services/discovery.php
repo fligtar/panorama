@@ -29,12 +29,18 @@ class ServicesDiscovery extends Report {
     /**
      * Generate the CSV for graphs
      */
-     public function generateCSV($graph) {
-         $columns = array(
-             'pane' => 'Main Pane',
-             'details' => 'Details View',
-             'downloads_pane' => 'Downloads from Pane',
-             'downloads_details' => 'Downloads from Details'
+    public function generateCSV($graph) {
+        $api = array(
+            'pane' => 'Pane Views',
+            'details' => 'Details Page Views'
+        );
+        $sources = array(
+             'discovery-details' => 'Downloads from Details',
+             'discovery-learnmore' => 'Downloads from Learn More',
+             'discovery-promo' => 'Downloads from Promos',
+             'discovery-featured' => 'Downloads from Featured',
+             'discovery-top' => 'Downloads from Top',
+             'discovery-personalrec' => 'Downloads from Personalized Recs'
          );
 
          if ($graph == 'current') {
@@ -48,21 +54,37 @@ class ServicesDiscovery extends Report {
              }
          }
          elseif ($graph == 'history') {
-             echo "Date,".implode(',', $columns)."\n";
+             echo "Date,".implode(',', $api).','.implode(',', $sources).",Pane Downloads (All)\n";
 
-             $dates = $this->db->query_stats("SELECT d.date, d.pane, d.details, IFNULL(ads.discovery_pane, 0) AS downloads_pane, IFNULL(ads.discovery_pane_details, 0) AS downloads_details FROM {$this->table} AS d LEFT JOIN addons_downloads_sources AS ads ON ads.date = d.date ORDER BY d.date");
+             $dates = $this->db->query_stats("SELECT d.date, d.pane, d.details, ads.sources FROM {$this->table} AS d LEFT JOIN addons_downloads_sources AS ads ON ads.date = d.date ORDER BY d.date");
              while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
-                 echo implode(',', $date)."\n";
-             }
-         }
-     }
- }
+                echo "{$date['date']},{$date['pane']},{$date['details']}";
+                 
+                $_source = json_decode($date['sources'], true);
+                // Merge old sources
+                $_source['discovery-learnmore'] += $_source['discovery-pane'];
+                $_source['discovery-details'] += $_source['discovery-pane-details'];
+                $total = 0;
+                
+                foreach ($sources as $source => $desc) {
+                    if (!empty($_source[$source])) {
+                        $total += $_source[$source];
+                        echo ",{$_source[$source]}";
+                    }
+                    else
+                        echo ",0";
+                }
+                echo ",{$total}\n";
+            }
+        }
+    }
+}
 
- // If this is not being controlled by something else, output the CSV by default
- if (!defined('OVERLORD')) {
-     $graph = !empty($_GET['graph']) ? $_GET['graph'] : 'current';
-     $report = new ServicesDiscovery;
-     $report->generateCSV($graph);
- }
+// If this is not being controlled by something else, output the CSV by default
+if (!defined('OVERLORD')) {
+ $graph = !empty($_GET['graph']) ? $_GET['graph'] : 'current';
+ $report = new ServicesDiscovery;
+ $report->generateCSV($graph);
+}
 
 ?>

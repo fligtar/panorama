@@ -1691,7 +1691,8 @@ var reports = {
                     options: {
                         chart: {
                             renderTo: 'services-discovery-history',
-                            defaultSeriesType: 'spline'
+                            defaultSeriesType: 'spline',
+                            marginBottom: 100
                         },
                         title: { text: 'Discovery Pane Interactions' },
                         series: []
