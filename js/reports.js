@@ -469,7 +469,7 @@ var reports = {
                             marginRight: 80
                         },
                         title: { text: 'Add-on Status' },
-                        subtitle: { text: 'yesterday' },
+                        subtitle: { text: 'real-time data' },
                         tooltip: {
                             formatter: function() {
                             	return '<b>'+ this.point.name +'</b>: '+ Highcharts.numberFormat(this.y, 0) +' add-ons (' + Highcharts.numberFormat(this.percentage, 2) + '%)';

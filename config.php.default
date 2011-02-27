@@ -10,6 +10,8 @@ define('STATS_DB_NAME', '');
 define('STATS_DB_USER', '');
 define('STATS_DB_PASS', '');
 
+define('METRICS_DB_NAME', '');
+
 // No trailing slash
 define('HADOOP_DATA', '');
 ?>

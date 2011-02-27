@@ -39,9 +39,9 @@ class AddonStatus extends Report {
     public function generateCSV($graph) {
         $labels = array(
             'Incomplete',
-            'Unreviewed',
+            'Awaiting Preliminary Review (Previously Unreviewed)',
             'Pending (Files only)',
-            'Awaiting Review',
+            'Awaiting Full Review',
             'Fully Reviewed',
             'Admin Disabled',
             'Self-hosted',

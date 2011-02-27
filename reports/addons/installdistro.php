@@ -1,8 +1,8 @@
 <?php
 require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 
-class AddonInstalldistro extends Report {
-    public $table = 'addons_installdistro';
+class AddonInstalled extends Report {
+    public $table = 'addons_installed';
     public $backfillable = true;
     public $cron_type = 'yesterday';
     
@@ -15,8 +15,13 @@ class AddonInstalldistro extends Report {
         
         $data_dir = HADOOP_DATA.'/'.$date;
         
-        $data = file_get_contents($data_dir.'/metadata-installed-distro.txt');
+        $data = file_get_contents($data_dir.'/metadata-installed-fx.txt');
         $data = explode("\n", $data);
+        /*$qry = "SELECT distro FROM old_addons_installdistro WHERE date = '%DATE%'";
+        
+        $import = $this->db->query_stats(str_replace('%DATE%', $date, $qry));
+        $installed = mysql_fetch_array($import);
+        $installed = json_decode($installed[0], true);*/
         
         foreach ($data as $val) {
             if (empty($val)) continue;
@@ -24,16 +29,22 @@ class AddonInstalldistro extends Report {
             $installed[$s[0]] = $s[1];
         }
         
-        $total = array_sum($installed);
+        $insert['users_with_addons'] = array_sum($installed);
         
-        $subtotal = 0;
+        $insert['addons_installed'] = 0;
         foreach ($installed as $num => $count) {
-            $subtotal += $num * $count;
+            $insert['addons_installed'] += $num * $count;
         }
-        $average = round($subtotal / $total, 0);
+        $insert['average_installed'] = round($insert['addons_installed'] / $insert['users_with_addons'], 0);
         
-        $qry = "INSERT INTO {$this->table} (date, total, average, distro) VALUES ('{$date}', {$total}, {$average}, '".json_encode($installed)."')";
+        $qry = "SELECT adu_count FROM raw_adu WHERE date = '%DATE%' AND product_name = 'Firefox' AND product_version = '4.0'";
         
+        $_adu = $this->db->query_metrics(str_replace('%DATE%', $date, $qry));
+        $adu = mysql_fetch_array($_adu);
+        $insert['penetration'] = round($insert['users_with_addons'] / $adu[0], 2);
+        
+        $qry = "INSERT INTO {$this->table} (date, addons_installed, average_installed, users_with_addons, penetration, distro) VALUES ('{$date}', {$insert['addons_installed']}, {$insert['average_installed']}, {$insert['users_with_addons']}, {$insert['penetration']} '".json_encode($installed)."')";
+        echo $qry;exit;
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row ({$total} total)");
         else
@@ -69,7 +80,7 @@ class AddonInstalldistro extends Report {
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
     $graph = !empty($_GET['graph']) ? $_GET['graph'] : 'current';
-    $report = new AddonInstalldistro;
+    $report = new AddonInstalled;
     $report->generateCSV($graph);
 }
 

@@ -20,11 +20,25 @@ class Database {
         return mysql_query($qry, $this->db);
     }
     
+    public function query_metrics($qry) {
+        if ($this->selected != 'metrics')
+            $this->connect_metrics();
+        
+        return mysql_query($qry, $this->db);
+    }
+    
     private function connect_amo() {
         $this->disconnect();
         $this->db = mysql_connect(AMO_DB_HOST, AMO_DB_USER, AMO_DB_PASS);
         mysql_select_db(AMO_DB_NAME, $this->db);
         $this->selected = 'amo';
+    }
+    
+    private function connect_metrics() {
+        $this->disconnect();
+        $this->db = mysql_connect(STATS_DB_HOST, STATS_DB_USER, STATS_DB_PASS);
+        mysql_select_db(METRICS_DB_NAME, $this->db);
+        $this->selected = 'metrics';
     }
     
     private function connect_stats() {
