@@ -8,7 +8,10 @@ import hive
 from lifter import Lifter
 from settings import *
 
-class Usage(Lifter):
+class AddonUsage(Lifter):
+    """This lifter looks through daily add-on metadata pings and gathers
+    lots of data about the ecosystem for that day, like the number of 
+    users with add-ons, how many of the add-ons are hosted on AMO, etc."""
     
     def lift(self):
         hive_file = self.hive_data()
@@ -18,6 +21,8 @@ class Usage(Lifter):
         self.hive_cleanup(hive_file)
     
     def hive_data(self):
+        """Performs a HIVE query and writes it to a text file."""
+        
         if HIVE_ALTERNATE is not None:
             self.log('Hive alternate file used')
             return HIVE_ALTERNATE
@@ -32,6 +37,8 @@ class Usage(Lifter):
         return hive_file
     
     def hive_cleanup(self, hive_file):
+        """Deletes the hive file once we're done with it."""
+        
         if HIVE_ALTERNATE is not None:
             hive.cleanup(hive_file)
 
@@ -62,6 +69,7 @@ class Usage(Lifter):
         not_stored = re.compile('(%s)' % '|'.join(not_stored))
 
         users_with_addons = 0
+        addons_installed = 0
         guids = collections.defaultdict(int)
         install_distro = collections.defaultdict(int)
 
@@ -80,6 +88,7 @@ class Usage(Lifter):
                     if not not_counted.match(guid):
                         addon_user = True
                         counted_guids += 1
+                        addons_installed += _count
     
                 if addon_user is True:
                     users_with_addons += _count
@@ -88,11 +97,12 @@ class Usage(Lifter):
                     install_distro[counted_guids] += _count
         
         self.log('GUIDs from file processed')
-        addons_installed = sum(guids.itervalues())
-        average_installed = addons_installed / users_with_addons
+        addons_installed_all = sum(guids.itervalues())
+        average_installed = round(addons_installed / users_with_addons, 2)
         unique_guids = len(guids)
         amo = self.check_amo(guids)
-        penetration = round(users_with_addons / self.get_adu(), 2)
+        penetration_adu = round(users_with_addons / self.get_adu(), 2)
+        penetration = round(users_with_addons / guids['{972ce4c6-7e08-4474-a285-3208198ce6fd}'], 2)
         
         self.log('Additional calculations made')
         self.time_event('calculate_usage')
@@ -103,9 +113,11 @@ class Usage(Lifter):
                 'date': self.date,
                 'users_with_addons': users_with_addons,
                 'addons_installed': addons_installed,
+                'addons_installed_all': addons_installed_all,
                 'average_installed': average_installed,
                 'unique_guids': unique_guids,
                 'penetration': penetration,
+                'penetration_adu': penetration_adu,
                 'amo_known_count': amo['known_count'],
                 'amo_known_adu': amo['known_adu'],
                 'amo_active_count': amo['active_count'],
@@ -115,6 +127,8 @@ class Usage(Lifter):
         }
     
     def check_amo(self, guids):
+        """Pull all known GUIDs from AMO and compare to our set."""
+        
         known_count = 0
         known_adu = 0
         active_count = 0
@@ -148,6 +162,8 @@ class Usage(Lifter):
         }
     
     def get_adu(self, product_name='Firefox', product_version='4.0'):
+        """Gets application ADUs for the date from metrics."""
+        
         db = self.get_database('metrics').cursor()
         db.execute("SELECT adu_count FROM raw_adu WHERE date = '%s' AND product_name = '%s' AND product_version = '%s'" % (self.date, product_name, product_version))
         adu = int(db.fetchall()[0][0])
@@ -157,6 +173,8 @@ class Usage(Lifter):
         return adu
 
     def commit(self, data):
+        """Save our findings to the db."""
+        
         db = self.get_database().cursor()
         self.log('Inserting addons_installed...')
         db.execute("""INSERT INTO addons_installed (%s) 
@@ -172,4 +190,4 @@ class Usage(Lifter):
         db.close()
 
 if __name__ == '__main__':
-    Usage()
+    AddonUsage()

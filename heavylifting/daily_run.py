@@ -1,4 +1,4 @@
-import usage
+import lifter_usage
 
-u = usage.Usage()
+u = lifter_usage.AddonUsage()
 del u
