@@ -1,0 +1,23 @@
+DATABASES = {
+    'panorama': {
+        'host': '',
+        'user': '',
+        'passwd': '',
+        'db': '',
+    },
+    'amo': {
+        'host': '',
+        'user': '',
+        'passwd': '',
+        'db': '',
+    },
+    'metrics': {
+        'host': '',
+        'user': '',
+        'passwd': '',
+        'db': '',
+    },
+}
+
+# No trailing slash!
+FILES = ''
