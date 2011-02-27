@@ -19,5 +19,8 @@ DATABASES = {
     },
 }
 
-# No trailing slash!
+# Path to files directory. No trailing slash!
 FILES = ''
+
+# If Hive isn't used on this machine, set to path of data file
+HIVE_ALTERNATE = None

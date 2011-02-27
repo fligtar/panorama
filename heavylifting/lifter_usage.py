@@ -4,20 +4,38 @@ import sys
 import re
 import urllib2
 import json
+import hive
 from lifter import Lifter
+from settings import *
 
 class Usage(Lifter):
     
     def lift(self):
-        data = self.calculate_usage()
+        hive_file = self.hive_data()
+        data = self.calculate_usage(hive_file)
         print data['addons_installed']
         self.commit(data)
+        self.hive_cleanup(hive_file)
     
     def hive_data(self):
-        #hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT guid, COUNT(1) as num FROM addons_pings WHERE ds = '2011-02-24' AND src='firefox' GROUP BY guid ORDER BY num;" > addons.txt
-        pass
+        if HIVE_ALTERNATE is not None:
+            self.log('Hive alternate file used')
+            return HIVE_ALTERNATE
+        
+        hive_file = hive.query("""SELECT guid, COUNT(1) as num 
+                    FROM addons_pings WHERE ds = '%s' AND src='firefox' 
+                    GROUP BY guid ORDER BY num;""" % self.date)
+        
+        self.time_event('hive_data')
+        self.log('Hive file finished')
+        
+        return hive_file
+    
+    def hive_cleanup(self, hive_file):
+        if HIVE_ALTERNATE is not None:
+            hive.cleanup(hive_file)
 
-    def calculate_usage(self):
+    def calculate_usage(self, hive_file):
         """This function reads a file of add-on GUID combinations and records
         how many times they occur, along with additional usage information."""
         
@@ -47,7 +65,7 @@ class Usage(Lifter):
         guids = collections.defaultdict(int)
         install_distro = collections.defaultdict(int)
 
-        with open(self.file_path + '/2011-02-24/addons.txt') as f:
+        with open(hive_file) as f:
             for line in f:
                 _guids, _count = line.split()
                 _count = int(_count)
