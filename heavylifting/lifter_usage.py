@@ -73,31 +73,28 @@ class AddonUsage(Lifter):
         guids = collections.defaultdict(int)
         install_distro = collections.defaultdict(int)
 
-        f = open(hive_file)
-        
-        for line in f:
-            _guids, _count = line.split()
-            _count = int(_count)
-            addon_user = False
-            counted_guids = 0
-            
-            for guid in _guids.split(','):
-                if guid[-1:] == '?':
-                    guid = guid[:-1]
-                if not not_stored.match(guid):
-                    guids[urllib2.unquote(guid)] += _count
-                if not not_counted.match(guid):
-                    addon_user = True
-                    counted_guids += 1
-                    addons_installed += _count
-
-            if addon_user is True:
-                users_with_addons += _count
-            
-            if counted_guids > 0:
-                install_distro[counted_guids] += _count
-        
-        f.close()
+        with open(hive_file) as f:
+            for line in f:
+                _guids, _count = line.split()
+                _count = int(_count)
+                addon_user = False
+                counted_guids = 0
+                
+                for guid in _guids.split(','):
+                    if guid[-1:] == '?':
+                        guid = guid[:-1]
+                    if not not_stored.match(guid):
+                        guids[urllib2.unquote(guid)] += _count
+                    if not not_counted.match(guid):
+                        addon_user = True
+                        counted_guids += 1
+                        addons_installed += _count
+    
+                if addon_user is True:
+                    users_with_addons += _count
+                
+                if counted_guids > 0:
+                    install_distro[counted_guids] += _count
         
         self.log('GUIDs from file processed')
         addons_installed_all = sum(guids.itervalues())
