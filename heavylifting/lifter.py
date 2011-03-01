@@ -2,6 +2,7 @@ import sys
 import datetime
 import MySQLdb as mysql
 import time
+import hive
 from settings import *
 
 class Lifter:
@@ -38,6 +39,12 @@ class Lifter:
             self.selected_db = which
         
         return self.db
+    
+    def hive_cleanup(self, hive_file):
+        """Deletes the hive file once we're done with it."""
+
+        if HIVE_ALTERNATE is None:
+            hive.cleanup(hive_file)
     
     def log(self, msg):
         """Print a message along with the class name."""

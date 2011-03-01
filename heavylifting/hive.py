@@ -14,3 +14,4 @@ def cleanup(file_path):
     """Delete the file."""
     
     os.remove(file_path)
+    print 'Deleting', file_path
