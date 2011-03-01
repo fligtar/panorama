@@ -30,8 +30,8 @@ class StartupPerformance(Lifter):
         
         hive_file = hive.query("""SELECT guid, appos, appversion, tmain, 
                     tfirstpaint, tsessionrestored FROM addons_pings 
-                    WHERE ds = '%s' AND src='%s' AND guid LIKE 
-                    '%972ce4c6-7e08-4474-a285-3208198ce6fd%';""" % (self.date, app))
+                    WHERE ds = '{date}' AND src='{app}' AND guid LIKE 
+                    '%972ce4c6-7e08-4474-a285-3208198ce6fd%';""".format(date=self.date, app=app))
         
         self.time_event('hive_data')
         self.log('Hive file finished')
