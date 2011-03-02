@@ -28,13 +28,14 @@ class StartupPerformance(Lifter):
             self.log('Hive alternate file used')
             return HIVE_ALTERNATE
         
+        self.log('Starting HIVE query...')
         hive_file = hive.query("""SELECT guid, appos, appversion, tmain, 
                     tfirstpaint, tsessionrestored FROM addons_pings 
                     WHERE ds = '{date}' AND src='{app}' AND guid LIKE 
                     '%972ce4c6-7e08-4474-a285-3208198ce6fd%';""".format(date=self.date, app=app))
         
         self.time_event('hive_data')
-        self.log('Hive file finished')
+        self.log('HIVE data obtained')
         
         return hive_file
 
@@ -42,6 +43,8 @@ class StartupPerformance(Lifter):
         """This function reads a file of add-on GUID combinations and start-up
         data and splits it into distributions of start-up seconds by number
         of add-ons installed"""
+        
+        self.log('Analyzing performance...')
         
         # These GUIDs aren't counted or stored
         not_counted = [
@@ -138,7 +141,7 @@ class StartupPerformance(Lifter):
             return r
         
         return {
-            'avg': round(sum(times) / _len, 2),
+            'avg': '%.2f' % sum(times) / _len,
             'median': times[int(math.floor(_len / 2))],
         }
     
