@@ -141,7 +141,7 @@ class StartupPerformance(Lifter):
             return r
         
         return {
-            'avg': '%.2f' % sum(times) / _len,
+            'avg': '%.2f' % (sum(times) / _len),
             'median': times[int(math.floor(_len / 2))],
         }
     
