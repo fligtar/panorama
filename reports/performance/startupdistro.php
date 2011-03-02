@@ -2,7 +2,7 @@
 require_once dirname(dirname(dirname(__FILE__))).'/lib/report.class.php';
 
 class PerformanceStartupdistro extends Report {
-    public $table = 'performance_startupdistro';
+    public $table = 'performance_startupdistro2';
     public $backfillable = true;
     public $cron_type = 'yesterday';
     
@@ -10,6 +10,7 @@ class PerformanceStartupdistro extends Report {
      * Pull data and store it for a single day's report
      */
     public function analyzeDay($date = '') {
+        return;
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
         

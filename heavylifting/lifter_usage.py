@@ -15,6 +15,7 @@ class AddonUsage(Lifter):
     
     def lift(self):
         for app in ['firefox', 'mobile', 'seamonkey']:
+            self.log('Starting %s' % app)
             hive_file = self.hive_data(app)
             data = self.calculate_usage(hive_file)
             self.commit(data, app)

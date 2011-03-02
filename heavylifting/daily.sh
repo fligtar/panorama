@@ -51,6 +51,6 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 #hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT commas, COUNT(1) FROM (SELECT (LENGTH(request_url) - LENGTH(REGEXP_REPLACE(request_url, ',', '')) + 1) as commas FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%api/%/search/guid%972ce4c6-7e08-4474-a285-3208198ce6fd%src=mobile%') temp GROUP BY commas ORDER BY commas;" | tee $DATA/metadata-installed-mobile.txt
 
 # Firefox start-up performance
-hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored FROM addons_pings WHERE ds = '$DATE';" > $DATA/metadata-perf.txt
+#hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored FROM addons_pings WHERE ds = '$DATE';" > $DATA/metadata-perf.txt
 
 scp -r $DATA/ fligtar@khan:./public_html/panorama/hadoop-drop/

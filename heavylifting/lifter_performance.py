@@ -129,6 +129,8 @@ class StartupPerformance(Lifter):
             for measure, times in measures.iteritems():
                 addon_count[num_addons][measure] = self.calculations(times)
         
+        addon_count = [{k: addon_count[k]} for k in sorted(addon_count, key=int)]
+        
         self.log('Additional calculations made')
         self.time_event('analyze_performance')
         
