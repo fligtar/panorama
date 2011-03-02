@@ -46,6 +46,13 @@ class Lifter:
         if HIVE_ALTERNATE is None:
             hive.cleanup(hive_file)
     
+    def sort_dict(self, d):
+        """Sorts a dictionary by int key"""
+        r = {}
+        for k in sorted(d, key=int):
+            r[k] = d[k]
+        return r
+    
     def log(self, msg):
         """Print a message along with the class name."""
         

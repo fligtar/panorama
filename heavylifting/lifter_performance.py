@@ -129,8 +129,6 @@ class StartupPerformance(Lifter):
             for measure, times in measures.iteritems():
                 addon_count[num_addons][measure] = self.calculations(times)
         
-        addon_count = [{k: addon_count[k]} for k in sorted(addon_count, key=int)]
-        
         self.log('Additional calculations made')
         self.time_event('analyze_performance')
         
@@ -149,6 +147,7 @@ class StartupPerformance(Lifter):
             return r
         
         return {
+            'count': _len,
             'avg': '%.2f' % (sum(times) / _len),
             'median': times[int(math.floor(_len / 2))],
         }
@@ -166,7 +165,7 @@ class StartupPerformance(Lifter):
                 for measure in ['tmain', 'tfirstpaint', 'tsessionrestored']:
                     for stat, value in appversions[appversion][measure].iteritems():
                         sql[measure + '_' + stat] = value
-                    sql[measure + '_seconds_distro'] = json.dumps(appversions[appversion][measure + '_distro'])
+                    sql[measure + '_seconds_distro'] = json.dumps(self.sort_dict(appversions[appversion][measure + '_distro']))
                 
                 sql['count'] = appversions[appversion]['count']
                 sql['app'] = app
@@ -185,7 +184,7 @@ class StartupPerformance(Lifter):
         self.log('Inserting performance_addondistro...')
         db.execute("""INSERT INTO performance_addondistro (date, app, distro)
                     VALUES ('{date}', '{app}', '{distro}')""".format(
-                    date=self.date, app=app, distro=json.dumps(data['addon_count'])))
+                    date=self.date, app=app, distro=json.dumps(self.sort_dict(data['addon_count']))))
 
         db.close()
 
