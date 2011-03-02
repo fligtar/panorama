@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ERROR);
 define('OVERLORD', true);
-require_once '../reports/addons/installdistro.php';
+require_once '../web/reports/addons/installdistro.php';
 
 ob_start();
 

@@ -11,7 +11,7 @@ ob_start();
 
 // Iterate through reports directories to get every report
 $containers = array();
-$reports_dir = '../reports';
+$reports_dir = '../web/reports';
 $cron_type = (!empty($argv[1]) && $argv[1] == 'yesterday') ? 'yesterday' : 'today';
 $date = !empty($argv[2]) ? $argv[2] : '';
  
