@@ -13,7 +13,7 @@ DATA=/home/fligtar/data/$DATE
 mkdir $DATA
 
 # DEBUG
-hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SHOW PARTITIONS research_logs;"
+#hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SHOW PARTITIONS research_logs;"
 
 # Discovery Pane views
 hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='services.addons.mozilla.org' AND request_url LIKE '%discovery/pane%';" | tee $DATA/discovery.txt
@@ -53,4 +53,4 @@ hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT COUNT(1) FROM res
 # Firefox start-up performance
 #hive --auxpath '/usr/lib/hive/lib/hive_contrib.jar' -e "SELECT guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored FROM addons_pings WHERE ds = '$DATE';" > $DATA/metadata-perf.txt
 
-scp -r $DATA/ fligtar@khan:./public_html/panorama/hadoop-drop/
+scp -r $DATA/ fligtar@khan:./panorama/hadoop-drop/

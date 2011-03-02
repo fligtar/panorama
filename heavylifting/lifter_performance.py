@@ -143,6 +143,7 @@ class StartupPerformance(Lifter):
         """Perform calculations on a list of times."""
         r = {}
         _len = len(times)
+        times = sorted(times)
         
         if _len == 0:
             return r
