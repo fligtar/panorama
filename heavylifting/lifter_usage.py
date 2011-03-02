@@ -14,32 +14,40 @@ class AddonUsage(Lifter):
     users with add-ons, how many of the add-ons are hosted on AMO, etc."""
     
     def lift(self):
-        hive_file = self.hive_data()
-        data = self.calculate_usage(hive_file)
-        print data['addons_installed']
-        self.commit(data)
-        self.hive_cleanup(hive_file)
+        for app in ['firefox', 'mobile', 'seamonkey']:
+            hive_file = self.hive_data(app)
+            data = self.calculate_usage(hive_file)
+            self.commit(data, app)
+            self.hive_cleanup(hive_file)
     
-    def hive_data(self):
+    def hive_data(self, app):
         """Performs a HIVE query and writes it to a text file."""
         
         if HIVE_ALTERNATE is not None:
             self.log('Hive alternate file used')
             return HIVE_ALTERNATE
         
-        hive_file = hive.query("""SELECT guid, COUNT(1) as num 
-                    FROM addons_pings WHERE ds = '{date}' AND src='firefox' AND 
-                    guid LIKE '%972ce4c6-7e08-4474-a285-3208198ce6fd%' 
-                    GROUP BY guid ORDER BY num;""".format(date=self.date))
+        self.log('Starting HIVE query...')
+        if app == 'mobile':
+            hive_file = hive.query("""SELECT guid, COUNT(1) as num 
+                        FROM addons_pings WHERE ds = '{date}' AND src='{app}'  
+                        GROUP BY guid ORDER BY num;""".format(date=self.date, app=app))
+        else:
+            hive_file = hive.query("""SELECT guid, COUNT(1) as num 
+                        FROM addons_pings WHERE ds = '{date}' AND src='{app}' AND 
+                        guid LIKE '%972ce4c6-7e08-4474-a285-3208198ce6fd%' 
+                        GROUP BY guid ORDER BY num;""".format(date=self.date, app=app))
         
         self.time_event('hive_data')
-        self.log('Hive file finished')
+        self.log('HIVE data obtained')
         
         return hive_file
 
     def calculate_usage(self, hive_file):
         """This function reads a file of add-on GUID combinations and records
         how many times they occur, along with additional usage information."""
+        
+        self.log('Calculating usage...')
         
         # These GUIDs aren't installed by the user and don't count towards an
         # "add-on user" but are still stored in the DB
@@ -167,20 +175,22 @@ class AddonUsage(Lifter):
         
         return adu
 
-    def commit(self, data):
+    def commit(self, data, app):
         """Save our findings to the db."""
         
+        data['addons_installed']['app'] = app
         db = self.get_database().cursor()
         self.log('Inserting addons_installed...')
         db.execute("""INSERT INTO addons_installed (%s) 
                     VALUES ('%s')""" % (', '.join(data['addons_installed']), 
                     "','".join(map(str, data['addons_installed'].values()))))
         
-        self.log('Inserting addons_usage...')
-        for guid, count in data['addons_usage'].iteritems():
-            if count >= 10:
-                db.execute("""INSERT INTO addons_usage (date, guid, installs)
-                            VALUES ('%s', '%s', %d)""" % (self.date, guid, count))
+        if app == 'firefox':
+            self.log('Inserting addons_usage...')
+            for guid, count in data['addons_usage'].iteritems():
+                if count >= 10:
+                    db.execute("""INSERT INTO addons_usage (date, guid, installs)
+                                VALUES ('%s', '%s', %d)""" % (self.date, guid, count))
 
         db.close()
 

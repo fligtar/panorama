@@ -15,7 +15,7 @@ class StartupPerformance(Lifter):
     users with add-ons, how many of the add-ons are hosted on AMO, etc."""
     
     def lift(self):
-        for app in ['firefox']:
+        for app in ['firefox', 'mobile', 'seamonkey']:
             hive_file = self.hive_data(app)
             data = self.analyze_performance(hive_file)
             self.commit(data, app)
@@ -29,7 +29,12 @@ class StartupPerformance(Lifter):
             return HIVE_ALTERNATE
         
         self.log('Starting HIVE query...')
-        hive_file = hive.query("""SELECT guid, appos, appversion, tmain, 
+        if app == 'mobile':
+            hive_file = hive.query("""SELECT guid, appos, appversion, tmain, 
+                        tfirstpaint, tsessionrestored FROM addons_pings 
+                        WHERE ds = '{date}' AND src='{app}';""".format(date=self.date, app=app))
+        else:
+            hive_file = hive.query("""SELECT guid, appos, appversion, tmain, 
                     tfirstpaint, tsessionrestored FROM addons_pings 
                     WHERE ds = '{date}' AND src='{app}' AND guid LIKE 
                     '%972ce4c6-7e08-4474-a285-3208198ce6fd%';""".format(date=self.date, app=app))
