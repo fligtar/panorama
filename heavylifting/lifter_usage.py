@@ -50,12 +50,12 @@ class AddonUsage(Lifter):
             '%7BCAFEEFAC-.+-ABCDEFFEDCBA%7D', # Java Console
             'jqs%40sun\.com', # Java Quick Start
             '\d+%40personas\.mozilla\.org', # Personas
-            '\d+', # Greasemonkey scripts
+            '\d+$', # Greasemonkey scripts
             '.+%40greasespot.net', # Greasemonkey scripts
         ]
         # These GUIDs aren't stored in the DB
         not_stored = [
-            '\d+',
+            '\d+$',
             '.+%40greasespot.net',
             '\d+%40personas\.mozilla\.org',
         ]
