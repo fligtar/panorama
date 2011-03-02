@@ -220,6 +220,58 @@ class PerformanceStartupdistro extends Report {
                 $i++;
             }
         }
+        elseif ($graph == 'addons-median') {
+            echo "Label,tMain,tFirstPaint,tSessionRestored\n";
+            
+            $_date = !empty($date) ? " AND date='".addslashes($date)."'" : '';
+            $_row = $this->db->query_stats("SELECT distro FROM performance_addondistro WHERE app = '".addslashes($app)."'{$_date} ORDER BY date DESC LIMIT 1");
+            $row = mysql_fetch_array($_row, MYSQL_ASSOC);
+            $distro = json_decode($row['distro'], true);
+            
+            foreach ($distro as $addons => $measures) {
+                $data[$addons] = array(
+                    'tmain' => $measures['tmain']['median'],
+                    'tfirstpaint' => $measures['tfirstpaint']['median'],
+                    'tsessionrestored' => $measures['tsessionrestored']['median']
+                );
+            }
+
+            ksort($data);
+            
+            $i = 0;
+            foreach ($data as $label => $columns) {
+                if (!empty($limit) && $i >= $limit) break;
+                
+                echo "{$label},".implode(',', $columns)."\n";
+                $i++;
+            }
+        }
+        elseif ($graph == 'addons-avg') {
+            echo "Label,tMain,tFirstPaint,tSessionRestored\n";
+            
+            $_date = !empty($date) ? " AND date='".addslashes($date)."'" : '';
+            $_row = $this->db->query_stats("SELECT distro FROM performance_addondistro WHERE app = '".addslashes($app)."'{$_date} ORDER BY date DESC LIMIT 1");
+            $row = mysql_fetch_array($_row, MYSQL_ASSOC);
+            $distro = json_decode($row['distro'], true);
+            
+            foreach ($distro as $addons => $measures) {
+                $data[$addons] = array(
+                    'tmain' => $measures['tmain']['avg'],
+                    'tfirstpaint' => $measures['tfirstpaint']['avg'],
+                    'tsessionrestored' => $measures['tsessionrestored']['avg']
+                );
+            }
+
+            ksort($data);
+            
+            $i = 0;
+            foreach ($data as $label => $columns) {
+                if (!empty($limit) && $i >= $limit) break;
+                
+                echo "{$label},".implode(',', $columns)."\n";
+                $i++;
+            }
+        }
         elseif ($graph == 'average') {
             echo "Date,tMain,tFirstPaint,tSessionRestored\n";
 
@@ -237,9 +289,9 @@ class PerformanceStartupdistro extends Report {
             }
         }
         elseif ($graph == 'count') {
-            echo "Date,Start-ups Recorded,Add-ons Installed\n";
+            echo "Date,Start-ups Recorded\n";
 
-            $dates = $this->db->query_stats("SELECT date, count, addons FROM {$this->table} WHERE app = '".addslashes($app)."' AND os = '".addslashes($os)."' AND version = '".addslashes($version)."' ORDER BY date");
+            $dates = $this->db->query_stats("SELECT date, count FROM {$this->table} WHERE app = '".addslashes($app)."' AND os = '".addslashes($os)."' AND version = '".addslashes($version)."' ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
                 echo implode(',', $date)."\n";
             }

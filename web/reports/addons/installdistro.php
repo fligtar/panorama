@@ -59,7 +59,7 @@ class AddonInstalled extends Report {
         if ($graph == 'current') {
             echo "Label,Count\n";
 
-            $_values = $this->db->query_stats("SELECT distro FROM {$this->table} ORDER BY date DESC LIMIT 1");
+            $_values = $this->db->query_stats("SELECT distro FROM {$this->table} WHERE app='firefox' ORDER BY date DESC LIMIT 1");
             $values = mysql_fetch_array($_values, MYSQL_ASSOC);
             $distro = json_decode($values['distro']);
 
@@ -70,7 +70,7 @@ class AddonInstalled extends Report {
         elseif ($graph == 'history') {
             echo "Date,Total Installed,Average Installed\n";
 
-            $dates = $this->db->query_stats("SELECT date, total, average FROM {$this->table} ORDER BY date");
+            $dates = $this->db->query_stats("SELECT date, addons_installed, average_installed FROM {$this->table} WHERE app='firefox' ORDER BY date");
             while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
                 echo implode(',', $date)."\n";
             }

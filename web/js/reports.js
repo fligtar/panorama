@@ -1422,7 +1422,7 @@ var reports = {
                 defaults: {
                     'app': 'firefox',
                     'os': 'WINNT',
-                    'version': '4.0b11',
+                    'version': '4.0b12',
                     'date': ''
                 }
             },
@@ -1494,9 +1494,6 @@ var reports = {
                     		    }
                     		}
                         },
-                        xAxis: {
-                            tickInterval: 24 * 3600 * 1000
-                        },
                         plotOptions: {
                             spline: {
                                 marker: { 
@@ -1540,9 +1537,6 @@ var reports = {
                     		        return Highcharts.numberFormat(this.value, 0) + 'ms';
                     		    }
                     		}
-                        },
-                        xAxis: {
-                            tickInterval: 24 * 3600 * 1000
                         },
                         plotOptions: {
                             spline: {
@@ -1616,9 +1610,6 @@ var reports = {
                     		    }
                     		}
                         ],
-                        xAxis: {
-                            tickInterval: 24 * 3600 * 1000
-                        },
                         plotOptions: {
                             spline: {
                                 marker: { 
@@ -1642,6 +1633,98 @@ var reports = {
                             color: '#AA4643'
                         }
                     }
+                },
+                {
+                    base_subtitle: '%app% (all platforms)',
+                    base_url: 'reports/performance/startupdistro.php?action=graph&graph=addons-median&date=%date%&app=%app%&os=%os%&version=%version%&limit=31',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-addons-median',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Median Start-up by Add-ons Installed' },
+                        subtitle: { base_text: '%app% (all platforms)', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	var s = '<b>' + this.x + ' add-ons:</b><br/>';
+                            	$.each(this.points, function(i, point) {
+                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms<br/>';
+                            	});
+                            	return s;                            	
+                            },
+                            shared: true
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + ' add-ons';
+                    		    }
+                    		}
+                    	},
+                    	yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    base_subtitle: '%app% (all platforms)',
+                    base_url: 'reports/performance/startupdistro.php?action=graph&graph=addons-avg&date=%date%&app=%app%&os=%os%&version=%version%&limit=31',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-startupdistro-addons-avg',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Average Start-up by Add-ons Installed' },
+                        subtitle: { base_text: '%app% (all platforms)', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	var s = '<b>' + this.x + ' add-ons:</b><br/>';
+                            	$.each(this.points, function(i, point) {
+                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms<br/>';
+                            	});
+                            	return s;                            	
+                            },
+                            shared: true
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + ' add-ons';
+                    		    }
+                    		}
+                    	},
+                    	yAxis: {
+                            labels: {
+                    		    formatter: function() {
+                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                    		    }
+                    		}
+                        },
+                    	plotOptions: {
+                    	    column: {
+                    	        shadow: false
+                    	    }
+                    	},
+                        series: []
+                    },
+                    specificSeries: {}
                 }
             ]
         },
