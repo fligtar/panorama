@@ -16,6 +16,7 @@ class StartupPerformance(Lifter):
     
     def lift(self):
         for app in ['firefox', 'mobile', 'seamonkey']:
+            self.log('Starting %s' % app)
             hive_file = self.hive_data(app)
             data = self.analyze_performance(hive_file)
             self.commit(data, app)
@@ -164,7 +165,8 @@ class StartupPerformance(Lifter):
             for appversion in appversions:
                 for measure in ['tmain', 'tfirstpaint', 'tsessionrestored']:
                     for stat, value in appversions[appversion][measure].iteritems():
-                        sql[measure + '_' + stat] = value
+                        if stat != 'count':
+                            sql[measure + '_' + stat] = value
                     sql[measure + '_seconds_distro'] = json.dumps(self.sort_dict(appversions[appversion][measure + '_distro']))
                 
                 sql['count'] = appversions[appversion]['count']

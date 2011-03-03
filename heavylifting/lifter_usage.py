@@ -102,11 +102,22 @@ class AddonUsage(Lifter):
         
         self.log('GUIDs from file processed')
         addons_installed_all = sum(guids.itervalues())
-        average_installed = round(addons_installed / users_with_addons, 2)
+        if users_with_addons > 0:
+            average_installed = round(addons_installed / users_with_addons, 2)
+        else:
+            average_installed = 0
         unique_guids = len(guids)
         amo = self.check_amo(guids)
-        penetration_adu = round(users_with_addons / self.get_adu(), 2)
-        penetration = round(users_with_addons / guids['{972ce4c6-7e08-4474-a285-3208198ce6fd}'], 2)
+        adu = self.get_adu()
+        if adu > 0:
+            penetration_adu = round(users_with_addons / self.get_adu(), 2)
+        else:
+            penetration_adu = 0
+        
+        if guids['{972ce4c6-7e08-4474-a285-3208198ce6fd}'] > 0:
+            penetration = round(users_with_addons / guids['{972ce4c6-7e08-4474-a285-3208198ce6fd}'], 2)
+        else:
+            penetration = 0
         
         self.log('Additional calculations made')
         self.time_event('calculate_usage')
