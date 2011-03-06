@@ -33,7 +33,31 @@ class Goals2011 extends Report {
             $data['addons_creation']['history'][$_row['month']] = $_row;
         }
         
-        //print_r($data);
+        // Ecosystem add-on usage last 30 days (desktop)
+        $_qry = $this->db->query_stats("SELECT penetration, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'firefox' ORDER BY date DESC LIMIT 1");
+        $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        $data['ecosystem_addonusage']['latest'] = $_row;
+        
+        // Ecosystem add-on usage history (desktop)
+        $_qry = $this->db->query_stats("SELECT date, penetration, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'firefox' ORDER BY date");
+        $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        while ($_row = mysql_fetch_array($_qry, MYSQL_ASSOC)) {
+            $data['ecosystem_addonusage']['history'][$_row['date']] = $_row;
+        }
+        
+        // Ecosystem add-on usage last 30 days (mobile)
+        $_qry = $this->db->query_stats("SELECT penetration_adu, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'mobile' ORDER BY date DESC LIMIT 1");
+        $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        $data['ecosystem_addonusage']['latest_mobile'] = $_row;
+        
+        // Ecosystem add-on usage history (mobile)
+        $_qry = $this->db->query_stats("SELECT date, penetration_adu, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'mobile' ORDER BY date");
+        $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        while ($_row = mysql_fetch_array($_qry, MYSQL_ASSOC)) {
+            $data['ecosystem_addonusage']['history_mobile'][$_row['date']] = $_row;
+        }
+        
+        #print_r($data);
         return $data;
     }
     

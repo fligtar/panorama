@@ -1351,7 +1351,10 @@ var reports = {
                             formatter: function() {
                             	var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':</b><br/>';
                             	$.each(this.points, function(i, point) {
-                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +' users<br/>';
+                            	    if (i == 3 || i == 4)
+                            	        s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'%<br/>';
+                            	    else
+                            	        s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +' users<br/>';
                             	});
                             	return s;
                             },
@@ -1661,51 +1664,14 @@ var reports = {
                         },
                         title: { text: 'Start-up Population Size' },
                         subtitle: { base_text: '%app% / %os% / %version%', text: '' },
-                        tooltip: {
-                            formatter: function() {
-                            	return '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':</b><br/>' + 
-                            	    '<span style="color: ' + this.points[0].series.color + ';">' + this.points[0].series.name + ':</span> ' + Highcharts.numberFormat(this.points[0].y, 0) + '<br/>' + 
-                            	    '<span style="color: ' + this.points[1].series.color + ';">' + this.points[1].series.name + ':</span> ' + Highcharts.numberFormat(this.points[1].y, 0) + '<br/>' +
-                            	    Highcharts.numberFormat(this.points[1].y / this.points[0].y, 0) + ' add-ons per user';                        	
-                            },
-                            shared: true,
-                            crosshairs: [ { width: 3 }]
-                        },
-                        yAxis: [
-                            {
-                                labels: {
-                    		        formatter: function() {
-                    		            return Highcharts.numberFormat(this.value, 0);
-                    		        },
-                    		        style: {
-                        		        color: '#4572A7'
-                        		    }
-                    		    },
-                    		    title: {
-                    		        text: 'Add-ons Installed',
-                    		        style: {
-                    		            color: '#4572A7'
-                    		        }
-                    		    },
-                    		    opposite: true
-                    		},
-                    		{
-                                labels: {
-                    		        formatter: function() {
-                    		            return Highcharts.numberFormat(this.value, 0);
-                    		        },
-                    		        style: {
-                        		        color: '#AA4643'
-                        		    }
-                    		    },
-                    		    title: {
-                    		        text: 'Start-ups Recorded',
-                    		        style: {
-                    		            color: '#AA4643'
-                    		        }
-                    		    }
-                    		}
-                        ],
+                        tooltip: {},
+                        yAxis: {
+                            labels: {
+                		        formatter: function() {
+                		            return Highcharts.numberFormat(this.value, 0);
+                		        }
+                		    }
+                		},
                         plotOptions: {
                             spline: {
                                 marker: { 
@@ -1720,15 +1686,7 @@ var reports = {
                         },
                         series: []
                     },
-                    specificSeries: {
-                        0: {
-                            color: '#4572A7'
-                        },
-                        1: {
-                            yAxis: 1,
-                            color: '#AA4643'
-                        }
-                    }
+                    specificSeries: {}
                 },
                 {
                     base_subtitle: '%app% (all platforms)',
