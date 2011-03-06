@@ -17,7 +17,7 @@ class AddonUsage(Lifter):
         for app in ['firefox', 'mobile', 'seamonkey']:
             self.log('Starting %s' % app)
             hive_file = self.hive_data(app)
-            data = self.calculate_usage(hive_file)
+            data = self.calculate_usage(hive_file, app)
             self.commit(data, app)
             self.hive_cleanup(hive_file)
     
@@ -44,7 +44,7 @@ class AddonUsage(Lifter):
         
         return hive_file
 
-    def calculate_usage(self, hive_file):
+    def calculate_usage(self, hive_file, app):
         """This function reads a file of add-on GUID combinations and records
         how many times they occur, along with additional usage information."""
         
@@ -107,9 +107,9 @@ class AddonUsage(Lifter):
             average_installed = 0
         unique_guids = len(guids)
         amo = self.check_amo(guids)
-        adu = self.get_adu()
+        adu = self.get_adu(app)
         if adu > 0:
-            penetration_adu = round(users_with_addons / self.get_adu(), 2)
+            penetration_adu = round(users_with_addons / adu, 2)
         else:
             penetration_adu = 0
         
@@ -175,14 +175,23 @@ class AddonUsage(Lifter):
             'active_adu': active_adu
         }
     
-    def get_adu(self, product_name='Firefox', product_version='4.0'):
+    def get_adu(self, app):
         """Gets application ADUs for the date from metrics."""
         
+        if app == 'firefox':
+            product_name = 'Firefox'
+            product_version = '4.0'
+        elif app == 'mobile':
+            product_name = 'Fennec'
+            product_version = '4.0'
+        else:
+            return 0
+        
         db = self.get_database('metrics').cursor()
-        db.execute("SELECT adu_count FROM raw_adu WHERE date = '%s' AND product_name = '%s' AND product_version = '%s'" % (self.date, product_name, product_version))
+        db.execute("SELECT SUM(adu_count) FROM raw_adu WHERE date = '%s' AND product_name = '%s' AND product_version >= '%s'" % (self.date, product_name, product_version))
         adu = int(db.fetchall()[0][0])
         
-        self.log('%d active daily users' % adu)
+        self.log('%d active daily users (%s)' % (adu, app))
         
         return adu
 
