@@ -73,7 +73,7 @@ class AddonUsage(Lifter):
         not_stored = re.compile('(%s)' % '|'.join(not_stored))
 
         users_with_addons = 0
-        ecosystem_addonusage = 0
+        addons_installed = 0
         guids = collections.defaultdict(int)
         install_distro = collections.defaultdict(int)
 
@@ -92,7 +92,7 @@ class AddonUsage(Lifter):
                     if not not_counted.match(guid):
                         addon_user = True
                         counted_guids += 1
-                        ecosystem_addonusage += _count
+                        addons_installed += _count
     
                 if addon_user is True:
                     users_with_addons += _count
@@ -100,7 +100,7 @@ class AddonUsage(Lifter):
                 install_distro[counted_guids] += _count
         
         self.log('GUIDs from file processed')
-        ecosystem_addonusage_all = sum(guids.itervalues())
+        addons_installed_all = sum(guids.itervalues())
         if users_with_addons > 0:
             average_installed = round(ecosystem_addonusage / users_with_addons, 2)
         else:
@@ -126,8 +126,8 @@ class AddonUsage(Lifter):
             'ecosystem_addonusage': {
                 'date': self.date,
                 'users_with_addons': users_with_addons,
-                'ecosystem_addonusage': ecosystem_addonusage,
-                'ecosystem_addonusage_all': ecosystem_addonusage_all,
+                'addons_installed': addons_installed,
+                'addons_installed_all': addons_installed_all,
                 'average_installed': average_installed,
                 'unique_guids': unique_guids,
                 'penetration': penetration,
