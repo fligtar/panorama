@@ -102,7 +102,7 @@ class AddonUsage(Lifter):
         self.log('GUIDs from file processed')
         addons_installed_all = sum(guids.itervalues())
         if users_with_addons > 0:
-            average_installed = round(ecosystem_addonusage / users_with_addons, 2)
+            average_installed = round(addons_installed / users_with_addons, 2)
         else:
             average_installed = 0
         unique_guids = len(guids)
