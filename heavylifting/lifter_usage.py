@@ -73,7 +73,7 @@ class AddonUsage(Lifter):
         not_stored = re.compile('(%s)' % '|'.join(not_stored))
 
         users_with_addons = 0
-        addons_installed = 0
+        ecosystem_addonusage = 0
         guids = collections.defaultdict(int)
         install_distro = collections.defaultdict(int)
 
@@ -92,18 +92,17 @@ class AddonUsage(Lifter):
                     if not not_counted.match(guid):
                         addon_user = True
                         counted_guids += 1
-                        addons_installed += _count
+                        ecosystem_addonusage += _count
     
                 if addon_user is True:
                     users_with_addons += _count
                 
-                if counted_guids > 0:
-                    install_distro[counted_guids] += _count
+                install_distro[counted_guids] += _count
         
         self.log('GUIDs from file processed')
-        addons_installed_all = sum(guids.itervalues())
+        ecosystem_addonusage_all = sum(guids.itervalues())
         if users_with_addons > 0:
-            average_installed = round(addons_installed / users_with_addons, 2)
+            average_installed = round(ecosystem_addonusage / users_with_addons, 2)
         else:
             average_installed = 0
         unique_guids = len(guids)
@@ -123,12 +122,12 @@ class AddonUsage(Lifter):
         self.time_event('calculate_usage')
         
         return {
-            'addons_usage': guids,
-            'addons_installed': {
+            'ecosystem_topaddons': guids,
+            'ecosystem_addonusage': {
                 'date': self.date,
                 'users_with_addons': users_with_addons,
-                'addons_installed': addons_installed,
-                'addons_installed_all': addons_installed_all,
+                'ecosystem_addonusage': ecosystem_addonusage,
+                'ecosystem_addonusage_all': ecosystem_addonusage_all,
                 'average_installed': average_installed,
                 'unique_guids': unique_guids,
                 'penetration': penetration,
@@ -190,18 +189,18 @@ class AddonUsage(Lifter):
     def commit(self, data, app):
         """Save our findings to the db."""
         
-        data['addons_installed']['app'] = app
+        data['ecosystem_addonusage']['app'] = app
         db = self.get_database().cursor()
-        self.log('Inserting addons_installed...')
-        db.execute("""INSERT INTO addons_installed (%s) 
-                    VALUES ('%s')""" % (', '.join(data['addons_installed']), 
-                    "','".join(map(str, data['addons_installed'].values()))))
+        self.log('Inserting ecosystem_addonusage...')
+        db.execute("""INSERT INTO ecosystem_addonusage (%s) 
+                    VALUES ('%s')""" % (', '.join(data['ecosystem_addonusage']), 
+                    "','".join(map(str, data['ecosystem_addonusage'].values()))))
         
         if app == 'firefox':
-            self.log('Inserting addons_usage...')
-            for guid, count in data['addons_usage'].iteritems():
+            self.log('Inserting ecosystem_topaddons...')
+            for guid, count in data['ecosystem_topaddons'].iteritems():
                 if count >= 10:
-                    db.execute("""INSERT INTO addons_usage (date, guid, installs)
+                    db.execute("""INSERT INTO ecosystem_topaddons (date, guid, installs)
                                 VALUES ('%s', '%s', %d)""" % (self.date, guid, count))
 
         db.close()

@@ -2,126 +2,7 @@
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/lib/report.class.php';
 
 class PerformanceStartupdistro extends Report {
-    public $table = 'performance_startupdistro2';
-    public $backfillable = true;
-    public $cron_type = 'yesterday';
-    
-    /**
-     * Pull data and store it for a single day's report
-     */
-    public function analyzeDay($date = '') {
-        return;
-        if (empty($date))
-            $date = date('Y-m-d', strtotime('yesterday'));
-        
-        $apps = array();
-        
-        /* We read the raw perf file and split the data into an array like:
-             apps[firefox][WINNT][4.0b10][tmain][3] => 1234 
-                 (1234 users started tMain in 3 seconds)
-                 
-             apps[firefox][WINNT][4.0b10][tmain_all] => (4234, 2342, 4234, 2344, ...)
-                 (the individual tMain times for an average)
-        */
-        $data_dir = HADOOP_DATA.'/'.$date;
-        $file = fopen($data_dir.'/metadata-perf.txt', 'r');
-        while (($line = fgets($file)) !== false) {
-            if (empty($line)) continue;
-            $line = trim($line);
-            $columns = explode("\t", $line);
-            
-            /* Column order: guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored */
-            // Set up app array if new app
-            if (!array_key_exists($columns[1], $apps))
-                $apps[$columns[1]] = array();
-            
-            // Set up OS array if new OS
-            if (!array_key_exists($columns[2], $apps[$columns[1]]))
-                $apps[$columns[1]][$columns[2]] = array();
-            
-            // Set up appversion array if new appversion
-            if (!array_key_exists($columns[3], $apps[$columns[1]][$columns[2]]))
-                $apps[$columns[1]][$columns[2]][$columns[3]] = array(
-                    'tmain_all' => array(),
-                    'tmain' => array(),
-                    'tfirstpaint_all' => array(),
-                    'tfirstpaint' => array(),
-                    'tsessionrestored_all' => array(),
-                    'tsessionrestored' => array(),
-                    'count' => 0,
-                    'addons' => 0
-                );
-            
-            $apps[$columns[1]][$columns[2]][$columns[3]]['count']++;
-            $apps[$columns[1]][$columns[2]][$columns[3]]['addons'] += substr_count($columns[0], ',') + 1;
-            
-            if (is_numeric($columns[4]) && $columns[4] < 3600000 && $columns[4] >= 0) {
-                $apps[$columns[1]][$columns[2]][$columns[3]]['tmain_all'][] = $columns[4];
-                $round = round($columns[4] / 1000, 0);
-                if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round]))
-                    $apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round]++;
-                else
-                    $apps[$columns[1]][$columns[2]][$columns[3]]['tmain'][$round] = 1;
-            }
-            
-            if (is_numeric($columns[5]) && $columns[5] < 3600000 && $columns[5] >= 0) {
-                $apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint_all'][] = $columns[5];
-                $round = round($columns[5] / 1000, 0);
-                if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint'][$round]))
-                    $apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint'][$round]++;
-                else
-                    $apps[$columns[1]][$columns[2]][$columns[3]]['tfirstpaint'][$round] = 1;
-            }
-            
-            if (is_numeric($columns[6]) && $columns[6] < 3600000 && $columns[6] >= 0) {
-                $apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored_all'][] = $columns[6];
-                $round = round($columns[6] / 1000, 0);
-                if (!empty($apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored'][$round]))
-                    $apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored'][$round]++;
-                else
-                    $apps[$columns[1]][$columns[2]][$columns[3]]['tsessionrestored'][$round] = 1;
-            }
-        }
-        fclose($file);
-        
-        /* Now that the pings are all sorted into app, OS, and version, 
-           we can make the total calculations and store them */
-        foreach ($apps as $app => $oses) {
-            foreach ($oses as $os => $versions) {
-                foreach ($versions as $version => $data) {
-                    // We aren't interested in combinations with fewer than 10 users
-                    if ($data['count'] < 10 || (empty($data['tmain_all']) && empty($data['tfirstpaint_all']) && empty($data['tsessionrestored_all']))) {
-                        $this->log("{$date} - Combination omitted ({$app}/{$os}/{$version})");
-                        continue;
-                    }
-                    
-                    sort($data['tmain_all']);
-                    sort($data['tfirstpaint_all']);
-                    sort($data['tsessionrestored_all']);
-                    
-                    $data['tmain_avg'] = round(array_sum($data['tmain_all']) / count($data['tmain_all']), 0);
-                    $data['tfirstpaint_avg'] = round(array_sum($data['tfirstpaint_all']) / count($data['tfirstpaint_all']), 0);
-                    $data['tsessionrestored_avg'] = round(array_sum($data['tsessionrestored_all']) / count($data['tsessionrestored_all']), 0);
-                    
-                    $data['tmain_median'] = $data['tmain_all'][floor(count($data['tmain_all']) / 2)];
-                    $data['tfirstpaint_median'] = $data['tfirstpaint_all'][floor(count($data['tfirstpaint_all']) / 2)];
-                    $data['tsessionrestored_median'] = $data['tsessionrestored_all'][floor(count($data['tsessionrestored_all']) / 2)];
-                    
-                    ksort($data['tmain']);
-                    ksort($data['tfirstpaint']);
-                    ksort($data['tsessionrestored']);
-                    
-                    $qry = "INSERT INTO {$this->table} (date, app, os, version, count, addons, tmain_avg, tmain_median, tmain_seconds_distro, tfirstpaint_avg, tfirstpaint_median, tfirstpaint_seconds_distro, tsessionrestored_avg, tsessionrestored_median,  tsessionrestored_seconds_distro) VALUES ('{$date}', '".addslashes($app)."', '".addslashes($os)."', '".addslashes($version)."', {$data['count']}, {$data['addons']}, {$data['tmain_avg']}, {$data['tmain_median']}, '".json_encode($data['tmain'])."', {$data['tfirstpaint_avg']}, {$data['tfirstpaint_median']}, '".json_encode($data['tfirstpaint'])."', {$data['tsessionrestored_avg']}, {$data['tsessionrestored_median']}, '".json_encode($data['tsessionrestored'])."')";
-
-                    if ($this->db->query_stats($qry))
-                        $this->log("{$date} - Inserted row ({$app}/{$os}/{$version})");
-                    else
-                        $this->log("{$date} - Problem inserting row ({$app}/{$os}/{$version})".mysql_error());
-                }
-            }
-        }
-        $apps = null;
-    }
+    public $table = 'performance_startupdistro';
     
     /**
      * Output the available filters for app, os, and version
@@ -221,7 +102,7 @@ class PerformanceStartupdistro extends Report {
             }
         }
         elseif ($graph == 'addons-median') {
-            echo "Label,tMain,tFirstPaint,tSessionRestored\n";
+            echo "Label,tMain,tFirstPaint,tSessionRestored,Users\n";
             
             $_date = !empty($date) ? " AND date='".addslashes($date)."'" : '';
             $_row = $this->db->query_stats("SELECT distro FROM performance_addondistro WHERE app = '".addslashes($app)."'{$_date} ORDER BY date DESC LIMIT 1");
@@ -232,7 +113,8 @@ class PerformanceStartupdistro extends Report {
                 $data[$addons] = array(
                     'tmain' => $measures['tmain']['median'],
                     'tfirstpaint' => $measures['tfirstpaint']['median'],
-                    'tsessionrestored' => $measures['tsessionrestored']['median']
+                    'tsessionrestored' => $measures['tsessionrestored']['median'],
+                    'count' => $measures['tmain']['count']
                 );
             }
 
@@ -247,7 +129,7 @@ class PerformanceStartupdistro extends Report {
             }
         }
         elseif ($graph == 'addons-avg') {
-            echo "Label,tMain,tFirstPaint,tSessionRestored\n";
+            echo "Label,tMain,tFirstPaint,tSessionRestored,Users\n";
             
             $_date = !empty($date) ? " AND date='".addslashes($date)."'" : '';
             $_row = $this->db->query_stats("SELECT distro FROM performance_addondistro WHERE app = '".addslashes($app)."'{$_date} ORDER BY date DESC LIMIT 1");
@@ -258,7 +140,8 @@ class PerformanceStartupdistro extends Report {
                 $data[$addons] = array(
                     'tmain' => $measures['tmain']['avg'],
                     'tfirstpaint' => $measures['tfirstpaint']['avg'],
-                    'tsessionrestored' => $measures['tsessionrestored']['avg']
+                    'tsessionrestored' => $measures['tsessionrestored']['avg'],
+                    'count' => $measures['tmain']['count']
                 );
             }
 

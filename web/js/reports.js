@@ -200,92 +200,6 @@ var reports = {
                 }
             ]
         },
-        installdistro: {
-            graphs: [
-                {
-                    url: 'reports/addons/installdistro.php?graph=current',
-                    options: {
-                        chart: {
-                            renderTo: 'addon-installdistro-current-50',
-                            defaultSeriesType: 'column'
-                        },
-                        title: { text: 'Installed Add-ons Distribution - Top 50' },
-                        subtitle: { text: 'Firefox 4 users only' },
-                        tooltip: {
-                            formatter: function() {
-                            	return '<b>'+ this.point.name +' add-ons installed</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
-                            }
-                        },
-                        xAxis: {
-                    		type: 'linear',
-                    		maxZoom: null,
-                    		max: 50,
-                    		labels: {
-                    		    formatter: function() {
-                    		        return this.value + 1;
-                    		    }
-                    		}
-                    	},
-                    	legend: { enabled: false },
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/addons/installdistro.php?graph=current',
-                    options: {
-                        chart: {
-                            renderTo: 'addon-installdistro-current',
-                            defaultSeriesType: 'column'
-                        },
-                        title: { text: 'Installed Add-ons Distribution' },
-                        subtitle: { text: 'Firefox 4 users only' },
-                        tooltip: {
-                            formatter: function() {
-                            	return '<b>'+ this.point.name +' add-ons installed</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
-                            }
-                        },
-                        xAxis: {
-                    		type: 'linear',
-                    		maxZoom: null,
-                    		labels: {
-                    		    formatter: function() {
-                    		        return this.value + 1;
-                    		    }
-                    		}
-                    	},
-                    	legend: { enabled: false },
-                    	plotOptions: {
-                    	    column: {
-                    	        shadow: false
-                    	    }
-                    	},
-                        series: []
-                    },
-                    specificSeries: {}
-                },
-                {
-                    url: 'reports/addons/installdistro.php?graph=history',
-                    options: {
-                        chart: {
-                            renderTo: 'addon-installdistro-history',
-                            defaultSeriesType: 'area'
-                        },
-                        title: { text: 'Installed Add-ons' },
-                        subtitle: { text: 'Firefox 4.0 only' },
-                        tooltip: {
-                            formatter: function() {
-                            	return ''+
-                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
-                            		Highcharts.numberFormat(this.y, 0) +' add-ons installed</b>';
-                            }
-                        },
-                        series: []
-                    },
-                    specificSeries: {}
-                }
-            ]
-        },
         packager: {
             graphs: [
                 {
@@ -1387,6 +1301,158 @@ var reports = {
             ]
         }
     },
+    ecosystem: {
+        addonusage: {
+            filters: {
+                url: 'reports/ecosystem/addonusage.php?action=filters',
+                defaults: {
+                    'app': 'firefox'
+                }
+            },
+            graphs: [
+                {
+                    base_url: 'reports/ecosystem/addonusage.php?action=graph&graph=total-usage&app=%app%',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'ecosystem-addonusage-total-usage',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Active Daily Add-ons' },
+                        subtitle: { base_text: '%app%', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':</b><br/>';
+                            	$.each(this.points, function(i, point) {
+                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +' add-ons<br/>';
+                            	});
+                            	return s;
+                            },
+                            shared: true,
+                            crosshairs: [ { width: 3 }]
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    base_url: 'reports/ecosystem/addonusage.php?action=graph&graph=users&app=%app%',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'ecosystem-addonusage-users',
+                            defaultSeriesType: 'spline',
+                            marginRight: 60,
+                            marginBottom: 85
+                        },
+                        title: { text: 'Add-on Users' },
+                        subtitle: { base_text: '%app%', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':</b><br/>';
+                            	$.each(this.points, function(i, point) {
+                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +' users<br/>';
+                            	});
+                            	return s;
+                            },
+                            shared: true,
+                            crosshairs: [ { width: 3 }]
+                        },
+                        yAxis: [
+                            {
+                                title: {
+                    		        text: 'Users',
+                    		        style: {
+                    		            color: '#4572A7'
+                    		        }
+                    		    }
+                            },
+                            {
+                                title: {
+                    		        text: 'Penetration',
+                    		        style: {
+                    		            color: '#4572A7'
+                    		        }
+                    		    },
+                                max: '100',
+                                labels: {
+                                    formatter: function() {
+                        		        return Highcharts.numberFormat(this.value, 0) + '%';
+                        		    }
+                        		},
+                        		opposite: true
+                            }
+                        ],
+                        series: []
+                    },
+                    specificSeries: {
+                        4: {
+                            yAxis: 1,
+                            dashStyle: 'shortdot'
+                        },
+                        5: {
+                            yAxis: 1,
+                            dashStyle: 'shortdot'
+                        }
+                    }
+                },
+                {
+                    base_url: 'reports/ecosystem/addonusage.php?action=graph&graph=total-counts&app=%app%',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'ecosystem-addonusage-total-counts',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Individual Add-ons' },
+                        subtitle: { base_text: '%app%', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':</b><br/>';
+                            	$.each(this.points, function(i, point) {
+                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +' add-ons<br/>';
+                            	});
+                            	return s;
+                            },
+                            shared: true,
+                            crosshairs: [ { width: 3 }]
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    base_url: 'reports/ecosystem/addonusage.php?action=graph&graph=distro&app=%app%&limit=50',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'ecosystem-addonusage-distro',
+                            defaultSeriesType: 'column'
+                        },
+                        title: { text: 'Installed Add-ons Distribution' },
+                        subtitle: { base_text: '%app%', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	return '<b>'+ this.point.name +' add-ons installed</b><br/>'+ Highcharts.numberFormat(this.y, 0) +' users';
+                            }
+                        },
+                        xAxis: {
+                    		type: 'linear',
+                    		maxZoom: null,
+                    		labels: {
+                    		    formatter: function() {
+                    		        return this.value + 1;
+                    		    }
+                    		}
+                    	},
+                    	legend: { enabled: false },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+            ]
+        }
+    },
     editors: {
         queues: {
             graphs: [
@@ -1649,7 +1715,10 @@ var reports = {
                             formatter: function() {
                             	var s = '<b>' + this.x + ' add-ons:</b><br/>';
                             	$.each(this.points, function(i, point) {
-                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms<br/>';
+                            	    if (i == 3)
+                            	        s += '<span style="color: #999999;">' + Highcharts.numberFormat(point.y, 0) + ' users</span><br/>';
+                            	    else
+                            	        s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms<br/>';
                             	});
                             	return s;                            	
                             },
@@ -1664,13 +1733,23 @@ var reports = {
                     		    }
                     		}
                     	},
-                    	yAxis: {
-                            labels: {
-                    		    formatter: function() {
-                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
-                    		    }
-                    		}
-                        },
+                    	yAxis: [
+                        	{
+                                labels: {
+                        		    formatter: function() {
+                        		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                        		    }
+                        		}
+                            },
+                            {
+                                labels: {
+                        		    formatter: function() {
+                        		        return;
+                        		    }
+                        		},
+                        		opposite: true
+                            }
+                        ],
                     	plotOptions: {
                     	    column: {
                     	        shadow: false
@@ -1678,7 +1757,13 @@ var reports = {
                     	},
                         series: []
                     },
-                    specificSeries: {}
+                    specificSeries: {
+                        4: {
+                            yAxis: 1,
+                            type: 'spline',
+                            color: '#CCCCCC'
+                        }
+                    }
                 },
                 {
                     base_subtitle: '%app% (all platforms)',
@@ -1695,7 +1780,10 @@ var reports = {
                             formatter: function() {
                             	var s = '<b>' + this.x + ' add-ons:</b><br/>';
                             	$.each(this.points, function(i, point) {
-                            	    s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms<br/>';
+                            	    if (i == 3)
+                            	        s += '<span style="color: #999999;">' + Highcharts.numberFormat(point.y, 0) + ' users</span><br/>';
+                            	    else
+                            	        s += '<span style="color: ' + point.series.color + ';">' + point.series.name + ':</span> ' + Highcharts.numberFormat(point.y, 0) +'ms<br/>';
                             	});
                             	return s;                            	
                             },
@@ -1710,13 +1798,23 @@ var reports = {
                     		    }
                     		}
                     	},
-                    	yAxis: {
-                            labels: {
-                    		    formatter: function() {
-                    		        return Highcharts.numberFormat(this.value, 0) + 'ms';
-                    		    }
-                    		}
-                        },
+                    	yAxis: [
+                        	{
+                                labels: {
+                        		    formatter: function() {
+                        		        return Highcharts.numberFormat(this.value, 0) + 'ms';
+                        		    }
+                        		}
+                            },
+                            {
+                                labels: {
+                        		    formatter: function() {
+                        		        return;
+                        		    }
+                        		},
+                        		opposite: true
+                            }
+                        ],
                     	plotOptions: {
                     	    column: {
                     	        shadow: false
@@ -1724,7 +1822,13 @@ var reports = {
                     	},
                         series: []
                     },
-                    specificSeries: {}
+                    specificSeries: {
+                        4: {
+                            yAxis: 1,
+                            type: 'spline',
+                            color: '#CCCCCC'
+                        }
+                    }
                 }
             ]
         },

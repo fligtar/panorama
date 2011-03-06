@@ -21,7 +21,6 @@
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
                 <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
                 <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);">impressions</a></li>
-                <li><a href="#addon-installdistro" onclick="panorama.getReport(reports.addons.installdistro, this);">installed distribution</a></li>
                 <li><a href="#addon-packager" onclick="panorama.getReport(reports.addons.packager, this);">packager</a></li>
                 <li><a href="#addon-privacy" onclick="panorama.getReport(reports.addons.privacy, this);">privacy policies</a></li>
                 <li><a href="#addon-publicstats" onclick="panorama.getReport(reports.addons.publicstats, this);">public stats</a></li>
@@ -52,6 +51,12 @@
                 <li><a href="#contributions-sources" onclick="panorama.getReport(reports.contributions.sources, this);">sources</a></li>
             </ul>
             
+            <li>ecosystem</li>
+            <ul>
+                <li class="popular"><a href="#ecosystem-addonusage" onclick="panorama.getReport(reports.ecosystem.addonusage, this);">add-on usage</a></li>
+                <li><a href="#ecosystem-topaddons" onclick="panorama.getReport(reports.ecosystem.topaddons, this);">top add-ons</a></li>
+            </ul>
+            
             <li>editors</li>
             <ul>
                 <li><a href="#editors-queues" onclick="panorama.getReport(reports.editors.queues, this);">queues</a></li>
@@ -59,14 +64,14 @@
             
             <li>performance</li>
             <ul>
-                <li><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up time</a></li>
+                <li class="popular"><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up time</a></li>
                 <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this);" class="todo">add-on impact</a></li>
             </ul>
             
             <li>services</li>
             <ul>
                 <li><a href="#services-api" onclick="panorama.getReport(reports.services.api, this);">api usage</a></li>
-                <li><a href="#services-discovery" onclick="panorama.getReport(reports.services.discovery, this);">discovery pane</a></li>
+                <li class="popular"><a href="#services-discovery" onclick="panorama.getReport(reports.services.discovery, this);">discovery pane</a></li>
             </ul>
             
             <li>users</li>

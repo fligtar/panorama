@@ -110,6 +110,9 @@ nav > ul > li {
 nav > ul > ul li {
     margin-top: 0.2em;
 }
+nav li.popular {
+    list-style: disc;
+}
 a.todo {
     color: #CCCCCC;
 }

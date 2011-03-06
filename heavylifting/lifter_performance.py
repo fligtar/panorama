@@ -159,7 +159,7 @@ class StartupPerformance(Lifter):
         valid_version = re.compile('(\w*\d+\.?)+(pre)?$')
         
         db = self.get_database().cursor()
-        self.log('Inserting performance_startupdistro2...')
+        self.log('Inserting performance_startupdistro...')
         for appos, appversions in data['raw_times'].iteritems():
             sql = {}
             for appversion in appversions:
@@ -176,7 +176,7 @@ class StartupPerformance(Lifter):
                 sql['date'] = self.date
                 
                 if sql['count'] >= 10 and valid_version.match(sql['version']):
-                    db.execute("""INSERT INTO performance_startupdistro2 ({keys}) 
+                    db.execute("""INSERT INTO performance_startupdistro ({keys}) 
                             VALUES ('{vals}')""".format(keys=', '.join(sql.keys()), 
                             vals="', '".join(map(str, sql.values()))))
                     self.log('Inserted {app} {version} {os}'.format(**sql))
