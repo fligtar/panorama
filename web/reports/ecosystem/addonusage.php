@@ -81,6 +81,14 @@ class EcosystemAddonusage extends Report {
                 echo implode(',', $date)."\n";
             }
         }
+        elseif ($graph == 'avg') {
+            echo "Date,Average Installed Add-ons\n";
+
+            $dates = $this->db->query_stats("SELECT date, average_installed FROM {$this->table} WHERE app='".addslashes($app)."' ORDER BY date");
+            while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
+                echo implode(',', $date)."\n";
+            }
+        }
     }
 }
 

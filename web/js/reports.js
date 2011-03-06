@@ -1429,7 +1429,7 @@ var reports = {
                             renderTo: 'ecosystem-addonusage-distro',
                             defaultSeriesType: 'column'
                         },
-                        title: { text: 'Installed Add-ons Distribution' },
+                        title: { text: 'User-Installed Add-ons Distribution' },
                         subtitle: { base_text: '%app%', text: '' },
                         tooltip: {
                             formatter: function() {
@@ -1441,7 +1441,7 @@ var reports = {
                     		maxZoom: null,
                     		labels: {
                     		    formatter: function() {
-                    		        return this.value + 1;
+                    		        return this.value;
                     		    }
                     		}
                     	},
@@ -1450,7 +1450,37 @@ var reports = {
                     },
                     specificSeries: {}
                 },
+                {
+                    base_url: 'reports/ecosystem/addonusage.php?action=graph&graph=avg&app=%app%',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'ecosystem-addonusage-avg',
+                            defaultSeriesType: 'spline'
+                        },
+                        title: { text: 'Average Add-ons per User' },
+                        subtitle: { base_text: '%app%', text: '' },
+                        yAxis: {
+                            labels: { formatter: function() {
+                                return Highcharts.numberFormat(this.value, 2);
+                            }}
+                        },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 2) +'</b> add-ons per user';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                }
             ]
+        },
+        topaddons: {
+            type: 'html',
+            url: 'reports/ecosystem/topaddons.php'
         }
     },
     editors: {

@@ -74,6 +74,9 @@ a:hover {
     color: #000000;
     text-decoration: underline;
 }
+strong {
+    font-weight: bold;
+}
 
 header {
     display: block;
@@ -187,6 +190,19 @@ dd {
 .report-section {
     border-bottom: 1px solid #999999;
     margin-bottom: 2em;
+}
+.report-section h3 {
+    margin-bottom: 20px;
+}
+.report-section ol li {
+    list-style: decimal;
+    margin: 5px 0;
+}
+.report-section strong a {
+    color: #666666;
+}
+.report-section .hosted strong a {
+    color: #4572A7;
 }
 .filters {
     margin-bottom: 2em;
