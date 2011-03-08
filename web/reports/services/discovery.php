@@ -39,7 +39,7 @@ class ServicesDiscovery extends Report {
              'discovery-learnmore' => 'Downloads from Learn More',
              'discovery-promo' => 'Downloads from Promos',
              'discovery-featured' => 'Downloads from Featured',
-             'discovery-top' => 'Downloads from Top',
+             'discovery-upandcoming' => 'Downloads from Up & Coming',
              'discovery-personalrec' => 'Downloads from Personalized Recs'
          );
 
