@@ -65,7 +65,7 @@
             <li>performance</li>
             <ul>
                 <li class="popular"><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up time</a></li>
-                <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this);" class="todo">add-on impact</a></li>
+                <li><a href="#performance-addonimpact" onclick="panorama.getReport(reports.performance.addonimpact, this);">add-on impact</a></li>
             </ul>
             
             <li>services</li>

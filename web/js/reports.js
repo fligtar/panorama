@@ -1822,17 +1822,7 @@ var reports = {
         },
         addonimpact: {
             type: 'html',
-            filters: {
-                url: 'reports/performance/addonimpact.php?action=filters',
-                defaults: {
-                    'app': 'firefox',
-                    'os': 'WINNT',
-                    'version': '4.0b11',
-                    'date': ''
-                }
-            },
-            base_url: 'reports/performance/addonimpact.php?action=html&date=%date%&app=%app%&os=%os%&version=%version%',
-            url: null
+            url: 'reports/performance/addonimpact.php'
         }
     },
     services: {
