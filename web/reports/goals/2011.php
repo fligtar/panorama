@@ -15,49 +15,69 @@ class Goals2011 extends Report {
     
     public function getData() {
         header('Content-type: text/plain');
-        $data = array(
-            'addons_creation' => array(
-                '30days' => array(),
-                'history' => array()
-            )
-        );
+        $data = array();
         
         // Add-on creation last 30 days
         $_qry = $this->db->query_stats("SELECT SUM(type1) AS extensions_created, SUM(sdk) AS sdk_created, SUM(restartless) AS restartless_created FROM addons_creation WHERE date >= CURDATE() - INTERVAL 30 DAY");
         $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
-        $data['addons_creation']['30days'] = $_row;
+        $data['extensions_created'] = array(
+            '30days' => $_row['extensions_created'],
+            'chart' => array()
+        );
+        $data['sdk_created'] = array(
+            '30days' => $_row['sdk_created'],
+            'chart' => array()
+        );
+        $data['restartless_created'] = array(
+            '30days' => $_row['restartless_created'],
+            'chart' => array()
+        );
         
         // Add-on creation monthly history
         $_qry = $this->db->query_stats("SELECT LEFT(date, 7) AS month, SUM(type1) AS extensions_created, SUM(sdk) AS sdk_created, SUM(restartless) AS restartless_created FROM addons_creation WHERE date >= '2010' GROUP BY month ORDER BY month");
         while ($_row = mysql_fetch_array($_qry, MYSQL_ASSOC)) {
-            $data['addons_creation']['history'][$_row['month']] = $_row;
+            $year = substr($_row['month'], 0, 4);
+            $data['extensions_created']['chart'][$year][] = $_row['extensions_created'];
+            $data['sdk_created']['chart'][$year][] = $_row['sdk_created'];
+            $data['restartless_created']['chart'][$year][] = $_row['restartless_created'];
         }
         
         // Ecosystem add-on usage last 30 days (desktop)
         $_qry = $this->db->query_stats("SELECT penetration, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'firefox' ORDER BY date DESC LIMIT 1");
         $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
-        $data['ecosystem_addonusage']['latest'] = $_row;
+        $data['penetration'] = array(
+            'latest' => $_row['penetration'],
+            'chart' => array()
+        );
+        $data['amo_percentage'] = array(
+            'latest' => !empty($_row['addons_installed']) ? round(($_row['amo_active_adu'] / $_row['addons_installed']) * 100, 2) : 0,
+            'chart' => array()
+        );
         
         // Ecosystem add-on usage history (desktop)
         $_qry = $this->db->query_stats("SELECT date, penetration, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'firefox' ORDER BY date");
         $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
         while ($_row = mysql_fetch_array($_qry, MYSQL_ASSOC)) {
-            $data['ecosystem_addonusage']['history'][$_row['date']] = $_row;
+            $data['penetration']['chart'][$_row['date']] = $_row['penetration'];
+            $data['amo_percentage']['chart'][$_row['date']] = !empty($_row['addons_installed']) ? round(($_row['amo_active_adu'] / $_row['addons_installed']) * 100, 2) : 0;
         }
         
         // Ecosystem add-on usage last 30 days (mobile)
-        $_qry = $this->db->query_stats("SELECT penetration_adu, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'mobile' ORDER BY date DESC LIMIT 1");
+        $_qry = $this->db->query_stats("SELECT penetration_adu FROM ecosystem_addonusage WHERE app = 'mobile' ORDER BY date DESC LIMIT 1");
         $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
-        $data['ecosystem_addonusage']['latest_mobile'] = $_row;
+        $data['penetration_mobile'] = array(
+            'latest' => $_row['penetration_adu'],
+            'chart' => array()
+        );
         
         // Ecosystem add-on usage history (mobile)
-        $_qry = $this->db->query_stats("SELECT date, penetration_adu, amo_active_adu, addons_installed FROM ecosystem_addonusage WHERE app = 'mobile' ORDER BY date");
+        $_qry = $this->db->query_stats("SELECT date, penetration_adu FROM ecosystem_addonusage WHERE app = 'mobile' ORDER BY date");
         $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
         while ($_row = mysql_fetch_array($_qry, MYSQL_ASSOC)) {
-            $data['ecosystem_addonusage']['history_mobile'][$_row['date']] = $_row;
+            $data['penetration_mobile']['chart'][$_row['date']] = $_row['penetration_adu'];
         }
         
-        #print_r($data);
+        //print_r($data);
         return $data;
     }
     

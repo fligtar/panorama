@@ -1521,7 +1521,7 @@ var reports = {
                 defaults: {
                     'app': 'firefox',
                     'os': 'WINNT',
-                    'version': '4.0b12',
+                    'version': '4.0',
                     'date': ''
                 }
             },
