@@ -150,7 +150,7 @@ class AddonUsage(Lifter):
         known_guids = {}
         
         db = self.get_database('amo').cursor()
-        db.execute("SELECT guid, status, inactive FROM addons WHERE guid != '' AND addontype_id != 9")
+        db.execute("SELECT guid, status, inactive FROM addons WHERE guid IS NOT NULL AND guid != '' AND addontype_id != 9")
         self.log('%d GUIDs pulled from AMO' % db.rowcount)
         for r in db.fetchall():
             known_guids[r[0]] = (r[1], r[2])

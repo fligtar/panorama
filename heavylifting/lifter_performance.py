@@ -62,6 +62,7 @@ class StartupPerformance(Lifter):
         not_counted = re.compile('(%s)' % '|'.join(not_counted))
         raw_times = {}
         addon_count = {}
+        _addons = {}
 
         with open(hive_file) as f:
             for line in f:
@@ -69,6 +70,8 @@ class StartupPerformance(Lifter):
                 guids = []
                 
                 for guid in _guids.split(','):
+                    if guid[-1:] == '?':
+                        guid = guid[:-1]
                     if not not_counted.match(guid):
                         guids.append(urllib2.unquote(guid))
                         
@@ -91,6 +94,13 @@ class StartupPerformance(Lifter):
                 # Times per number of add-ons
                 if num_addons not in addon_count:
                     addon_count[num_addons] = collections.defaultdict(list)
+                
+                # Individual add-ons
+                if num_addons == 1:
+                    if guids[0] not in _addons:
+                        _addons[guids[0]] = {}
+                    if _appos not in _addons[guids[0]]:
+                        _addons[guids[0]][_appos] = collections.defaultdict(list)
                     
                 raw_times[_appos][_appversion]['count'] += 1
                 
@@ -100,6 +110,9 @@ class StartupPerformance(Lifter):
                         raw_times[_appos][_appversion]['tmain_distro'][int(round(_tmain / 1000, 0))] += 1
                         raw_times[_appos][_appversion]['tmain_times'].append(_tmain)
                         addon_count[num_addons]['tmain'].append(_tmain)
+                        
+                        if num_addons == 1:
+                            _addons[guids[0]][_appos]['tmain_times'].append(_tmain)
                 
                 if _tfirstpaint.isdigit():
                     _tfirstpaint = int(_tfirstpaint)
@@ -107,6 +120,9 @@ class StartupPerformance(Lifter):
                         raw_times[_appos][_appversion]['tfirstpaint_distro'][int(round(_tfirstpaint / 1000, 0))] += 1
                         raw_times[_appos][_appversion]['tfirstpaint_times'].append(_tfirstpaint)
                         addon_count[num_addons]['tfirstpaint'].append(_tfirstpaint)
+                        
+                        if num_addons == 1:
+                            _addons[guids[0]][_appos]['tfirstpaint_times'].append(_tfirstpaint)
         
                 if _tsessionrestored.isdigit():
                     _tsessionrestored = int(_tsessionrestored)
@@ -114,6 +130,9 @@ class StartupPerformance(Lifter):
                         raw_times[_appos][_appversion]['tsessionrestored_distro'][int(round(_tsessionrestored / 1000, 0))] += 1
                         raw_times[_appos][_appversion]['tsessionrestored_times'].append(_tsessionrestored)
                         addon_count[num_addons]['tsessionrestored'].append(_tsessionrestored)
+                        
+                        if num_addons == 1:
+                            _addons[guids[0]][_appos]['tsessionrestored_times'].append(_tsessionrestored)
         
         self.log('GUIDs from file processed')
         
@@ -123,12 +142,24 @@ class StartupPerformance(Lifter):
                 for measure in ['tmain', 'tfirstpaint', 'tsessionrestored']:
                     raw_times[appos][appversion][measure] = self.calculations(raw_times[appos][appversion][measure + '_times'])
                     del raw_times[appos][appversion][measure + '_times']
-                    
         
         # Do calculations on add-on count distribution
         for num_addons, measures in addon_count.iteritems():
             for measure, times in measures.iteritems():
                 addon_count[num_addons][measure] = self.calculations(times)
+        
+        # Do calculations on individual add-ons
+        addons = collections.defaultdict(list)
+        for guid in _addons:
+            for appos in ['WINNT', 'Darwin']:
+                if appos in _addons[guid] and len(_addons[guid][appos]['tmain_times']) >= 10:
+                    if guid not in addons:
+                        addons[guid] = {}
+                    if appos not in addons[guid]:
+                        addons[guid][appos] = collections.defaultdict(dict)
+                    for measure in ['tmain', 'tfirstpaint', 'tsessionrestored']:
+                        addons[guid][appos][measure] = self.calculations(_addons[guid][appos][measure + '_times'])
+        del _addons
         
         self.log('Additional calculations made')
         self.time_event('analyze_performance')
@@ -136,6 +167,7 @@ class StartupPerformance(Lifter):
         return {
             'addon_count': addon_count,
             'raw_times': raw_times,
+            'addons': addons
         }
     
     def calculations(self, times):
@@ -182,6 +214,21 @@ class StartupPerformance(Lifter):
                     self.log('Inserted {app} {version} {os}'.format(**sql))
                 else:
                     self.log('Skipped {app} {version} {os}'.format(**sql))
+        
+        if app == 'firefox':
+            self.log('Inserting performance_addons...')
+            for guid in data['addons']:
+                sql = {}
+                for appos in data['addons'][guid]:
+                    sql[appos.lower()] = json.dumps(data['addons'][guid][appos])
+                    sql[appos.lower() + '_tsessionrestored_avg'] = data['addons'][guid][appos]['tsessionrestored']['avg']
+            
+                sql['guid'] = guid
+                sql['date'] = self.date
+            
+                db.execute("""INSERT INTO performance_addons ({keys}) 
+                            VALUES ('{vals}')""".format(keys=', '.join(sql.keys()), 
+                            vals="', '".join(map(str, sql.values()))))
         
         self.log('Inserting performance_addondistro...')
         db.execute("""INSERT INTO performance_addondistro (date, app, distro)
