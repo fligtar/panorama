@@ -52,6 +52,10 @@ class PerformanceAddonimpact extends Report {
         echo '<div class="report-section">';
         echo "<h3>Slow Add-ons {$os} {$date}</h3>";
         
+        $_qry = $this->db->query_stats("SELECT tsessionrestored_median FROM performance_startupdistro WHERE date = '{$date}' AND app = 'firefox' AND os = '{$os}' AND version = '4.0'");
+        $median = mysql_fetch_array($_qry);
+        $median = $median['tsessionrestored_median'];
+        
         $_qry = $this->db->query_stats("SELECT guid, {$os}_tsessionrestored_avg FROM {$this->table} WHERE date = '{$date}' ORDER BY {$os}_tsessionrestored_avg DESC LIMIT 100");
         
         echo '<ol>';
@@ -63,13 +67,13 @@ class PerformanceAddonimpact extends Report {
             if (mysql_num_rows($_amo) > 0) {
                 $amo = mysql_fetch_array($_amo, MYSQL_ASSOC);
                 
-                echo '<li class="hosted"><strong><a href="https://addons.mozilla.org/addon/'.$amo['id'].'" title="'.$guid.'" target="_blank">'.$amo['name'].'</a></strong> - AMO: '.$amo_statuses[$amo['status']].' - '.$guids[$os.'_tsessionrestored_avg'].' tSessionRestored avg</li>';
+                echo '<li class="hosted"><strong><a href="https://addons.mozilla.org/addon/'.$amo['id'].'" title="'.$guid.'" target="_blank">'.$amo['name'].'</a></strong> - AMO: '.$amo_statuses[$amo['status']].' - '.$guids[$os.'_tsessionrestored_avg'].' tSessionRestored avg (+'.round((($guids[$os.'_tsessionrestored_avg'] - $median) / $median) * 100, 2).'%)</li>';
             }
             elseif (!empty($unhosted[$guid])) {
-                echo '<li><strong><a href="http://www.google.com/search?q='.$guid.'" title="'.$guid.'" target="_blank">'.$unhosted[$guid].'</a></strong> - AMO: Not Hosted - '.$guids[$os.'_tsessionrestored_avg'].' tSessionRestored avg</li>';
+                echo '<li><strong><a href="http://www.google.com/search?q='.$guid.'" title="'.$guid.'" target="_blank">'.$unhosted[$guid].'</a></strong> - AMO: Not Hosted - '.$guids[$os.'_tsessionrestored_avg'].' tSessionRestored avg (+'.round((($guids[$os.'_tsessionrestored_avg'] - $median) / $median) * 100, 2).'%)</li>';
             }
             else {
-                echo '<li><strong><a href="http://www.google.com/search?q='.$guid.'" target="_blank">'.$guid.'</a></strong> - '.$guids[$os.'_tsessionrestored_avg'].' tSessionRestored avg</li>';
+                echo '<li><strong><a href="http://www.google.com/search?q='.$guid.'" target="_blank">'.$guid.'</a></strong> - '.$guids[$os.'_tsessionrestored_avg'].' tSessionRestored avg (+'.round((($guids[$os.'_tsessionrestored_avg'] - $median) / $median) * 100, 2).'%)</li>';
             }
         }
         echo '</ol>';
