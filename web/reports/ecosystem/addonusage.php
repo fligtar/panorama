@@ -40,12 +40,17 @@ class EcosystemAddonusage extends Report {
             }
         }
         elseif ($graph == 'users') {
-            echo "Date,Application ADU,Default Theme Users,Users with an Add-on,Penetration (based on default theme),Penetration (based on ADU)\n";
+            echo "Date,Application ADU,Default Theme Users,Users with an Add-on,Penetration (based on ADU)";
+            if ($app != 'mobile')
+                echo ",Penetration (based on default theme)";
+            echo "\n";
             
+            $_app = $app;
             switch($app) {
                 case 'firefox':
                 case 'mobile':
                     $version = '4.0';
+                    $_app = 'fennec';
                     break;
                 case 'seamonkey':
                     $version = '2.1';
@@ -53,15 +58,17 @@ class EcosystemAddonusage extends Report {
             }
             
             $adu = array();
-            $_adu = $this->db->query_metrics("SELECT date, adu_count FROM raw_adu WHERE product_name='{$app}' AND product_version >= '{$version}'");
+            $_adu = $this->db->query_metrics("SELECT date, adu_count FROM raw_adu WHERE product_name='{$_app}' AND product_version >= '{$version}'");
             while ($row = mysql_fetch_array($_adu)) {
                 $adu[$row['date']] = $row['adu_count'];
             }
 
-            $dates = $this->db->query_stats("SELECT ea.date AS 0_date, users_with_addons AS 3_users_with_addons, (penetration * 100) AS 4_penetration, (penetration_adu * 100) AS 5_penetration_adu, et.installs AS 2_default_theme FROM {$this->table} as ea INNER JOIN ecosystem_topaddons AS et ON ea.date = et.date AND et.guid = '{972ce4c6-7e08-4474-a285-3208198ce6fd}' WHERE ea.app='".addslashes($app)."' ORDER BY ea.date");
+            $dates = $this->db->query_stats("SELECT ea.date AS 0_date, users_with_addons AS 3_users_with_addons, (penetration * 100) AS 5_penetration, (penetration_adu * 100) AS 4_penetration_adu, et.installs AS 2_default_theme FROM {$this->table} as ea INNER JOIN ecosystem_topaddons AS et ON ea.date = et.date AND et.guid = '{972ce4c6-7e08-4474-a285-3208198ce6fd}' WHERE ea.app='".addslashes($app)."' ORDER BY ea.date");
             while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
                 $date['1_adu'] = $adu[$date['0_date']];
                 ksort($date);
+                if ($app == 'mobile')
+                    array_pop($date);
                 echo implode(',', $date)."\n";
             }
         }

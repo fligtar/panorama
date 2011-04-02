@@ -1822,7 +1822,15 @@ var reports = {
         },
         addonimpact: {
             type: 'html',
-            url: 'reports/performance/addonimpact.php'
+            filters: {
+                url: 'reports/performance/addonimpact.php?action=filters',
+                defaults: {
+                    'os': 'WINNT',
+                    'date': ''
+                }
+            },
+            base_url: 'reports/performance/addonimpact.php?action=html&date=%date%&os=%os%',
+            url: null
         }
     },
     services: {
