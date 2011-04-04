@@ -153,8 +153,8 @@ class StartupPerformance(Lifter):
         diffs = []
         for a in range(1, 21):
             if a in addon_count:
-                diffs.append((baseline - addon_count[a]['tsessionrestored']['median']) / baseline)
-        if baseline != and len(diffs) > 0:
+                diffs.append((addon_count[a]['tsessionrestored']['median'] - addon_count[a - 1]['tsessionrestored']['median']) / baseline)
+        if baseline != 0 and len(diffs) > 0:
             avg_impact = '%.2f' % ((sum(diffs) / len(diffs)) * 100)
         else:
             avg_impact = 0
@@ -245,7 +245,8 @@ class StartupPerformance(Lifter):
         self.log('Inserting performance_addondistro...')
         db.execute("""INSERT INTO performance_addondistro (date, app, distro, avg_impact)
                     VALUES ('{date}', '{app}', '{distro}', '{avg_impact}')""".format(
-                    date=self.date, app=app, distro=json.dumps(self.sort_dict(data['addon_count'])), data['avg_impact']))
+                    date=self.date, app=app, distro=json.dumps(self.sort_dict(data['addon_count'])),
+                    avg_impact=data['avg_impact']))
 
         db.close()
 
