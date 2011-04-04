@@ -77,6 +77,19 @@ class Goals2011 extends Report {
             $data['penetration_mobile']['chart'][$_row['date']] = $_row['penetration_adu'];
         }
         
+        // Performance average add-on impact
+        $_qry = $this->db->query_stats("SELECT avg_impact FROM performance_addondistro WHERE app='firefox' ORDER BY date DESC LIMIT 1");
+        $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        $data['performance_avg_impact'] = array(
+         'latest' => $_row['avg_impact'],
+         'chart' => array()
+        );
+        $_qry = $this->db->query_stats("SELECT date, avg_impact FROM performance_addondistro WHERE app='firefox' ORDER BY date");
+        $_row = mysql_fetch_array($_qry, MYSQL_ASSOC);
+        while ($_row = mysql_fetch_array($_qry, MYSQL_ASSOC)) {
+            $data['performance_avg_impact']['chart'][$_row['date']] = $_row['avg_impact'];
+        }
+        
         //print_r($data);
         return $data;
     }

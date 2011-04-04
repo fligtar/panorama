@@ -148,6 +148,17 @@ class StartupPerformance(Lifter):
             for measure, times in measures.iteritems():
                 addon_count[num_addons][measure] = self.calculations(times)
         
+        # Calculate average impact for installing 1 - 20 add-ons
+        baseline = addon_count[0]['tsessionrestored']['median']
+        diffs = []
+        for a in range(1, 21):
+            if a in addon_count:
+                diffs.append((baseline - addon_count[a]['tsessionrestored']['median']) / baseline)
+        if baseline != and len(diffs) > 0:
+            avg_impact = '%.2f' % ((sum(diffs) / len(diffs)) * 100)
+        else:
+            avg_impact = 0
+        
         # Do calculations on individual add-ons
         addons = collections.defaultdict(list)
         for guid in _addons:
@@ -166,6 +177,7 @@ class StartupPerformance(Lifter):
         
         return {
             'addon_count': addon_count,
+            'avg_impact': avg_impact,
             'raw_times': raw_times,
             'addons': addons
         }
@@ -231,9 +243,9 @@ class StartupPerformance(Lifter):
                             vals="', '".join(map(str, sql.values()))))
         
         self.log('Inserting performance_addondistro...')
-        db.execute("""INSERT INTO performance_addondistro (date, app, distro)
-                    VALUES ('{date}', '{app}', '{distro}')""".format(
-                    date=self.date, app=app, distro=json.dumps(self.sort_dict(data['addon_count']))))
+        db.execute("""INSERT INTO performance_addondistro (date, app, distro, avg_impact)
+                    VALUES ('{date}', '{app}', '{distro}', '{avg_impact}')""".format(
+                    date=self.date, app=app, distro=json.dumps(self.sort_dict(data['addon_count'])), data['avg_impact']))
 
         db.close()
 
