@@ -154,7 +154,7 @@ class StartupPerformance(Lifter):
             baseline = addon_count[0]['tsessionrestored']['median']
             diffs = []
             for a in range(1, 21):
-                if a in addon_count:
+                if a in addon_count and (a - 1) in addon_count:
                     diffs.append((addon_count[a]['tsessionrestored']['median'] - addon_count[a - 1]['tsessionrestored']['median']) / baseline)
             if baseline != 0 and len(diffs) > 0:
                 avg_impact = '%.2f' % ((sum(diffs) / len(diffs)) * 100)
