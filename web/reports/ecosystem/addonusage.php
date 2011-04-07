@@ -48,6 +48,8 @@ class EcosystemAddonusage extends Report {
             $_app = $app;
             switch($app) {
                 case 'firefox':
+                    $version = '4.0';
+                    break;
                 case 'mobile':
                     $version = '4.0';
                     $_app = 'fennec';
@@ -58,7 +60,7 @@ class EcosystemAddonusage extends Report {
             }
             
             $adu = array();
-            $_adu = $this->db->query_metrics("SELECT date, adu_count FROM raw_adu WHERE product_name='{$_app}' AND product_version >= '{$version}'");
+            $_adu = $this->db->query_metrics("SELECT date, SUM(adu_count) as adu_count FROM raw_adu WHERE product_name='{$_app}' AND product_version >= '{$version}' GROUP BY date");
             while ($row = mysql_fetch_array($_adu)) {
                 $adu[$row['date']] = $row['adu_count'];
             }
