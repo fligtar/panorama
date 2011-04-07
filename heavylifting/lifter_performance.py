@@ -149,15 +149,15 @@ class StartupPerformance(Lifter):
                 addon_count[num_addons][measure] = self.calculations(times)
         
         # Calculate average impact for installing 1 - 20 add-ons
-        baseline = addon_count[0]['tsessionrestored']['median']
-        diffs = []
-        for a in range(1, 21):
-            if a in addon_count:
-                diffs.append((addon_count[a]['tsessionrestored']['median'] - addon_count[a - 1]['tsessionrestored']['median']) / baseline)
-        if baseline != 0 and len(diffs) > 0:
-            avg_impact = '%.2f' % ((sum(diffs) / len(diffs)) * 100)
-        else:
-            avg_impact = 0
+        avg_impact = 0
+        if 0 in addon_count:
+            baseline = addon_count[0]['tsessionrestored']['median']
+            diffs = []
+            for a in range(1, 21):
+                if a in addon_count:
+                    diffs.append((addon_count[a]['tsessionrestored']['median'] - addon_count[a - 1]['tsessionrestored']['median']) / baseline)
+            if baseline != 0 and len(diffs) > 0:
+                avg_impact = '%.2f' % ((sum(diffs) / len(diffs)) * 100)
         
         # Do calculations on individual add-ons
         addons = collections.defaultdict(list)
