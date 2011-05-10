@@ -16,11 +16,22 @@ class ContributionSources extends Report {
         
         $fieldvals = array(
             'addon-detail' => 'addondetail',
-            'developers' => 'developers',
+            'developers' => 'meetthedeveloper',
             'direct' => 'direct',
             'meet-the-developer' => 'meetthedeveloper',
-            'meet-the-developer-post-install' => 'meetthedeveloper_postinstall',
-            'meet-the-developer-roadblock' => 'meetthedeveloper_roadblock'
+            'meet-developers' => 'meetthedeveloper',
+            'meet-the-developer-post-install' => 'postdownload',
+            'post-download' => 'postdownload',
+            'roadblock' => 'roadblock',
+            'meet-the-developer-roadblock' => 'roadblock',
+            'addondetail' => 'roadblock',
+            'addon-detail-version' => 'roadblock',
+            'search' => 'roadblock',
+            'recommended' => 'roadblock',
+            'homepagepromo' => 'roadblock',
+            'homepagebrowse' => 'roadblock',
+            'standalone' => 'standalone',
+            'api' => 'api'
         );
         
         $queries = array(
@@ -46,7 +57,10 @@ class ContributionSources extends Report {
                 if (empty($row[0]))
                     $row[0] = 0;
                 
-                $insert["{$fielddesc}_{$queryname}"] = $row[0];
+                if (!empty($insert["{$fielddesc}_{$queryname}"]))
+                    $insert["{$fielddesc}_{$queryname}"] += $row[0];
+                else
+                    $insert["{$fielddesc}_{$queryname}"] = $row[0];
             }
         }
         
@@ -64,11 +78,12 @@ class ContributionSources extends Report {
      public function generateCSV($graph, $field) {
          $plots = array(
              "addondetail_{$field}" => 'Add-on Details',
-             "developers_{$field}" => 'Meet the Developers',
              "direct_{$field}" => 'Direct',
              "meetthedeveloper_{$field}" => 'Meet the Developer',
-             "meetthedeveloper_postinstall_{$field}" => 'MTD Post-install',
-             "meetthedeveloper_roadblock_{$field}" => 'MTD Roadblock',
+             "postdownload_{$field}" => 'Post-download',
+             "roadblock_{$field}" => 'Roadblock',
+             "standalone_{$field}" => 'Standalone',
+             "api_{$field}" => 'API',
          );
      
          if ($graph == 'current') {
