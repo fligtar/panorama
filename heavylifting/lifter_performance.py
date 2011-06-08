@@ -73,7 +73,7 @@ class StartupPerformance(Lifter):
                     if guid[-1:] == '?':
                         guid = guid[:-1]
                     if not not_counted.match(guid):
-                        guids.append(urllib2.unquote(guid))
+                        guids.append(urllib2.unquote(guid).lower())
                         
                 num_addons = len(guids)
                 
