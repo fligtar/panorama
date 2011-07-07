@@ -15,42 +15,50 @@ class ContributionSources extends Report {
         $insert = array();
         
         $fieldvals = array(
-            'addon-detail' => 'addondetail',
-            'developers' => 'meetthedeveloper',
-            'direct' => 'direct',
-            'meet-the-developer' => 'meetthedeveloper',
-            'meet-developers' => 'meetthedeveloper',
-            'meet-the-developer-post-install' => 'postdownload',
-            'post-download' => 'postdownload',
-            'roadblock' => 'roadblock',
-            'meet-the-developer-roadblock' => 'roadblock',
-            'addondetail' => 'roadblock',
-            'addon-detail-version' => 'roadblock',
-            'search' => 'roadblock',
-            'recommended' => 'roadblock',
-            'homepagepromo' => 'roadblock',
-            'homepagebrowse' => 'roadblock',
+            'addon-detail' => 'addon_detail',
             'standalone' => 'standalone',
-            'api' => 'api'
+            'api' => 'api',
+            'meet-developers' => 'meet_developers',
+            'post-download' => 'post_download',
+            'browse' => 'browse',
+            'direct' => 'browse',
+            'roadblock' => 'roadblock'
+            /*'developers' => 'meet_developers',
+            'meet-the-developer' => 'meet_developers',
+            'meet-the-developer-post-install' => 'post_download',
+            'meet-the-developer-roadblock' => 'roadblock',
+            'addondetail' => 'addon_detail',
+            'addon-detail-version' => 'addon_detail',
+            'search' => 'browse',
+            'recommended' => 'browse',
+            'homepagepromo' => 'browse',
+            'homepagebrowse' => 'browse'*/
         );
+        $fieldvals["'".implode("', '", array_keys($fieldvals))."'"] = 'other';
         
         $queries = array(
-            'amt_earned' => "SELECT SUM(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND source = '%FIELDVAL%'",
-            'amt_avg' => "SELECT AVG(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND source = '%FIELDVAL%'",
-            'amt_min' => "SELECT MIN(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND source = '%FIELDVAL%'",
-            'amt_max' => "SELECT MAX(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND source = '%FIELDVAL%'",
-            'amt_eq_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount = 0+suggested_amount AND source = '%FIELDVAL%'",
-            'amt_gt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount > 0+suggested_amount AND source = '%FIELDVAL%'",
-            'amt_lt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount < 0+suggested_amount AND source = '%FIELDVAL%'",
-            'tx_success' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND source = '%FIELDVAL%'",
-            'tx_abort' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NULL AND source = '%FIELDVAL%'"
+            'amt_earned' => "SELECT SUM(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_avg' => "SELECT AVG(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_min' => "SELECT MIN(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_max' => "SELECT MAX(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_eq_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount = 0+suggested_amount AND %SOURCEFILTER%",
+            'amt_gt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount > 0+suggested_amount AND %SOURCEFILTER%",
+            'amt_lt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount < 0+suggested_amount AND %SOURCEFILTER%",
+            'tx_success' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'tx_abort' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NULL AND %SOURCEFILTER%"
         );
         
         foreach ($fieldvals as $fieldval => $fielddesc) {
+            if ($fielddesc == 'other')
+                $source_filter = "source NOT IN (%FIELDVAL%)";
+            else
+                $source_filter = "source = '%FIELDVAL%'";
+            
             foreach ($queries as $queryname => $query) {
-                $qry = str_replace('%DATE%', $date, $query);
+                $qry = str_replace('%SOURCEFILTER%', $source_filter, $query);
+                $qry = str_replace('%DATE%', $date, $qry);
                 $qry = str_replace('%FIELDVAL%', $fieldval, $qry);
-                
+                echo $qry."<br>";
                 $_rows = $this->db->query_amo($qry);
                 $row = mysql_fetch_array($_rows, MYSQL_NUM);
                 
@@ -65,11 +73,11 @@ class ContributionSources extends Report {
         }
         
         $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
-        
+        echo $qry;
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row");
         else
-            $this->log("{$date} - Problem inserting row");
+            $this->log("{$date} - Problem inserting row - ".mysql_error());
     }
     
     /**
@@ -77,13 +85,14 @@ class ContributionSources extends Report {
      */
      public function generateCSV($graph, $field) {
          $plots = array(
-             "addondetail_{$field}" => 'Add-on Details',
-             "direct_{$field}" => 'Direct',
-             "meetthedeveloper_{$field}" => 'Meet the Developer',
-             "postdownload_{$field}" => 'Post-download',
+             "addon_detail_{$field}" => 'Add-on Details',
+             "browse_{$field}" => 'Browse',
+             "meet_developers_{$field}" => 'Meet the Developer',
+             "post_download_{$field}" => 'Post-download',
              "roadblock_{$field}" => 'Roadblock',
              "standalone_{$field}" => 'Standalone',
              "api_{$field}" => 'API',
+             "other_{$field}" => 'Other'
          );
      
          if ($graph == 'current') {
