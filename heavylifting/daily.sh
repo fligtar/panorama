@@ -54,9 +54,9 @@ hive -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='servi
 #hive -e "SELECT guid, src, appos, appversion, tmain, tfirstpaint, tsessionrestored FROM addons_pings WHERE ds = '$DATE';" > $DATA/metadata-perf.txt
 
 # Impala total views
-hive -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='addons.mozilla.org' AND request_url LIKE '%/z/%/i/%';" | tee $DATA/impala-all.txt
+hive -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='addons.mozilla.org' AND request_url LIKE '%/i/%';" | tee $DATA/impala-all.txt
 
 # Impala details page views
-hive -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='addons.mozilla.org' AND request_url LIKE '%/z/%/i/addon%';" | tee $DATA/impala-details.txt
+hive -e "SELECT COUNT(1) FROM research_logs WHERE ds = '$DATE' AND domain='addons.mozilla.org' AND request_url LIKE '%/i/addon%';" | tee $DATA/impala-details.txt
 
 scp -r $DATA/ fligtar@khan:./panorama/hadoop-drop/

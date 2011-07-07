@@ -22,9 +22,9 @@ class AddonImpala extends Report {
         $qry = "INSERT INTO {$this->table} (date, home, details) VALUES ('{$date}', {$home_views}, {$details_views})";
 
         if ($this->db->query_stats($qry))
-            $this->log("{$date} - Inserted row ({$pane} total)");
+            $this->log("{$date} - Inserted row ({$total_views} total)");
         else
-            $this->log("{$date} - Problem inserting row ({$pane} total)");
+            $this->log("{$date} - Problem inserting row ({$total_views} total)");
     }
     
     /**
