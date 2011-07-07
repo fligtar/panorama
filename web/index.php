@@ -7,7 +7,7 @@
 </head>
 <body>
     <header>
-        <div class="corner"></div>
+        <div class="corner"><a href="#" onclick="panorama.groupByWeek(); return false;">group by week</a></div>
         <h1>panorama</h1>
     </header>
     
@@ -87,6 +87,7 @@
     </section>
     
     <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/date.js"></script>
 	<script type="text/javascript" src="js/highcharts.js"></script>
 	<script type="text/javascript" src="js/reports.js"></script>
 	<script type="text/javascript" src="js/panorama.js"></script>

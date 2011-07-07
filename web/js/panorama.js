@@ -8,8 +8,10 @@ $(document).ready(function() {
 
 var panorama = {
     currentReport: null,
+    allCharts: [],
     
     getReport: function(report, caller) {
+        panorama.allCharts = [];
         panorama.currentReport = report;
         $('nav .selected').removeClass('selected');
         $('#content .filters').remove();
@@ -104,7 +106,7 @@ var panorama = {
         $.get(chart.url, function(data) {
             chart.options.series = panorama.getSeriesFromCSV(data, chart);
             
-            panorama.createChart(chart.options);
+            panorama.allCharts.push(panorama.createChart(chart.options));
             
             // This will remove loading after the first chart loads
             // Don't care enough about the second
@@ -175,6 +177,54 @@ var panorama = {
     
     createChart: function(options) {
     	return new Highcharts.Chart(options);
+    },
+    
+    groupByWeek: function() {
+        for (var chart in panorama.allCharts) {
+            for (var series in panorama.allCharts[chart].series) {
+                var series_data = [];
+                var new_data = [];
+                var new_series = [];
+                
+                for (var point in panorama.allCharts[chart].series[series].data) {
+                    series_data[panorama.allCharts[chart].series[series].data[point].x] = panorama.allCharts[chart].series[series].data[point].y;
+                }
+                
+                for (var x in series_data) {
+                    var d = new Date();
+                    d.setTime(x);
+                    if (!d.is().sun())
+                        d = d.last().sun();
+                    //console.log(d);
+                    if (d in new_data)
+                        new_data[d] += series_data[x];
+                    else
+                        new_data[d] = series_data[x];
+                }
+                
+                for (var x in new_data) {
+                    new_series.push([x, new_data[x]]);
+                    //console.log(x);
+                }
+                
+                panorama.allCharts[chart].series[series].setData(new_series, false);
+                panorama.allCharts[chart].xAxis[0].options.type = 'line';
+                panorama.allCharts[chart].xAxis[0].options.labels.formatter = function() {
+                    return 'hiii'+
+        				Highcharts.dateFormat('%A, %b %e, %Y', this.x);
+                };
+                //console.debug(panorama.allCharts[chart].xAxis[0]);
+                //panorama.allCharts[chart].series[series].xAxis.redraw();
+            }
+            panorama.allCharts[chart].options.tooltip.formatter = function() {
+                //console.debug(this);
+        			return 'these dont work yet! '+
+        				Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>' +
+        				Highcharts.numberFormat(this.y, 0) + '</b> (' + this.series.name + ')';
+        	};
+            panorama.allCharts[chart].series[series].xAxis.redraw();
+            panorama.allCharts[chart].redraw();
+        }
     }
 };
 

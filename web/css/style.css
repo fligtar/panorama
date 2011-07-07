@@ -96,6 +96,8 @@ header .corner {
     float: right;
     border-top: 5px solid #333333;
     width: 12em;
+    padding: 1em 1em 0 0;
+    text-align: right;
 }
 
 nav {
