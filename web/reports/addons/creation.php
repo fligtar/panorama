@@ -23,7 +23,7 @@ class AddonCreation extends Report {
             'type4' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 4",
             'type5' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 5",
             'type9' => "SELECT COUNT(*) FROM addons WHERE DATE(created) = '%DATE%' AND addontype_id = 9",
-            'sdk' => "SELECT COUNT(*) FROM addons INNER JOIN versions ON addons.current_version = versions.id INNER JOIN files ON versions.id = files.version_id AND files.platform_id = 1 WHERE files.jetpack = 1 AND DATE(addons.created) = '%DATE%'",
+            'sdk' => "SELECT COUNT(*) FROM addons INNER JOIN versions ON addons.current_version = versions.id INNER JOIN files ON versions.id = files.version_id AND files.platform_id = 1 WHERE files.jetpack IS NOT NULL AND DATE(addons.created) = '%DATE%'",
             'restartless' => "SELECT COUNT(*) FROM addons INNER JOIN versions ON addons.current_version = versions.id INNER JOIN files ON versions.id = files.version_id AND files.platform_id = 1 WHERE files.no_restart = 1 AND DATE(addons.created) = '%DATE%'"
         );
 
