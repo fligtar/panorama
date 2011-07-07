@@ -58,7 +58,7 @@ class ContributionSources extends Report {
                 $qry = str_replace('%SOURCEFILTER%', $source_filter, $query);
                 $qry = str_replace('%DATE%', $date, $qry);
                 $qry = str_replace('%FIELDVAL%', $fieldval, $qry);
-                echo $qry."<br>";
+                
                 $_rows = $this->db->query_amo($qry);
                 $row = mysql_fetch_array($_rows, MYSQL_NUM);
                 
@@ -73,7 +73,7 @@ class ContributionSources extends Report {
         }
         
         $qry = "INSERT INTO {$this->table} (date, ".implode(', ', array_keys($insert)).") VALUES ('{$date}', ".implode(', ', $insert).")";
-        echo $qry;
+        
         if ($this->db->query_stats($qry))
             $this->log("{$date} - Inserted row");
         else

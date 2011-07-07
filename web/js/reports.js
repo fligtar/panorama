@@ -149,6 +149,36 @@ var reports = {
                 }
             ]
         },
+        impala: {
+            graphs: [
+                {
+                    url: 'reports/addons/impala.php?graph=home',
+                    options: {
+                        chart: {
+                            renderTo: 'addons-impala-home',
+                            defaultSeriesType: 'spline',
+                            marginBottom: 100
+                        },
+                        title: { text: 'Impala Homepage Interactions' },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    url: 'reports/addons/impala.php?graph=details',
+                    options: {
+                        chart: {
+                            renderTo: 'addons-impala-details',
+                            defaultSeriesType: 'spline',
+                            marginBottom: 100
+                        },
+                        title: { text: 'Impala Details Page Interactions' },
+                        series: []
+                    },
+                    specificSeries: {}
+                }
+            ]
+        },
         impressions: {
             graphs: [
                 {
