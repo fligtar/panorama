@@ -7,7 +7,7 @@
 </head>
 <body>
     <header>
-        <div class="corner"><a href="#" onclick="panorama.groupByWeek(); return false;">group by week</a></div>
+        <div class="corner"><a href="#" onclick="panorama.groupBy('week'); return false;">group by week</a> | <a href="#" onclick="panorama.groupBy('month'); return false;">month</a></div>
         <h1>panorama</h1>
     </header>
     

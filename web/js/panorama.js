@@ -8,6 +8,7 @@ $(document).ready(function() {
 
 var panorama = {
     currentReport: null,
+    tamperedReport: false,
     allCharts: [],
     
     getReport: function(report, caller) {
@@ -47,6 +48,8 @@ var panorama = {
         for (var i in report.graphs) {
             panorama.reportAndChartIt(report.graphs[i]);
         }
+        
+        panorama.tamperedReport = false;
     },
     
     loadFilters: function(report) {
@@ -179,8 +182,18 @@ var panorama = {
     	return new Highcharts.Chart(options);
     },
     
-    groupByWeek: function() {
+    groupBy: function(type) {
+        if (panorama.tamperedReport === true) {
+            panorama.getGraphs(panorama.currentReport);
+            return;
+        }
+        
         for (var chart in panorama.allCharts) {
+            if (panorama.allCharts[chart].options.chart.defaultSeriesType != 'line' &&
+                panorama.allCharts[chart].options.chart.defaultSeriesType != 'spline' &&
+                panorama.allCharts[chart].options.chart.defaultSeriesType != 'area')
+                continue;
+            
             for (var series in panorama.allCharts[chart].series) {
                 var series_data = [];
                 var new_data = [];
@@ -193,9 +206,15 @@ var panorama = {
                 for (var x in series_data) {
                     var d = new Date();
                     d.setTime(x);
-                    if (!d.is().sun())
-                        d = d.last().sun();
-                    //console.log(d);
+                    
+                    if (type == 'week') {
+                        if (!d.is().sun())
+                            d = d.last().sun();
+                    }
+                    else if (type == 'month') {
+                        d.moveToFirstDayOfMonth();
+                    }
+                        
                     if (d in new_data)
                         new_data[d] += series_data[x];
                     else
@@ -204,27 +223,29 @@ var panorama = {
                 
                 for (var x in new_data) {
                     new_series.push([x, new_data[x]]);
-                    //console.log(x);
                 }
                 
                 panorama.allCharts[chart].series[series].setData(new_series, false);
-                panorama.allCharts[chart].xAxis[0].options.type = 'line';
-                panorama.allCharts[chart].xAxis[0].options.labels.formatter = function() {
-                    return 'hiii'+
-        				Highcharts.dateFormat('%A, %b %e, %Y', this.x);
-                };
-                //console.debug(panorama.allCharts[chart].xAxis[0]);
-                //panorama.allCharts[chart].series[series].xAxis.redraw();
             }
-            panorama.allCharts[chart].options.tooltip.formatter = function() {
-                //console.debug(this);
-        			return 'these dont work yet! '+
-        				Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>' +
-        				Highcharts.numberFormat(this.y, 0) + '</b> (' + this.series.name + ')';
-        	};
-            panorama.allCharts[chart].series[series].xAxis.redraw();
+            
+            if (type == 'week') {
+                panorama.allCharts[chart].options.tooltip.formatter = function() {
+                    var d = new Date(this.point.name);
+                    return d.toString('MMMM d') + ' - ' + d.add(6).days().toString('MMMM d, yyyy') + '<br/><b>' +
+    				Highcharts.numberFormat(this.y, 0) + '</b> (' + this.series.name + ')';
+                };
+            }
+            else if (type == 'month') {
+                panorama.allCharts[chart].options.tooltip.formatter = function() {
+                    var d = new Date(this.point.name);
+                    return d.toString('MMMM yyyy') + '<br/><b>' +
+    				Highcharts.numberFormat(this.y, 0) + '</b> (' + this.series.name + ')';
+                };
+            }
             panorama.allCharts[chart].redraw();
         }
+        
+        panorama.tamperedReport = true;
     }
 };
 
