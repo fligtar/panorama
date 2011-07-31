@@ -49,10 +49,27 @@ class AddonImpala extends Report {
             $pretty = 'Details Page Views';
             
             $sources = array(
+                 'dp-btn-primary' => 'Primary Download Button',
+                 'dp-btn-version' => 'Version Download Button',
+                 'dp-btn-devchannel' => 'Dev Channel Download Button',
                  'dp-hc-oftenusedwith' => 'Often Used With - Hovercard',
                  'dp-dl-oftenusedwith' => 'Often Used With - Details Link',
                  'dp-hc-othersby' => 'Others By Author - Hovercard',
                  'dp-dl-othersby' => 'Others By Author - Details Link'
+             );
+        }
+        elseif ($graph == 'category') {
+            $pretty = 'Category Page Views';
+            
+            $sources = array(
+                 'cb-hc-featured' => 'Featured - Hovercard',
+                 'cb-dl-featured' => 'Featured - Details Link',
+                 'cb-hc-toprated' => 'Top Rated - Hovercard',
+                 'cb-dl-toprated' => 'Top Rated - Hovercard',
+                 'cb-hc-mostpopular' => 'Most Popular - Hovercard',
+                 'cb-dl-mostpopular' => 'Most Popular - Details Link',
+                 'cb-hc-recentlyadded' => 'Recently Added - Hovercard',
+                 'cb-dl-recentlyadded' => 'Recently Added - Details Link'
              );
         }
         else {
