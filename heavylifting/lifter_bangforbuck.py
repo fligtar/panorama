@@ -76,7 +76,7 @@ class AddonBangForBuck(Lifter):
         hive_file = hive.query("""SELECT guid, COUNT(1) as num 
                     FROM addons_pings WHERE ds = '{date}' AND src='firefox' AND 
                     guid LIKE '%972ce4c6-7e08-4474-a285-3208198ce6fd%' 
-                    GROUP BY guid HAVING num > 1 ORDER BY num DESC;""".format(date=self.date, app=app))
+                    GROUP BY guid HAVING num > 1 ORDER BY num DESC;""".format(date=self.date))
         
         self.time_event('hive_data')
         self.log('HIVE data obtained')
