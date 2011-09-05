@@ -13,7 +13,7 @@ class AddonUpdatePings extends Report {
         if (empty($date))
             $date = date('Y-m-d', strtotime('yesterday'));
         
-        $qry = "SELECT a.addontype_id, u.count, u.status, u.application, u.os, u.locale FROM update_counts AS u INNER JOIN addons AS a ON u.addon_id = a.id WHERE u.date = '%DATE%'";
+        $qry = "SELECT a.addontype_id, u.count, u.status, u.application, u.os, u.locale FROM update_counts AS u INNER JOIN addons AS a ON u.addon_id = a.id WHERE u.date = '%DATE%' AND a.guid != '{972ce4c6-7e08-4474-a285-3208198ce6fd}'";
         
         $_rows = $this->db->query_amo(str_replace('%DATE%', $date, $qry));
         
@@ -106,99 +106,43 @@ class AddonUpdatePings extends Report {
     /**
      * Generate the CSV for graphs
      */
-    public function generateCSV($graph) {
-        $pretty = array(
-            '_total' => 'All Sources',
-            'null' => 'Unknown',
-            'category' => 'Category Browse',
-            'search' => 'Search Results',
-            'collection' => 'Collections',
-            'recommended' => 'Featured Page',
-            'homepagebrowse' => 'Homepage (Browse)',
-            'homepagepromo' => 'Homepage (Promo)',
-            'api' => 'API / Add-ons Manager',
-            'sharingapi' => 'Add-on Collector',
-            'addondetail' => 'Add-on Details',
-            'external' => 'External Sources',
-            'developers' => 'Meet the Developers',
-            'installservice' => 'Install Service',
-            'fxcustomization' => 'Firefox Customization Page',
-            'oftenusedwith' => 'Often Used With',
-            'similarcollections' => 'Similar Collections',
-            'userprofile' => 'User Profile',
-            'email' => 'Email Sharing',
-            'rockyourfirefox' => 'Rock Your Firefox',
-            'mostshared' => 'Most Shared Box',
-            'fxfirstrun' => 'Firefox Firstrun',
-            'fxwhatsnew' => 'Firefox Updated',
-            'creatured' => 'Category Features',
-            'version-history' => 'Version History',
-            'addon-detail-version' => 'Add-on Details (Version Area)',
-            'discovery-pane' => '(Old) Discovery Pane',
-            'discovery-pane-details' => '(Old) Discovery Pane Details',
-            'discovery-details' => 'Discovery Pane Details',
-            'discovery-learnmore' => 'Discovery Pane Learn More'
+    public function generateCSV() {
+        $columns = array(
+            'total' => 'All Types',
+            'type1' => 'Extensions',
+            'type2' => 'Themes',
+            'type3' => 'Dictionaries',
+            'type5' => 'Language Packs',
         );
         
-        if ($graph == 'current') {
-            echo "Label,Count\n";
+        $dates = array();
+        
+        $qry = $this->db->query_stats("SELECT date, total FROM addons_updatepings ORDER BY date");
+        while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
+            if (empty($dates[$r['date']]))
+                $dates[$r['date']] = array();
             
-            $_values = $this->db->query_stats("SELECT sources FROM {$this->table} ORDER BY date DESC LIMIT 1");
-            $values = mysql_fetch_array($_values, MYSQL_ASSOC);
-            $values = json_decode($values['sources'], true);
-            
-            foreach ($values as $column => $value) {
-                if (in_array($column, array('total'))) continue;
-                
-                if (!empty($pretty[$column]))
-                    echo "{$pretty[$column]},{$value}\n";
-                else
-                    echo "{$column},{$value}\n"; 
+            $dates[$r['date']]['total'] = $r['total'];
+        }
+        
+        foreach (array(1, 2, 3, 5) as $addontype) {
+            $qry = $this->db->query_stats("SELECT date, total FROM addons_updatepings_addontypes WHERE type = {$addontype}");
+            while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
+                $dates[$r['date']][$addontype] = $r['total'];
             }
         }
-        elseif ($graph == 'history') {
-            $headers = array();
-            $sources = array();
-            
-            $dates = $this->db->query_stats("SELECT date, total, sources FROM {$this->table} ORDER BY date");
-            while ($date = mysql_fetch_array($dates, MYSQL_ASSOC)) {
-                $sources[$date['date']] = json_decode($date['sources'], true);
-                $sources[$date['date']]['_total'] = $date['total'];
-                $headers = array_merge($headers, array_keys($sources[$date['date']]));
-            }
-            
-            $headers = array_unique($headers);
-            sort($headers);
-            
-            echo "Date";
-            foreach ($headers as $header) {
-                if (!empty($pretty[$header]))
-                    echo ",{$pretty[$header]}";
-                else
-                    echo ",{$header}";
-            }
-            echo "\n";
-            
-            foreach ($sources as $date => $source) {
-                echo $date;
-                foreach ($headers as $header) {
-                    if (empty($source[$header]))
-                        echo ",0";
-                    else
-                        echo ",{$source[$header]}";
-                }
-                echo "\n";
-            }
+        
+        echo "Date,".implode(',', $columns)."\n";
+        foreach ($dates as $date => $addontypes) {
+            echo $date.','.implode(',', $addontypes)."\n";
         }
     }
 }
 
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
-    $graph = !empty($_GET['graph']) ? $_GET['graph'] : 'current';
     $report = new AddonUpdatePings;
-    //$report->generateCSV($graph);
-    $report->analyzeDay('2011-08-02');
+    $report->generateCSV();
 }
 
 ?>

@@ -27,9 +27,9 @@
                 <li><a href="#addon-shares" onclick="panorama.getReport(reports.addons.shares, this);" class="todo">shares</a></li>
                 <li><a href="#addon-status" onclick="panorama.getReport(reports.addons.status, this);">status</a></li>
                 <li><a href="#addon-tags" onclick="panorama.getReport(reports.addons.tags, this);">tags</a></li>
-                <li><a href="#addon-themes" onclick="panorama.getReport(reports.addons.themes, this);" class="todo">theme usage</a></li>
+                <li><a href="#addon-themeusage" onclick="panorama.getReport(reports.addons.themeusage, this);">theme usage</a></li>
                 <li><a href="#addon-translations" onclick="panorama.getReport(reports.addons.translations, this);" class="todo">translations</a></li>
-                <li><a href="#addon-updatepings" onclick="panorama.getReport(reports.addons.updatepings, this);" class="todo">update pings</a></li>
+                <li><a href="#addon-updatepings" onclick="panorama.getReport(reports.addons.updatepings, this);">update pings</a></li>
                 <li><a href="#addon-reviews" onclick="panorama.getReport(reports.addons.reviews, this);">user reviews</a></li>
                 <li><a href="#addon-viewsource" onclick="panorama.getReport(reports.addons.viewsource, this);">view source</a></li>
             </ul>

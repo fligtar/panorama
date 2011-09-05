@@ -436,6 +436,59 @@ var reports = {
                 }
             ]
         },
+        themeusage: {
+            graphs: [
+                {
+                    url: 'reports/addons/themeusage.php',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-themeusage-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Theme Usage' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' themes</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                }
+            ]
+        },
+        updatepings: {
+            graphs: [
+                {
+                    url: 'reports/addons/updatepings.php',
+                    options: {
+                        chart: {
+                            renderTo: 'addon-updatepings-history',
+                            defaultSeriesType: 'area'
+                        },
+                        title: { text: 'Add-on Update Pings by Type' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' update pings</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {
+                        '*': {
+                            visible: false
+                        },
+                        1: {
+                            visible: true
+                        }
+                    }
+                }
+            ]
+        },
         viewsource: {
             graphs: [
                 {
