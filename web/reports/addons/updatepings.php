@@ -106,43 +106,101 @@ class AddonUpdatePings extends Report {
     /**
      * Generate the CSV for graphs
      */
-    public function generateCSV() {
+    public function generateCSV($type, $graph) {
+        if (!in_array($graph, array('summary', 'status', 'application', 'os', 'locale'))) return;
+        
         $columns = array(
-            'total' => 'All Types',
-            'type1' => 'Extensions',
-            'type2' => 'Themes',
-            'type3' => 'Dictionaries',
-            'type5' => 'Language Packs',
+            '0' => 'All Types',
+            '1' => 'Extensions',
+            '2' => 'Themes',
+            '3' => 'Dictionaries',
+            '5' => 'Language Packs',
         );
+        $type = array_search($type, $columns);
         
         $dates = array();
         
-        $qry = $this->db->query_stats("SELECT date, total FROM addons_updatepings ORDER BY date");
-        while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
-            if (empty($dates[$r['date']]))
-                $dates[$r['date']] = array();
-            
-            $dates[$r['date']]['total'] = $r['total'];
-        }
-        
-        foreach (array(1, 2, 3, 5) as $addontype) {
-            $qry = $this->db->query_stats("SELECT date, total FROM addons_updatepings_addontypes WHERE type = {$addontype}");
+        if ($graph == 'summary') {
+            $qry = $this->db->query_stats("SELECT date, total FROM addons_updatepings ORDER BY date");
             while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
-                $dates[$r['date']][$addontype] = $r['total'];
+                if (empty($dates[$r['date']]))
+                    $dates[$r['date']] = array();
+            
+                $dates[$r['date']]['total'] = $r['total'];
+            }
+            
+            foreach (array(1, 2, 3, 5) as $addontype) {
+                $qry = $this->db->query_stats("SELECT date, total FROM addons_updatepings_addontypes WHERE type = {$addontype}");
+                while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
+                    $dates[$r['date']][$addontype] = $r['total'];
+                }
+            }
+            
+            echo "Date,".implode(',', $columns)."\n";
+            foreach ($dates as $date => $addontypes) {
+                echo $date.','.implode(',', $addontypes)."\n";
             }
         }
-        
-        echo "Date,".implode(',', $columns)."\n";
-        foreach ($dates as $date => $addontypes) {
-            echo $date.','.implode(',', $addontypes)."\n";
+        else {
+            $headers = array();
+            $qry = $this->db->query_stats("SELECT date, {$graph} FROM addons_updatepings_addontypes WHERE type = {$type}");
+            while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
+                $status = json_decode($r[$graph], true);
+                $dates[$r['date']] = $status;
+                
+                foreach ($status as $k => $v) {
+                    if ($v > 100000)
+                        $headers[] = $k;
+                }
+            }
+            
+            $headers = array_unique($headers);
+            sort($headers);
+            
+            echo "Date";
+            foreach ($headers as $header) {
+                    echo ','.str_replace(',', '/', $header);
+            }
+            echo "\n";
+            
+            foreach ($dates as $date => $key) {
+                echo $date;
+                foreach ($headers as $header) {
+                    if (empty($key[$header]))
+                        echo ",0";
+                    else
+                        echo ",{$key[$header]}";
+                }
+                echo "\n";
+            }
         }
+    }
+    
+    /**
+     * Output the available filters for app, os, and version
+     */
+    public function outputFilterJSON() {
+        $filters = array(
+            'type' => array('Extensions', 'Themes', 'Dictionaries', 'Language Packs')
+        );
+        
+        echo json_encode($filters);
     }
 }
 
 // If this is not being controlled by something else, output the CSV by default
 if (!defined('OVERLORD')) {
     $report = new AddonUpdatePings;
-    $report->generateCSV();
+    
+    $action = !empty($_GET['action']) ? $_GET['action'] : '';
+    if ($action == 'graph') {
+        $type = !empty($_GET['type']) ? $_GET['type'] : '';
+        $graph = !empty($_GET['graph']) ? $_GET['graph'] : '';
+        $report->generateCSV($type, $graph);
+    }
+    elseif ($action == 'filters') {
+        $report->outputFilterJSON();
+    }
 }
 
 ?>

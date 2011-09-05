@@ -460,15 +460,24 @@ var reports = {
             ]
         },
         updatepings: {
+            filters: {
+                url: 'reports/addons/updatepings.php?action=filters',
+                defaults: {
+                    'type': 'Extensions'
+                }
+            },
             graphs: [
                 {
-                    url: 'reports/addons/updatepings.php',
+                    base_subtitle: '',
+                    base_url: 'reports/addons/updatepings.php?action=graph&graph=summary',
+                    url: null,
                     options: {
                         chart: {
-                            renderTo: 'addon-updatepings-history',
+                            renderTo: 'addon-updatepings-summary',
                             defaultSeriesType: 'area'
                         },
                         title: { text: 'Add-on Update Pings by Type' },
+                        subtitle: { base_text: '', text: '' },
                         tooltip: {
                             formatter: function() {
                             	return ''+
@@ -486,6 +495,98 @@ var reports = {
                             visible: true
                         }
                     }
+                },
+                {
+                    base_subtitle: '%type% only',
+                    base_url: 'reports/addons/updatepings.php?action=graph&type=%type%&graph=status',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-updatepings-status',
+                            defaultSeriesType: 'area',
+                            marginBottom: 120
+                        },
+                        title: { text: 'Add-on Status' },
+                        subtitle: { base_text: '%type% only', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' update pings</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                /*{
+                    base_subtitle: '%type% only',
+                    base_url: 'reports/addons/updatepings.php?action=graph&type=%type%&graph=application',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-updatepings-application',
+                            defaultSeriesType: 'area',
+                            marginBottom: 120
+                        },
+                        title: { text: 'Add-on Application' },
+                        subtitle: { base_text: '%type% only', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' update pings</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },*/
+                {
+                    base_subtitle: '%type% only',
+                    base_url: 'reports/addons/updatepings.php?action=graph&type=%type%&graph=os',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-updatepings-os',
+                            defaultSeriesType: 'area',
+                            marginBottom: 120
+                        },
+                        title: { text: 'Add-on OS' },
+                        subtitle: { base_text: '%type% only', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' update pings</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
+                },
+                {
+                    base_subtitle: '%type% only',
+                    base_url: 'reports/addons/updatepings.php?action=graph&type=%type%&graph=locale',
+                    url: null,
+                    options: {
+                        chart: {
+                            renderTo: 'addon-updatepings-locale',
+                            defaultSeriesType: 'area',
+                            marginBottom: 120
+                        },
+                        title: { text: 'Add-on Locale' },
+                        subtitle: { base_text: '%type% only', text: '' },
+                        tooltip: {
+                            formatter: function() {
+                            	return ''+
+                            		Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '<br/><b>'+
+                            		Highcharts.numberFormat(this.y, 0) +' update pings</b> (' + this.series.name + ')';
+                            }
+                        },
+                        series: []
+                    },
+                    specificSeries: {}
                 }
             ]
         },

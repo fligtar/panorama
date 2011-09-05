@@ -12,7 +12,7 @@ class AddonThemeUsage extends Report {
         
         $dates = array();
         
-        $qry = $this->db->query_stats("SELECT date, status FROM addons_updatepings_addontypes WHERE type = 2");
+        $qry = $this->db->query_stats("SELECT date, status FROM addons_updatepings_addontypes WHERE type = 2 AND date >= '2008-07-09'");
         while ($r = mysql_fetch_array($qry, MYSQL_ASSOC)) {
             if (empty($dates[$r['date']]))
                 $dates[$r['date']] = array();
@@ -26,9 +26,11 @@ class AddonThemeUsage extends Report {
                 $dates[$row['date']]['adu'] = $row['adu_count'];
         }
         
-        echo "Date,Themes in Use,Firefox ADU\n";
+        echo "Date,Themes in Use,Firefox ADU,Percentage\n";
         foreach ($dates as $date => $data) {
-            echo $date.','.$data['enabled'].','.$data['adu']."\n";
+            $adu = (!empty($data['adu']) ? $data['adu'] : 0);
+            $p = (!empty($adu) ? round($data['enabled'] / $adu * 100, 2) : 0);
+            echo $date.','.$data['enabled'].','.$adu.','.$p."\n";
         }
     }
 }
