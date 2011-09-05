@@ -33,7 +33,7 @@ class EcosystemTopaddons extends Report {
         }
         
         echo '<div class="report-section">';
-        echo "<h3>Top Add-ons {$date}</h3>";
+        echo "<h1>Top Add-ons {$date}</h1>";
         
         $_qry = $this->db->query_stats("SELECT guid, installs FROM {$this->table} WHERE date = '{$date}' ORDER BY installs DESC LIMIT 100");
         

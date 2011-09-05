@@ -50,7 +50,7 @@ class PerformanceAddonimpact extends Report {
         }
         
         echo '<div class="report-section">';
-        echo "<h3>Slow Add-ons {$os} {$date}</h3>";
+        echo "<h1>Slow Add-ons {$os} {$date}</h1>";
         
         $_qry = $this->db->query_stats("SELECT tsessionrestored_median FROM performance_startupdistro WHERE date = '{$date}' AND app = 'firefox' AND os = '{$os}' AND version = '4.0'");
         $median = mysql_fetch_array($_qry);

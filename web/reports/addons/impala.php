@@ -40,9 +40,11 @@ class AddonImpala extends Report {
                 'name' => 'Add-on Details',
                 'webtrends' => '',
                 'sources' => array(
-                    'Download Button' => array(
-                        'dp-btn-primary' => 'Downloads from primary button',
-                        'dp-btn-version' => 'Downloads from version button',
+                    'Download Button (no source)' => array(
+                        #'dp-btn-primary' => 'Downloads from primary button',
+                        #'dp-btn-version' => 'Downloads from version button',
+                        'addondetail' => 'Downloads from primary button',
+                        'addon-detail-version' => 'Downloads from version button',
                         'dp-btn-devchannel' => 'Downloads from development channel button'
                     ),
                     'Often Used With' => array(
@@ -146,6 +148,9 @@ class AddonImpala extends Report {
                         $page_downloads += $ads[$date][$_src];
                         $cat_downloads[$_cat] += $ads[$date][$_src];
                     }
+                    else {
+                        $ads[$date][$_src] = 0;
+                    }
                 }
             }
             arsort($cat_downloads);
@@ -165,7 +170,7 @@ class AddonImpala extends Report {
                 $_srcs = $page['sources'][$_cat];
                 echo '<tr><th class="heading">'.$_cat.'</th><th class="data">'.number_format($cat_downloads[$_cat]).' downloads</th><th class="data">'.round($cat_downloads[$_cat] / $page_downloads * 100, 0).'% of page total</th></tr>';
                 foreach ($_srcs as $_src => $_desc) {
-                    echo '<tr><td class="item">'.$_desc.'</td><td class="data">'.number_format($ads[$date][$_src]).'</td><td class="data">'.round($ads[$date][$_src] / $cat_downloads[$_cat] * 100, 0).'% of category total</td></tr>';
+                    echo '<tr><td class="item">'.$_desc.'</td><td class="data">'.number_format($ads[$date][$_src]).'</td><td class="data">'.(empty($cat_downloads[$_cat]) ? 0 : round($ads[$date][$_src] / $cat_downloads[$_cat] * 100, 0)).'% of category total</td></tr>';
                 }
             }
             echo '</table>';
