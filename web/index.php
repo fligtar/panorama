@@ -19,7 +19,6 @@
                 <li><a href="#addon-creation" onclick="panorama.getReport(reports.addons.creation, this, this);">creation</a></li>
                 <li><a href="#addon-downloads" onclick="panorama.getReport(reports.addons.downloads, this);">downloads</a></li>
                 <li><a href="#addon-eulas" onclick="panorama.getReport(reports.addons.eulas, this);">eulas</a></li>
-                <li><a href="#addon-license" onclick="panorama.getReport(reports.addons.license, this);" class="todo">license</a></li>
                 <li class="popular"><a href="#addon-impala" onclick="panorama.getReport(reports.addons.impala, this);">impala downloads</a></li>
                 <li><a href="#addon-impressions" onclick="panorama.getReport(reports.addons.impressions, this);">impressions</a></li>
                 <li><a href="#addon-packager" onclick="panorama.getReport(reports.addons.packager, this);">packager</a></li>
