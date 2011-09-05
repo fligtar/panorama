@@ -17,7 +17,7 @@ class AddonImpala extends Report {
         $pages = array(
             'homepage' => array(
                 'name' => 'Homepage',
-                'webtrends' => 'AMO Homepage - all locales',
+                'webtrends' => 'AMO Homepage - Firefox all locales',
                 'sources' => array(
                     'Promo Module' => array(
                         'hp-btn-promo' => 'Downloads from promo button',
@@ -38,7 +38,7 @@ class AddonImpala extends Report {
             ),
             'details' => array(
                 'name' => 'Add-on Details',
-                'webtrends' => '',
+                'webtrends' => 'AMO Details Pages - Firefox all locales',
                 'sources' => array(
                     'Download Button (no source)' => array(
                         #'dp-btn-primary' => 'Downloads from primary button',
@@ -67,7 +67,7 @@ class AddonImpala extends Report {
             ),
             'category-landing' => array(
                 'name' => 'Category Landing',
-                'webtrends' => '',
+                'webtrends' => 'AMO Category Landing Pages - Firefox all locales',
                 'sources' => array(
                     'Featured Carousel' => array(
                         'cb-hc-featured' => 'Downloads from hovercard',
@@ -89,7 +89,7 @@ class AddonImpala extends Report {
             ),
             'category-browse' => array(
                 'name' => 'Category Browse',
-                'webtrends' => '',
+                'webtrends' => 'AMO Category Browse Pages - Firefox all locales',
                 'sources' => array(
                     'Featured Sort' => array(
                         'cb-btn-featured' => 'Downloads from button',
@@ -136,7 +136,7 @@ class AddonImpala extends Report {
             $ads[$_date['date']] = json_decode($_date['sources'], true);
         }
         
-        foreach ($pages as $page) {
+        foreach ($pages as $pageid => $page) {
             $page_downloads = 0;
             $cat_downloads = array();
             
@@ -158,13 +158,18 @@ class AddonImpala extends Report {
             // Output the pretties
             echo '<section>';
             echo '<h2>'.$page['name'].'</h2>';
-            echo '<p>'.number_format($page_downloads).' downloads ('.round($page_downloads / $total_downloads[$date] * 100, 2).'% of site-wide total)';
+            echo '<p><strong>'.number_format($page_downloads).' downloads</strong> ('.round($page_downloads / $total_downloads[$date] * 100, 2).'% of site-wide total)</p>';
             if (!empty($webtrends['data'][date('n/j/Y', $time)]['SubRows'][$page['webtrends']]['measures']['Page Views'])) {
-                $pv = $webtrends['data'][date('n/j/Y', $time)]['SubRows'][$page['webtrends']]['measures']['Page Views'];
-                echo ' / '.number_format($pv).' page views';
-                echo ' / '.round($page_downloads / $pv * 100, 2).'% download conversion';
+                echo '<p><strong>';
+                // AMO is 50% sampled in webtrends
+                $pv = $webtrends['data'][date('n/j/Y', $time)]['SubRows'][$page['webtrends']]['measures']['Page Views'] * 2;
+                echo number_format($pv).' page views</strong>';
+                echo ', '.round($page_downloads / $pv * 100, 2).'% of which led to downloads';
+                if ($pageid == 'details')
+                    echo ' (not including referrals from other pages)';
+                echo '</p>';
             }
-            echo '</p>';
+            
             echo '<table>';
             foreach ($cat_downloads as $_cat => $downloads) {
                 $_srcs = $page['sources'][$_cat];

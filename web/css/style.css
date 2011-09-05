@@ -195,6 +195,9 @@ dd {
     font-size: 1.5em;
     margin-bottom: 0.3em;
 }
+#content table {
+    margin-left: 1em;
+}
 #content h3,
 #content table .heading {
     font-size: 1.15em;
@@ -216,7 +219,7 @@ dd {
     color: #999;
 }
 #content p {
-    
+    margin: 0.5em 0 0.5em 1em;
 }
 
 .report-section {

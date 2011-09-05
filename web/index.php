@@ -4,6 +4,7 @@
 <head>
     <title>panorama</title>
     <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.ico" />
 </head>
 <body>
     <header>
