@@ -84,7 +84,7 @@ header {
     border-left: 10px solid #333333;
     border-right: 10px solid #333333;
 }
-h1 {
+header h1 {
     font-family: 'Acknowledgement';
     font-size: 2.5em;
     display: inline-block;
@@ -159,14 +159,6 @@ nav a.loading {
     margin-top: 2px;
 }
 
-h3 {
-    font-weight: bold;
-    font-size: 1.5em;
-}
-h4 {
-    font-weight: bold;
-    margin: 1em 0;
-}
 dl {
     display: inline-block;
     width: 33%;
@@ -189,6 +181,44 @@ dd {
     margin-left: 1em;
     margin-bottom: 1em;
 }
+#content section {
+    margin: 1em 0;
+    padding: 1em 0;
+    border-bottom: 1px solid #333;
+}
+#content h1 {
+    font-weight: bold;
+    font-size: 1.7em;
+    margin-bottom: 0.5em;
+}
+#content h2 {
+    font-size: 1.5em;
+    margin-bottom: 0.3em;
+}
+#content h3,
+#content table .heading {
+    font-size: 1.15em;
+    min-width: 300px;
+}
+#content table th {
+    padding: 1em 2em 0.3em 0;
+    vertical-align: middle;
+    border-bottom: 5px double #EEE;
+}
+#content h4 {
+    margin: 1em 0;
+}
+#content table .item {
+    padding: 0.2em 0 0.2em 1em;
+    color: #666;
+}
+#content table td.data {
+    color: #999;
+}
+#content p {
+    
+}
+
 .report-section {
     border-bottom: 1px solid #999999;
     margin-bottom: 2em;

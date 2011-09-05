@@ -12,6 +12,9 @@ define('STATS_DB_PASS', '');
 
 define('METRICS_DB_NAME', '');
 
+define('WEBTRENDS_USER', '');
+define('WEBTRENDS_PASS', '');
+
 // No trailing slash
 define('HADOOP_DATA', '');
 ?>

@@ -71,6 +71,43 @@ class Report {
         if (defined('OVERLORD'))
             ob_flush();
     }
+    
+    /**
+     * cURL utility function to fetch a URL and return the output
+     */
+    public function load_url($url, $post = '', $credentials = '') {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+        if (!empty($post)) {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        }
+        
+        if (!empty($credentials)) {
+            curl_setopt($ch, CURLOPT_USERPWD, $credentials);
+        }
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $response;
+    }
+    
+    /**
+     * Fetches a Webtrends report and returns the JSON
+     */
+    public function webtrends($url) {
+        $response = $this->load_url($url, '', WEBTRENDS_USER.':'.WEBTRENDS_PASS);
+        
+        return json_decode($response, true);
+    }
 }
 
 ?>
