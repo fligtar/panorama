@@ -1679,6 +1679,12 @@ var reports = {
             ]
         }
     },
+    marketplace: {
+        overview: {
+            type: 'html',
+            url: 'reports/marketplace/overview.php'
+        }
+    },
     performance: {
         startupdistro: {
             filters: {

@@ -37,15 +37,15 @@ class ContributionSources extends Report {
         $fieldvals["'".implode("', '", array_keys($fieldvals))."'"] = 'other';
         
         $queries = array(
-            'amt_earned' => "SELECT SUM(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
-            'amt_avg' => "SELECT AVG(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
-            'amt_min' => "SELECT MIN(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
-            'amt_max' => "SELECT MAX(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
-            'amt_eq_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount = 0+suggested_amount AND %SOURCEFILTER%",
-            'amt_gt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount > 0+suggested_amount AND %SOURCEFILTER%",
-            'amt_lt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount < 0+suggested_amount AND %SOURCEFILTER%",
-            'tx_success' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
-            'tx_abort' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NULL AND %SOURCEFILTER%"
+            'amt_earned' => "SELECT SUM(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_avg' => "SELECT AVG(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_min' => "SELECT MIN(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_max' => "SELECT MAX(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'amt_eq_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount = 0+suggested_amount AND %SOURCEFILTER%",
+            'amt_gt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount > 0+suggested_amount AND %SOURCEFILTER%",
+            'amt_lt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount < 0+suggested_amount AND %SOURCEFILTER%",
+            'tx_success' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND %SOURCEFILTER%",
+            'tx_abort' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NULL AND %SOURCEFILTER%"
         );
         
         foreach ($fieldvals as $fieldval => $fielddesc) {

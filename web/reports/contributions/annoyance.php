@@ -21,15 +21,15 @@ class ContributionAnnoyance extends Report {
         );
         
         $queries = array(
-            'amt_earned' => "SELECT SUM(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
-            'amt_avg' => "SELECT AVG(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
-            'amt_min' => "SELECT MIN(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
-            'amt_max' => "SELECT MAX(amount) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
-            'amt_eq_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount = 0+suggested_amount AND annoying = %FIELDVAL%",
-            'amt_gt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount > 0+suggested_amount AND annoying = %FIELDVAL%",
-            'amt_lt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount < 0+suggested_amount AND annoying = %FIELDVAL%",
-            'tx_success' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
-            'tx_abort' => "SELECT COUNT(*) FROM stats_contributions WHERE DATE(created) = '%DATE%' AND transaction_id IS NULL AND annoying = %FIELDVAL%"
+            'amt_earned' => "SELECT SUM(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
+            'amt_avg' => "SELECT AVG(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
+            'amt_min' => "SELECT MIN(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
+            'amt_max' => "SELECT MAX(amount) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
+            'amt_eq_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount = 0+suggested_amount AND annoying = %FIELDVAL%",
+            'amt_gt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount > 0+suggested_amount AND annoying = %FIELDVAL%",
+            'amt_lt_suggested' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND 0+amount < 0+suggested_amount AND annoying = %FIELDVAL%",
+            'tx_success' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NOT NULL AND annoying = %FIELDVAL%",
+            'tx_abort' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 0 AND DATE(created) = '%DATE%' AND transaction_id IS NULL AND annoying = %FIELDVAL%"
         );
         
         foreach ($fieldvals as $fieldval => $fielddesc) {

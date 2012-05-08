@@ -63,6 +63,11 @@
                 <li><a href="#editors-queues" onclick="panorama.getReport(reports.editors.queues, this);">queues</a></li>
             </ul>
             
+            <li>marketplace</li>
+            <ul>
+                <li class="popular"><a href="#marketplace-overview" onclick="panorama.getReport(reports.marketplace.overview, this);">overview</a></li>
+            </ul>
+            
             <li>performance</li>
             <ul>
                 <li class="popular"><a href="#performance-startupdistro" onclick="panorama.getReport(reports.performance.startupdistro, this);">start-up time</a></li>
