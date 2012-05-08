@@ -13,12 +13,14 @@ class MarketplaceOverview extends Report {
         echo "<h1>Marketplace Overview</h1><ul>";
         
         $queries = array(
-            '# purchases' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL",
+            'apps installed' => "SELECT COUNT(*) FROM users_install",
+            'apps purchased' => "SELECT COUNT(*) FROM addon_purchase",
+            '# purchases (including in-app)' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL",
             'purchase revenue' => "SELECT CONCAT('$', SUM(amount)) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL",
             'refunds' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 2",
             'users' => "SELECT COUNT(*) FROM users WHERE notes = '__market__'",
             'users with preauth' => "SELECT COUNT(*) FROM users_preapproval WHERE paypal_key IS NOT NULL",
-            'app downloads (not realtime)' => "SELECT SUM(totaldownloads) FROM addons WHERE addontype_id = 11"
+            'delayed total downloads' => "SELECT SUM(totaldownloads) FROM addons WHERE addontype_id = 11"
         );
         
         foreach ($queries as $name => $_qry) {
