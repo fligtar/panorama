@@ -13,13 +13,13 @@ class MarketplaceOverview extends Report {
         echo "<h1>Marketplace Overview</h1><ul>";
         
         $queries = array(
-            'apps installed' => "SELECT COUNT(*) FROM users_install",
-            'apps purchased' => "SELECT COUNT(*) FROM addon_purchase",
-            '# purchases (including in-app)' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL",
-            'purchase revenue' => "SELECT CONCAT('$', SUM(amount)) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL",
-            'refunds' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 2",
+            'apps installed' => "SELECT COUNT(*) FROM users_install WHERE created >= '2012-05-08'",
+            'apps purchased' => "SELECT COUNT(*) FROM addon_purchase WHERE created >= '2012-05-08'",
+            '# purchases (including in-app)' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL AND created >= '2012-05-08'",
+            'purchase revenue' => "SELECT CONCAT('$', SUM(amount)) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL AND created >= '2012-05-08'",
+            'refunds' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 2 AND created >= '2012-05-08'",
             'users' => "SELECT COUNT(*) FROM users WHERE notes = '__market__'",
-            'users with preauth' => "SELECT COUNT(*) FROM users_preapproval WHERE paypal_key IS NOT NULL",
+            'users with preauth' => "SELECT COUNT(*) FROM users_preapproval WHERE paypal_key IS NOT NULL AND created >= '2012-05-08'",
             'delayed total downloads' => "SELECT SUM(totaldownloads) FROM addons WHERE addontype_id = 11"
         );
         
