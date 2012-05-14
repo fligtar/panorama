@@ -14,13 +14,14 @@ class MarketplaceOverview extends Report {
         
         $queries = array(
             'apps installed' => "SELECT COUNT(*) FROM users_install WHERE created >= '2012-05-08'",
+            'users having installed an app' => "SELECT COUNT(*) FROM (SELECT DISTINCT user_id FROM users_install WHERE created >= '2012-05-08') AS t;",
             'apps purchased' => "SELECT COUNT(*) FROM addon_purchase WHERE created >= '2012-05-08'",
             '# purchases (including in-app)' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL AND created >= '2012-05-08'",
             'purchase revenue' => "SELECT CONCAT('$', SUM(amount)) FROM stats_contributions WHERE type = 1 AND transaction_id IS NOT NULL AND created >= '2012-05-08'",
             'refunds' => "SELECT COUNT(*) FROM stats_contributions WHERE type = 2 AND created >= '2012-05-08'",
-            'users' => "SELECT COUNT(*) FROM users WHERE notes = '__market__'",
+            'total mktpl users' => "SELECT COUNT(*) FROM users WHERE notes = '__market__'",
             'users with preauth' => "SELECT COUNT(*) FROM users_preapproval WHERE paypal_key IS NOT NULL AND created >= '2012-05-08'",
-            'delayed total downloads' => "SELECT SUM(totaldownloads) FROM addons WHERE addontype_id = 11"
+            'delayed total downloads (nonfunctional)' => "SELECT SUM(totaldownloads) FROM addons WHERE addontype_id = 11"
         );
         
         foreach ($queries as $name => $_qry) {
